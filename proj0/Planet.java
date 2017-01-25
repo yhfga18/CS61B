@@ -1,11 +1,11 @@
 public class Planet {
   // all of the numbers for this project will be doubles
-  double xxPos; // its current x position
-  double yyPos; // its current y position
-  double xxVel; // its current velocity in the x direction
-  double yyVel; // its current velocity in the y direction
-  double mass;  // its mass
-  String imgFileName; // The name of an image in the images directory that depicts the planet
+  public double xxPos; // its current x position
+  public double yyPos; // its current y position
+  public double xxVel; // its current velocity in the x direction
+  public double yyVel; // its current velocity in the y direction
+  public double mass;  // its mass
+  public String imgFileName; // The name of an image in the images directory that depicts the planet
 
   public Planet(double xP, double yP, double xV,
               double yV, double m, String img){
