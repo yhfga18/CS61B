@@ -84,7 +84,7 @@ public class IntList {
         IntList pointer = A;
         if (pointer == null){
             A = B;
-            return B;
+            return A;
         }
         while (pointer.rest != null){
             pointer = pointer.rest;
@@ -102,7 +102,8 @@ public class IntList {
         IntList newList = new IntList(A.first, null);
         IntList pointer = A;
         if (A == null){
-            return B;
+            newList = B;
+            return newList;
         }
         while (pointer.rest != null){
             pointer = pointer.rest;
