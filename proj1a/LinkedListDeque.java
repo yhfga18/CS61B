@@ -69,14 +69,15 @@ public class Node{
         return this.size;
     }
 
-    public String printDeque(){
-        String stringDeque = "";
+    public void printDeque(){
         Node pointer = this.sentinel;
-        while (pointer.next != null){
-            stringDeque += pointer.next.toString() + ' ';
+        while (pointer.next != this.sentinel){
+            System.out.print(pointer.next.value.toString() + ' ') ;
+            pointer = pointer.next;
         }
-        return stringDeque;
+        System.out.println();
     }
+
 
     public Item removeFirst(){
         if(isEmpty()){
@@ -86,8 +87,8 @@ public class Node{
             Node frontNode = this.sentinel.next;
             this.sentinel.next.next.prev = this.sentinel;
             this.sentinel.next = this.sentinel.next.next;
-            frontNode.prev = null; //必要？
-            frontNode.next = null;
+            // frontNode.prev = null; //必要？
+            // frontNode.next = null;
             this.size -= 1;
             Item returnValue = frontNode.value;
             frontNode = null;
@@ -103,8 +104,8 @@ public class Node{
             Node lastNode = this.sentinel.prev;
             this.sentinel.prev.prev.next = this.sentinel;
             this.sentinel.prev = this.sentinel.next;
-            lastNode.prev = null;
-            lastNode.next = null;//必要？
+            // lastNode.prev = null;
+            // lastNode.next = null;//必要？
             this.size -= 1;
             Item returnValue = lastNode.value;
             lastNode = null;
@@ -154,14 +155,14 @@ public class Node{
         return ithItem;
     }
 
-    private Item helper(int ith, int ind, Node pointer){
-        if (ind == ith){
+    private Item helper(int ith, int index, Node pointer){
+        if (index == ith){
             return pointer.value;
         }
         else {
             ith += 1;
             pointer = pointer.next;
-            return helper(ith, ind, pointer);
+            return helper(ith, index, pointer);
 
         }
     }
