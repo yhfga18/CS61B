@@ -30,70 +30,86 @@ public class ArrayDeque<Item> {
             System.arraycopy(this.items, 0, newItems, this.items.length - this.first - 1, this.rear);
         }
         this.first = START;
-        this.rear = this.items.length - 1;
+        this.rear = this.size - 1;
         this.items = newItems;
         // size += 1;
         // System.out.print("ResizeAddFirst Done!")
     }
 
     public void addFirst(Item item){
-        int capacity = this.items.length - 1;
+        int capacity = this.items.length;
 
         if (isEmpty() & capacity > 0){
             this.items[this.first] = item;
             this.first = 0;
             this.rear = 0;
         }
-        else if (this.first == 0 & this.rear == capacity){
-            resize(); // resize
+        else if (capacity == this.size){
+            resize();
             addFirst(item);
         }
-        else if (this.first == 0 & this.rear < capacity){
-            this.first = capacity;
+        else if (this.first == 0){
+            this.first = capacity - 1;
             this.items[this.first] = item;
         }
-        else if (this.rear < this.first){
-            if (this.rear < this.first - 1){
-                this.items[this.rear + 1] = item;
-            }
-            else if (this.rear == this.first - 1){
-                resize(); // resize
-            }
+        else {
+            this.first += 1;
+            this.items[this.first] = item;
         }
         this.size += 1;
     }
 
     public void addLast(Item item){
-        int capacity = this.items.length - 1;
-        if (this.first == 0 & this.rear == capacity){
-            resize(); // resize
-            this.items[this.rear + 1] = item;
-            this.rear += 1;
-        }
-        else if (this.first <= this.rear & this.rear < capacity){
-            this.items[rear + 1] = item;
-            this.rear += 1;
-        }
-        else if ((0 < this.first) & (this.first < this.rear) & (this.rear == capacity)){
-            this.items[0] = item;
-            this.rear = 0;
-        }
-        else if (this.rear < this.first){
-            if (this.rear < this.first - 1){
-                this.items[rear + 1] = item;
-                this.rear += 1;
-            }
-            else if (this.rear == this.first - 1){
-                resize(); //resize
-            };
-        }
-        else if (isEmpty() & capacity > 0) {
+        int capacity = this.items.length;
+        if (isEmpty() & capacity > 0) {
             this.items[0] = item;
             this.first = 0;
             this.rear = 0;
         }
+        else if (this.size == capacity){
+            resize();
+            addLast(item);
+        }
+        else if (this.rear == capacity - 1) {
+            this.rear = 0;
+            this.items[rear] = item;
+        }
+        else {
+            this.rear += 1;
+            this.items[this.rear] = item;
+        }
         this.size += 1;
+
     }
+    //     if (this.first == 0 & this.rear == capacity){
+    //         resize(); // resize
+    //         this.items[this.rear + 1] = item;
+    //         this.rear += 1;
+    //     }
+    //     else if (this.first <= this.rear & this.rear < capacity){
+    //         this.items[rear + 1] = item;
+    //         this.rear += 1;
+    //     }
+    //     else if ((0 < this.first) & (this.first < this.rear) & (this.rear == capacity)){
+    //         this.items[0] = item;
+    //         this.rear = 0;
+    //     }
+    //     else if (this.rear < this.first){
+    //         if (this.rear < this.first - 1){
+    //             this.items[rear + 1] = item;
+    //             this.rear += 1;
+    //         }
+    //         else if (this.rear == this.first - 1){
+    //             resize(); //resize
+    //         };
+    //     }
+    //     else if (isEmpty() & capacity > 0) {
+    //         this.items[0] = item;
+    //         this.first = 0;
+    //         this.rear = 0;
+    //     }
+    //     this.size += 1;
+    // }
     public boolean isEmpty(){
         return (this.size == 0);
 
@@ -180,6 +196,59 @@ public class ArrayDeque<Item> {
         //         this.size += 1;
         //     }
         // }
+
+
+// addFirst ver.2
+        // else if (this.first == 0 & this.rear == capacity){
+        //     resize(); // resize
+        //     addFirst(item);
+        // }
+        // else if (this.first == 0 & this.rear < capacity){
+        //     this.first = capacity;
+        //     this.items[this.first] = item;
+        // }
+        // else if (this.rear < this.first){
+        //     if (this.rear < this.first - 1){
+        //         this.items[this.rear + 1] = item;
+        //     }
+        //     else if (this.rear == this.first - 1){
+        //         resize(); // resize
+        //     }
+        // }
+
+
+// addLast
+    // public void addLast(Item item){
+    //     int capacity = this.items.length - 1;
+    //     if (this.first == 0 & this.rear == capacity){
+    //         resize(); // resize
+    //         this.items[this.rear + 1] = item;
+    //         this.rear += 1;
+    //     }
+    //     else if (this.first <= this.rear & this.rear < capacity){
+    //         this.items[rear + 1] = item;
+    //         this.rear += 1;
+    //     }
+    //     else if ((0 < this.first) & (this.first < this.rear) & (this.rear == capacity)){
+    //         this.items[0] = item;
+    //         this.rear = 0;
+    //     }
+    //     else if (this.rear < this.first){
+    //         if (this.rear < this.first - 1){
+    //             this.items[rear + 1] = item;
+    //             this.rear += 1;
+    //         }
+    //         else if (this.rear == this.first - 1){
+    //             resize(); //resize
+    //         };
+    //     }
+    //     else if (isEmpty() & capacity > 0) {
+    //         this.items[0] = item;
+    //         this.first = 0;
+    //         this.rear = 0;
+    //     }
+    //     this.size += 1;
+    // }
 
 // removeFirst
         // if (isEmpty()){
