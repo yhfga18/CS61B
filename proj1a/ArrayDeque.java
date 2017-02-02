@@ -1,6 +1,7 @@
 /**
  * Created by hideyoshitakahashi on 1/27/17.
  */
+
 public class ArrayDeque<Item> {
 
     private Item[] items;
@@ -16,21 +17,19 @@ public class ArrayDeque<Item> {
         this.size = 0;
         this.first = 0;
         this.rear = 0;
-        int capacity = this.items.length;
-
     }
 
     private void resize(){
         Item[] newItems = (Item[]) new Object[this.items.length * RFACTOR];
-        if (this.first < this.rear){
-            System.arraycopy(this.items, this.first, newItems, START, this.rear - this.first); // 0じゃなく4にして、最後にitemを入れる
+        if (this.first == 0){
+            System.arraycopy(this.items, this.first, newItems, 0, this.rear); // 0じゃなく4にして、最後にitemを入れる
         }
         else {
-            System.arraycopy(this.items, this.first, newItems, START, this.items.length - this.first); // 0じゃなく4にして、最後にitemを入れる
+            System.arraycopy(this.items, this.first, newItems, 0, this.items.length - this.first - 1); // 0じゃなく4にして、最後にitemを入れる
             System.arraycopy(this.items, 0, newItems, this.items.length - this.first - 1, this.rear);
         }
-        this.first = START;
-        this.rear = this.size - 1;
+        this.first = 0;
+        this.rear = this.items.length - 1;
         this.items = newItems;
         // size += 1;
         // System.out.print("ResizeAddFirst Done!")
@@ -267,4 +266,22 @@ public class ArrayDeque<Item> {
         //         this.first -= 1;
         //     }
         // }
+
+
+
+// private void resize(){
+    //     Item[] newItems = (Item[]) new Object[this.items.length * RFACTOR];
+    //     if (this.first < this.rear){
+    //         System.arraycopy(this.items, this.first, newItems, 0, this.rear - this.first - 1); // 0じゃなく4にして、最後にitemを入れる
+    //     }
+    //     else {
+    //         System.arraycopy(this.items, this.first, newItems, 0, this.items.length - this.first); // 0じゃなく4にして、最後にitemを入れる
+    //         System.arraycopy(this.items, 0, newItems, this.items.length - this.first - 1, this.rear);
+    //     }
+    //     this.first = 0;
+    //     this.rear = this.items.length - 1;
+    //     this.items = newItems;
+    //     // size += 1;
+    //     // System.out.print("ResizeAddFirst Done!")
+    // }
 
