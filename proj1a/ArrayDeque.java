@@ -22,7 +22,7 @@ public class ArrayDeque<Item> {
     private void resizeUp(){
         Item[] newItems = (Item[]) new Object[this.items.length * RFACTOR];
         if (this.first == 0){
-            System.arraycopy(this.items, this.first, newItems, 0, this.rear);
+            System.arraycopy(this.items, this.first, newItems, 0, this.rear + 1);
         }
         else {
             System.arraycopy(this.items, this.first, newItems, 0, this.items.length - this.first);
