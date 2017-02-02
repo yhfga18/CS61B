@@ -19,7 +19,8 @@ public class ArrayDeque<Item> {
         this.rear = 0;
     }
 
-    private void resize(Item[] newItems){
+    private void resizeUp(){
+        Item[] newItems = (Item[]) new Object[this.items.length * RFACTOR];
         if (this.first == 0){
             System.arraycopy(this.items, this.first, newItems, 0, this.rear);
         }
@@ -30,36 +31,22 @@ public class ArrayDeque<Item> {
         this.first = 0;
         this.rear = this.items.length - 1;
         this.items = newItems;
-    }
-
-    private void resizeUp(){
-        Item[] new_items = (Item[]) new Object[this.items.length * RFACTOR];
-        resize(new_items);
-        // if (this.first == 0){
-        //     System.arraycopy(this.items, this.first, newItems, 0, this.rear);
-        // }
-        // else {
-        //     System.arraycopy(this.items, this.first, newItems, 0, this.items.length - this.first);
-        //     System.arraycopy(this.items, 0, newItems, this.items.length - this.first, this.rear + 1);
-        // }
-        // this.first = 0;
-        // this.rear = this.items.length - 1;
-        // this.items = newItems;
+        // size += 1;
+        // System.out.print("ResizeAddFirst Done!")
     }
 
     private void resizeDown(){
-        Item[] new_items = (Item[]) new Object[this.items.length / RDIVIDOR];
-        resize(new_items);
-        // if (this.first == 0){
-        //     System.arraycopy(this.items, this.first, newItems, 0, this.rear);
-        // }
-        // else {
-        //     System.arraycopy(this.items, this.first, newItems, 0, this.items.length - this.first);
-        //     System.arraycopy(this.items, 0, newItems, this.items.length - this.first, this.rear + 1);
-        // }
-        // this.first = 0;
-        // this.rear = this.items.length - 1;
-        // this.items = newItems;
+        Item[] newItems = (Item[]) new Object[this.items.length * RDIVIDOR];
+        if (this.first < this.rear){
+            System.arraycopy(this.items, this.first, newItems, 0, this.rear);
+        }
+        else {
+            System.arraycopy(this.items, this.first, newItems, 0, this.items.length - this.first);
+            System.arraycopy(this.items, 0, newItems, this.items.length - this.first, this.rear + 1);
+        }
+        this.first = 0;
+        this.rear = this.items.length - 1;
+        this.items = newItems;
     }
 
 
@@ -198,8 +185,8 @@ public class ArrayDeque<Item> {
             }
             return returnItem;
         }
-    }
 
+    }
     public Item get(int index){
         if (isEmpty()){
             return null;
