@@ -63,7 +63,7 @@ public class ArrayDeque<Item> {
     public void addLast(Item item){
         int capacity = this.items.length;
         if (isEmpty() & capacity > 0) {
-            this.items[-1] = item;
+            this.items[capacity - 1] = item;
             this.first = 0;
             this.rear = 0;
             this.size += 1;
@@ -86,7 +86,6 @@ public class ArrayDeque<Item> {
 
     public boolean isEmpty(){
         return (this.size == 0);
-
     }
     public int size(){
         return this.size;
