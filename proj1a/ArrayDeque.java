@@ -126,7 +126,7 @@ public class ArrayDeque<Item> {
         else {
             Item returnItem = this.items[this.first];
             this.items[this.first] = null;
-            if (this.first + 1 > this.items.length){
+            if (this.first == this.items.length - 1){
                 this.first = 0;
             }
             else{
