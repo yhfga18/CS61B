@@ -29,6 +29,8 @@ public class ArrayDeque<Item> {
             System.arraycopy(this.items, this.first, newItems, START, this.items.length - this.first); // 0じゃなく4にして、最後にitemを入れる
             System.arraycopy(this.items, 0, newItems, this.items.length - this.first - 1, this.rear);
         }
+        this.first = START;
+        this.rear = this.items.length - 1;
         this.items = newItems;
         // size += 1;
         // System.out.print("ResizeAddFirst Done!")
@@ -41,7 +43,6 @@ public class ArrayDeque<Item> {
             this.items[this.first] = item;
             this.first = 0;
             this.rear = 0;
-            this.size += 1;
         }
         else if (this.first == 0 & this.rear == capacity){
             resize(); // resize
@@ -50,7 +51,6 @@ public class ArrayDeque<Item> {
         else if (this.first == 0 & this.rear < capacity){
             this.first = capacity;
             this.items[this.first] = item;
-            this.size += 1;
         }
         else if (this.rear < this.first){
             if (this.rear < this.first - 1){
@@ -59,26 +59,24 @@ public class ArrayDeque<Item> {
             else if (this.rear == this.first - 1){
                 resize(); // resize
             }
-            this.size += 1;
         }
+        this.size += 1;
     }
+
     public void addLast(Item item){
         int capacity = this.items.length - 1;
         if (this.first == 0 & this.rear == capacity){
             resize(); // resize
             this.items[this.rear + 1] = item;
             this.rear += 1;
-            this.size += 1;
         }
         else if (this.first < this.rear & this.rear < capacity){
             this.items[rear + 1] = item;
             this.rear += 1;
-            this.size += 1;
         }
         else if ((0 < this.first) & (this.first < this.rear) & (this.rear == capacity)){
             this.items[0] = item;
             this.rear = 0;
-            this.size += 1;
         }
         else if (this.rear < this.first){
             if (this.rear < this.first - 1){
@@ -87,15 +85,14 @@ public class ArrayDeque<Item> {
             }
             else if (this.rear == this.first - 1){
                 resize(); //resize
-            }
-            this.size += 1;
+            };
         }
         else if (isEmpty() & capacity > 0) {
             this.items[0] = item;
             this.first = 0;
             this.rear = 0;
-            this.size += 1;
         }
+        this.size += 1;
     }
     public boolean isEmpty(){
         return (this.size == 0);
