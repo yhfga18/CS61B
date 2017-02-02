@@ -103,7 +103,7 @@ public class Node{
         else{
             Node lastNode = this.sentinel.prev;
             this.sentinel.prev.prev.next = this.sentinel;
-            this.sentinel.prev = this.sentinel.next;
+            this.sentinel.prev = this.sentinel.prev.prev;
             // lastNode.prev = null;
             // lastNode.next = null;//必要？
             this.size -= 1;
@@ -111,6 +111,17 @@ public class Node{
             lastNode = null;
             return returnValue;
         }
+        // else{
+        //     Node lastNode = this.sentinel.prev;
+        //     this.sentinel.prev.prev.next = this.sentinel;
+        //     this.sentinel.prev = this.sentinel.next;
+        //     // lastNode.prev = null;
+        //     // lastNode.next = null;//必要？
+        //     this.size -= 1;
+        //     Item returnValue = lastNode.value;
+        //     lastNode = null;
+        //     return returnValue;
+        // }
     }
 
     public Item get(int index){

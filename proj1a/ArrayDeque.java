@@ -35,19 +35,18 @@ public class ArrayDeque<Item> {
         // System.out.print("ResizeAddFirst Done!")
     }
 
-    private void resizeDown(){
-        Item[] newItems = (Item[]) new Object[this.items.length * RDIVIDOR];
-        if (this.first < this.rear){
-            System.arraycopy(this.items, this.first, newItems, 0, this.rear);
-        }
-        else {
-            System.arraycopy(this.items, this.first, newItems, 0, this.items.length - this.first);
-            System.arraycopy(this.items, 0, newItems, this.items.length - this.first, this.rear + 1);
-        }
-        this.first = 0;
-        this.rear = this.items.length - 1;
-        this.items = newItems;
-    }
+    // private void resizeDown(){
+    //     Item[] newItems = (Item[]) new Object[this.items.length * RDIVIDOR];
+    //     if (this.first < this.rear){
+    //         System.arraycopy(this.items, this.first, newItems, 0, this.rear);
+    //     }
+    //     else {
+    //         System.arraycopy(this.items, this.first, newItems, 0, this.items.length - this.first);
+    //         System.arraycopy(this.items, 0, newItems, this.items.length - this.first, this.rear + 1);
+    //     }
+    //     this.first = 0;
+    //     this.rear = this.items.length - 1;
+    //     this.items = newItems;
 
 
 
@@ -153,9 +152,9 @@ public class ArrayDeque<Item> {
                 this.first += 1;
             }
             this.size -= 1;
-            if (this.size * 4 < this.items.length){
-                resizeDown();
-            }
+            // if (this.size * 4 < this.items.length){
+            //     resizeDown();
+            // }
             return returnItem;
         }
     }
@@ -180,9 +179,9 @@ public class ArrayDeque<Item> {
                 this.rear -= 1;
             }
             this.size -= 1;
-            if (this.size * 4 < this.items.length){
-                resizeDown();
-            }
+            // if (this.size * 4 < this.items.length){
+            //     resizeDown();
+            // }
             return returnItem;
         }
 
