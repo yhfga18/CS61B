@@ -126,8 +126,8 @@ public class ArrayDeque<Item> {
             return null;
         }
         else {
-            Item returnItem = this.items[rear];
-            this.items[rear] = null;
+            Item returnItem = this.items[this.rear];
+            this.items[this.rear] = null;
             if (this.rear == 0){
                 this.rear = this.items.length - 1;
             }
@@ -140,11 +140,11 @@ public class ArrayDeque<Item> {
 
     }
     public Item get(int index){
-        if (isEmpty() || index > size){
+        if (isEmpty()){
             return null;
         }
         else {
-            return this.items[(this.first + index)%this.items.length];
+            return this.items[(this.first + index) % this.items.length];
         }
     }
 
