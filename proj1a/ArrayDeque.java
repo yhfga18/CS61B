@@ -70,7 +70,7 @@ public class ArrayDeque<Item> {
             this.items[this.rear + 1] = item;
             this.rear += 1;
         }
-        else if (this.first < this.rear & this.rear < capacity){
+        else if (this.first <= this.rear & this.rear < capacity){
             this.items[rear + 1] = item;
             this.rear += 1;
         }
@@ -109,9 +109,14 @@ public class ArrayDeque<Item> {
             return null;
         }
         else {
-            Item returnItem = this.items[first];
-            this.items[first] = null;
-            this.first += 1;
+            Item returnItem = this.items[this.first];
+            this.items[this.first] = null;
+            if (this.first + 1 > this.items.length){
+                this.first = 0;
+            }
+            else{
+                this.first += 1;
+            }
             this.size -= 1;
             return returnItem;
         }
@@ -123,7 +128,12 @@ public class ArrayDeque<Item> {
         else {
             Item returnItem = this.items[rear];
             this.items[rear] = null;
-            this.rear -= 1;
+            if (this.rear == 0){
+                this.rear = this.items.length - 1;
+            }
+            else{
+                this.rear -= 1;
+            }
             this.size -= 1;
             return returnItem;
         }
