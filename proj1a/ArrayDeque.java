@@ -39,7 +39,7 @@ public class ArrayDeque<Item> {
         int capacity = this.items.length;
 
         if (isEmpty() & capacity > 0){
-            this.items[this.first] = item;
+            this.items[0] = item;
             this.first = 0;
             this.rear = 0;
         }
@@ -52,8 +52,8 @@ public class ArrayDeque<Item> {
             this.items[this.first] = item;
         }
         else {
-            this.first += 1;
-            this.items[this.first] = item;
+            this.first -= 1;
+            this.items[this.first] = item; /// 
         }
         this.size += 1;
     }
@@ -80,35 +80,7 @@ public class ArrayDeque<Item> {
         this.size += 1;
 
     }
-    //     if (this.first == 0 & this.rear == capacity){
-    //         resize(); // resize
-    //         this.items[this.rear + 1] = item;
-    //         this.rear += 1;
-    //     }
-    //     else if (this.first <= this.rear & this.rear < capacity){
-    //         this.items[rear + 1] = item;
-    //         this.rear += 1;
-    //     }
-    //     else if ((0 < this.first) & (this.first < this.rear) & (this.rear == capacity)){
-    //         this.items[0] = item;
-    //         this.rear = 0;
-    //     }
-    //     else if (this.rear < this.first){
-    //         if (this.rear < this.first - 1){
-    //             this.items[rear + 1] = item;
-    //             this.rear += 1;
-    //         }
-    //         else if (this.rear == this.first - 1){
-    //             resize(); //resize
-    //         };
-    //     }
-    //     else if (isEmpty() & capacity > 0) {
-    //         this.items[0] = item;
-    //         this.first = 0;
-    //         this.rear = 0;
-    //     }
-    //     this.size += 1;
-    // }
+
     public boolean isEmpty(){
         return (this.size == 0);
 
@@ -117,7 +89,8 @@ public class ArrayDeque<Item> {
         return this.size;
     }
     public void printDeque(){
-
+        // int index = this.first;
+        // while (index != this.rear){
     }
     public Item removeFirst(){
         if (isEmpty()){
@@ -126,7 +99,11 @@ public class ArrayDeque<Item> {
         else {
             Item returnItem = this.items[this.first];
             this.items[this.first] = null;
-            if (this.first == this.items.length - 1){
+            if (this.size == 1){
+                this.first = 0;
+                this.rear = 0;
+            }
+            else if (this.first == this.items.length - 1){
                 this.first = 0;
             }
             else{
@@ -143,7 +120,11 @@ public class ArrayDeque<Item> {
         else {
             Item returnItem = this.items[this.rear];
             this.items[this.rear] = null;
-            if (this.rear == 0){
+            if (this.size == 1){
+                this.first = 0;
+                this.rear = 0;
+            }
+            else if (this.rear == 0){
                 this.rear = this.items.length - 1;
             }
             else{
@@ -248,6 +229,8 @@ public class ArrayDeque<Item> {
     //     }
     //     this.size += 1;
     // }
+
+
 
 // removeFirst
         // if (isEmpty()){
