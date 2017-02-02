@@ -5,15 +5,15 @@ public class LinkedListDeque<Item> {
         private Item value;
         private Node prev, next;
 
-        private Node(){
+        public Node(){
             this.value = null;
         }
         public Node(Item value, Node prev, Node next) {
             this.value = value;
             this.prev = prev;
             this.next = next;
+        }
     }
-}
 
     private Node sentinel;
     private int size;
@@ -33,7 +33,7 @@ public class LinkedListDeque<Item> {
     // }
 
     public void addFirst(Item value) {
-        if (isEmpty()){
+        if (isEmpty()) {
             this.sentinel.next = new Node(value, this.sentinel, this.sentinel);
             this.sentinel.prev = this.sentinel.next;
             this.size += 1;
@@ -48,7 +48,7 @@ public class LinkedListDeque<Item> {
     }
 
     public void addLast(Item value) {
-        if(isEmpty()) {
+        if (isEmpty()) {
             addFirst(value);
         } else {
             Node oldLastNode = sentinel.prev;
@@ -59,18 +59,18 @@ public class LinkedListDeque<Item> {
         }
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return (this.sentinel.next == this.sentinel);
     }
 
-    public int size(){
+    public int size() {
         return this.size;
     }
 
     public void printDeque() {
         Node pointer = this.sentinel;
         while (pointer.next != this.sentinel) {
-            System.out.print(pointer.next.value.toString() + ' ') ;
+            System.out.print(pointer.next.value.toString() + ' ');
             pointer = pointer.next;
         }
         System.out.println();
@@ -78,7 +78,7 @@ public class LinkedListDeque<Item> {
 
 
     public Item removeFirst() {
-        if(isEmpty()) {
+        if (isEmpty()) {
             return null;
         } else {
             Node frontNode = this.sentinel.next;
@@ -94,10 +94,9 @@ public class LinkedListDeque<Item> {
     }
 
     public Item removeLast() {
-        if(isEmpty()) {
+        if (isEmpty()) {
             return null;
-        }
-        else {
+        } else {
             Node lastNode = this.sentinel.prev;
             this.sentinel.prev.prev.next = this.sentinel;
             this.sentinel.prev = this.sentinel.prev.prev;
@@ -111,10 +110,10 @@ public class LinkedListDeque<Item> {
     }
 
     public Item get(int index) {
-        if (index <= size/2){
+        if (index <= size / 2) {
             Node pointer = this.sentinel.next;
             int i = 0;
-            while (index != i){
+            while (index != i) {
                 pointer = pointer.next;
                 i += 1;
             }
@@ -122,7 +121,7 @@ public class LinkedListDeque<Item> {
         } else {
             Node pointer = this.sentinel.prev;
             int i = size - 1;
-            while (index != i){
+            while (index != i) {
                 pointer = pointer.prev;
                 i -= 1;
             }

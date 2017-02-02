@@ -146,9 +146,6 @@ public class ArrayDeque<Item> {
                 this.first += 1;
             }
             this.size -= 1;
-            // if (this.size * 4 < this.items.length){
-            //     resizeDown();
-            // }
             resizeDown();
             return returnItem;
         }
@@ -171,9 +168,6 @@ public class ArrayDeque<Item> {
                 this.rear -= 1;
             }
             this.size -= 1;
-            // if (this.size * 4 < this.items.length){
-            //     resizeDown();
-            // }
             resizeDown();
             return returnItem;
         }
