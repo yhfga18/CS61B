@@ -22,11 +22,11 @@ public class ArrayDeque<Item> {
     private void resize(){
         Item[] newItems = (Item[]) new Object[this.items.length * RFACTOR];
         if (this.first == 0){
-            System.arraycopy(this.items, this.first, newItems, 0, this.rear); // 0じゃなく4にして、最後にitemを入れる
+            System.arraycopy(this.items, this.first, newItems, 0, this.rear);
         }
         else {
-            System.arraycopy(this.items, this.first, newItems, 0, this.items.length - this.first - 1); // 0じゃなく4にして、最後にitemを入れる
-            System.arraycopy(this.items, 0, newItems, this.items.length - this.first - 1, this.rear);
+            System.arraycopy(this.items, this.first, newItems, 0, this.items.length - this.first);
+            System.arraycopy(this.items, 0, newItems, this.items.length - this.first, this.rear + 1);
         }
         this.first = 0;
         this.rear = this.items.length - 1;
@@ -91,9 +91,32 @@ public class ArrayDeque<Item> {
         return this.size;
     }
     public void printDeque(){
-        int index = this.first;
+        int f = this.first;
+        int r = this.rear;
+        if (isEmpty()){
+            System.out.print(" ");
+            return;
+        }
+        else if (this.first > this.rear){
+            while (r + 1 != f){
+                System.out.print(items[f] + " ");
+                f += 1;
+            }
+        }
+        else {
+            while (f <= this.items.length - 1){
+                System.out.print(items[f] + " ");
+                f += 1;
+            }
+            int i = 0;
+            while (i <= r){
+                System.out.print(items[i] + " ");
+                i += 1;
+            }
+        }
 
     }
+
     public Item removeFirst(){
         if (isEmpty()){
             this.first = 0;
