@@ -140,11 +140,11 @@ public class ArrayDeque<Item> {
 
     }
     public Item get(int index){
-        if (this.first + index < this.items.length){
-            return this.items[this.first + index];
+        if (isEmpty() || index > size){
+            return null;
         }
-        else{
-            return this.items[index - (this.items.length - this.first)];
+        else {
+            return this.items[(this.first + index)%this.items.length];
         }
     }
 
