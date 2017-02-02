@@ -36,20 +36,22 @@ public class ArrayDeque<Item> {
         // System.out.print("ResizeAddFirst Done!")
     }
 
-    // private void resizeDown(){
-    //     Item[] newItems = (Item[]) new Object[this.items.length * RDIVIDOR];
-    //     if (this.first < this.rear){
-    //         System.arraycopy(this.items, this.first, newItems, 0, this.rear);
-    //     }
-    //     else {
-    //         System.arraycopy(this.items, this.first, newItems, 0, this.items.length - this.first);
-    //         System.arraycopy(this.items, 0, newItems, this.items.length - this.first, this.rear + 1);
-    //     }
-    //     this.first = 0;
-    //     this.rear = this.items.length - 1;
-    //     this.items = newItems;
-
-
+    private void resizeDown(){
+        if (this.items.length < 16 || this.size * 4 >= this.items.length){
+            return;
+        }
+        Item[] newItems = (Item[]) new Object[this.items.length / RDIVIDOR];
+        if (this.first < this.rear){
+            System.arraycopy(this.items, this.first, newItems, 0, this.rear - this.first + 1);
+        }
+        else {
+            System.arraycopy(this.items, this.first, newItems, 0, this.items.length - this.first);
+            System.arraycopy(this.items, 0, newItems, this.items.length - this.first, this.rear + 1);
+        }
+        this.rear = this.items.length - this.first + this.rear + 1;
+        this.first = 0;
+        this.items = newItems;
+    }
 
     public void addFirst(Item item){
         int capacity = this.items.length;
@@ -156,6 +158,7 @@ public class ArrayDeque<Item> {
             // if (this.size * 4 < this.items.length){
             //     resizeDown();
             // }
+            resizeDown();
             return returnItem;
         }
     }
@@ -183,6 +186,7 @@ public class ArrayDeque<Item> {
             // if (this.size * 4 < this.items.length){
             //     resizeDown();
             // }
+            resizeDown();
             return returnItem;
         }
 
