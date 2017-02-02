@@ -112,7 +112,7 @@ public class ArrayDeque<Item> {
             System.out.print(" ");
             return;
         } else if (this.first > this.rear) {
-            while (r + 1 != f){
+            while (r + 1 != f) {
                 System.out.print(items[f] + " ");
                 f += 1;
             }

@@ -5,7 +5,7 @@ public class LinkedListDeque<Item> {
         private Item value;
         private Node prev, next;
 
-        public Node(){
+        public Node() {
             this.value = null;
         }
         public Node(Item value, Node prev, Node next) {
