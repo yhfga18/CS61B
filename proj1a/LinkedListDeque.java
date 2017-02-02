@@ -1,24 +1,24 @@
-public class LinkedListDeque<Item>{
+public class LinkedListDeque<Item> {
 
-public class Node{
+    public class Node {
 
-    private Item value;
-    private Node prev, next;
+        private Item value;
+        private Node prev, next;
 
-    private Node(){
-        this.value = null;
-    }
-    public Node(Item value, Node prev, Node next){
-        this.value = value;
-        this.prev = prev;
-        this.next = next;
+        private Node(){
+            this.value = null;
+        }
+        public Node(Item value, Node prev, Node next) {
+            this.value = value;
+            this.prev = prev;
+            this.next = next;
     }
 }
 
     private Node sentinel;
     private int size;
 
-    public LinkedListDeque(){
+    public LinkedListDeque() {
         this.sentinel = new Node();
         this.sentinel.prev = this.sentinel;
         this.sentinel.next = this.sentinel;
@@ -32,13 +32,12 @@ public class Node{
     //   this.size = 1;
     // }
 
-    public void addFirst(Item value){
+    public void addFirst(Item value) {
         if (isEmpty()){
             this.sentinel.next = new Node(value, this.sentinel, this.sentinel);
             this.sentinel.prev = this.sentinel.next;
             this.size += 1;
-        }
-        else{
+        } else {
             Node oldFrontNode = this.sentinel.next;
             Node newFrontNode = new Node(value, this.sentinel, oldFrontNode);
             this.sentinel.next = newFrontNode;
@@ -48,11 +47,10 @@ public class Node{
         }
     }
 
-    public void addLast(Item value){
-        if(isEmpty()){
+    public void addLast(Item value) {
+        if(isEmpty()) {
             addFirst(value);
-        }
-        else{
+        } else {
             Node oldLastNode = sentinel.prev;
             Node newLastNode = new Node(value, oldLastNode, this.sentinel);
             this.sentinel.prev = newLastNode;
@@ -69,9 +67,9 @@ public class Node{
         return this.size;
     }
 
-    public void printDeque(){
+    public void printDeque() {
         Node pointer = this.sentinel;
-        while (pointer.next != this.sentinel){
+        while (pointer.next != this.sentinel) {
             System.out.print(pointer.next.value.toString() + ' ') ;
             pointer = pointer.next;
         }
@@ -79,11 +77,10 @@ public class Node{
     }
 
 
-    public Item removeFirst(){
-        if(isEmpty()){
+    public Item removeFirst() {
+        if(isEmpty()) {
             return null;
-        }
-        else{
+        } else {
             Node frontNode = this.sentinel.next;
             this.sentinel.next.next.prev = this.sentinel;
             this.sentinel.next = this.sentinel.next.next;
@@ -96,11 +93,11 @@ public class Node{
         }
     }
 
-    public Item removeLast(){
-        if(isEmpty()){
+    public Item removeLast() {
+        if(isEmpty()) {
             return null;
         }
-        else{
+        else {
             Node lastNode = this.sentinel.prev;
             this.sentinel.prev.prev.next = this.sentinel;
             this.sentinel.prev = this.sentinel.prev.prev;
@@ -111,20 +108,9 @@ public class Node{
             lastNode = null;
             return returnValue;
         }
-        // else{
-        //     Node lastNode = this.sentinel.prev;
-        //     this.sentinel.prev.prev.next = this.sentinel;
-        //     this.sentinel.prev = this.sentinel.next;
-        //     // lastNode.prev = null;
-        //     // lastNode.next = null;//必要？
-        //     this.size -= 1;
-        //     Item returnValue = lastNode.value;
-        //     lastNode = null;
-        //     return returnValue;
-        // }
     }
 
-    public Item get(int index){
+    public Item get(int index) {
         if (index <= size/2){
             Node pointer = this.sentinel.next;
             int i = 0;
@@ -133,8 +119,7 @@ public class Node{
                 i += 1;
             }
             return pointer.value;
-        }
-        else{
+        } else {
             Node pointer = this.sentinel.prev;
             int i = size - 1;
             while (index != i){
@@ -144,33 +129,18 @@ public class Node{
             return pointer.value;
         }
     }
-//    public Item getRecursive(int index){
-//        Node pointer = sentinel.next;
-//        int i = 0;
-//        private Item helper(int ith, int index){
-//            if (ith == index){
-//                return pointer.value;
-//            }
-//            else{
-//                pointer = pointer.next;
-//                return helper(ith + 1, index);
-//            }
-//        }
-//        return helper(i, index);
-//    }
 
-    public Item getRecursive(int index){
+    public Item getRecursive(int index) {
         Node pointer = sentinel.next;
         int i = 0;
         Item ithItem = helper(i, index, pointer);
         return ithItem;
     }
 
-    private Item helper(int ith, int index, Node pointer){
-        if (index == ith){
+    private Item helper(int ith, int index, Node pointer) {
+        if (index == ith) {
             return pointer.value;
-        }
-        else {
+        } else {
             ith += 1;
             pointer = pointer.next;
             return helper(ith, index, pointer);
@@ -178,10 +148,3 @@ public class Node{
         }
     }
 }
-
-
-
-
-
-
-
