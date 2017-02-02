@@ -42,6 +42,7 @@ public class ArrayDeque<Item> {
             this.items[0] = item;
             this.first = 0;
             this.rear = 0;
+            this.size += 1;
         }
         else if (capacity == this.size){
             resize();
@@ -50,20 +51,22 @@ public class ArrayDeque<Item> {
         else if (this.first == 0){
             this.first = capacity - 1;
             this.items[this.first] = item;
+            this.size += 1;
         }
         else {
             this.first -= 1;
             this.items[this.first] = item; /// 
+            this.size += 1;
         }
-        this.size += 1;
     }
 
     public void addLast(Item item){
         int capacity = this.items.length;
         if (isEmpty() & capacity > 0) {
-            this.items[0] = item;
+            this.items[-1] = item;
             this.first = 0;
             this.rear = 0;
+            this.size += 1;
         }
         else if (this.size == capacity){
             resize();
@@ -72,13 +75,13 @@ public class ArrayDeque<Item> {
         else if (this.rear == capacity - 1) {
             this.rear = 0;
             this.items[rear] = item;
+            this.size += 1;
         }
         else {
             this.rear += 1;
             this.items[this.rear] = item;
+            this.size += 1;
         }
-        this.size += 1;
-
     }
 
     public boolean isEmpty(){
@@ -94,6 +97,8 @@ public class ArrayDeque<Item> {
     }
     public Item removeFirst(){
         if (isEmpty()){
+            this.first = 0;
+            this.rear = 0;
             return null;
         }
         else {
@@ -115,6 +120,8 @@ public class ArrayDeque<Item> {
     }
     public Item removeLast(){
         if (isEmpty()){
+            this.first = 0;
+            this.rear = 0;
             return null;
         }
         else {
