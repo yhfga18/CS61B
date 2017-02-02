@@ -44,8 +44,8 @@ public class ArrayDeque<Item> {
             System.arraycopy(this.items, this.first, newItems, 0, this.items.length - this.first);
             System.arraycopy(this.items, 0, newItems, this.items.length - this.first, this.rear + 1);
         }
+        this.rear = this.items.length - this.first + this.rear + 1;
         this.first = 0;
-        this.rear = this.items.length - 1;
         this.items = newItems;
     }
 
