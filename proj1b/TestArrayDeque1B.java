@@ -18,8 +18,8 @@ public class TestArrayDeque1B {
     static String message = "";
     @Test
     public static void main(String[] args) {
-        StudentArrayDeque<Integer> studentA = new StudentArrayDeque<>();
-        ArrayDequeSolution<Integer> rightA = new ArrayDequeSolution<>();
+        StudentArrayDeque<Integer> studentA = new StudentArrayDeque<Integer>();
+        ArrayDequeSolution<Integer> rightA = new ArrayDequeSolution<Integer>();
         for (int i = 0; i < 10; i += 1) {
             int randomN1 = StdRandom.uniform(9);
             if (randomN1 < 4) {
