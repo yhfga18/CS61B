@@ -7,7 +7,7 @@ public class Palindrome {
         ArrayDeque<Character> a = new ArrayDeque<Character>();
         // LinkedListDeque<Character> b = new LinkedListDeque<Character>();
         for (int i = 0; i < word.length(); i++) {
-            a.addFirst(word.charAt(i));
+            a.addLast(word.charAt(i));
         }
         return a;
     }
@@ -17,7 +17,7 @@ public class Palindrome {
         } else {
             int i = 0;
             int j = word.length() - 1;
-            while (i <= word.length()/2) {
+            while (i <= word.length() / 2) {
                 if (word.charAt(i) != word.charAt(j)) {
                     return false;
                 }
