@@ -17,7 +17,7 @@ public class Palindrome {
         } else {
             int i = 0;
             int j = word.length() - 1;
-            while (i <= word.length() / 2) {
+            while (i < word.length() / 2) {
                 if (word.charAt(i) != word.charAt(j)) {
                     return false;
                 }
@@ -30,11 +30,10 @@ public class Palindrome {
 
     public static boolean isPalindrome(String word, CharacterComparator cc) {
         int j = word.length() - 1;
-        for (int i = 0; i < word.length() / 2;) {
+        for (int i = 0; i < word.length() / 2; i++) {
             if (!(cc.equalChars(word.charAt(i), word.charAt(j)))) {
                 return false;
             }
-            i += 1;
             j -= 1;
         }
         return true;

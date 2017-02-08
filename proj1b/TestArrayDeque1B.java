@@ -17,17 +17,17 @@ import static org.junit.Assert.assertEquals;
 public class TestArrayDeque1B {
     static String message = "";
     @Test
-    public void main() {
+    public void arrayDequeTest() {
         StudentArrayDeque<Integer> studentA = new StudentArrayDeque<Integer>();
         ArrayDequeSolution<Integer> rightA = new ArrayDequeSolution<Integer>();
-        for (int i = 0; i < 10; i += 1) {
+        for (int i = 0; i < 20; i += 1) {
             int randomN1 = StdRandom.uniform(9);
             if (randomN1 < 4) {
                 String s = " ";
                 studentA.addFirst(i);
                 rightA.addFirst(i);
                 saveString(messageAddFirst(i));
-                assertEquals(message, studentA.removeFirst(), rightA.removeFirst());
+                // assertEquals(message, studentA.removeFirst(), rightA.removeFirst());
             } else {
                 studentA.addLast(i);
                 rightA.addLast(i);
@@ -35,7 +35,7 @@ public class TestArrayDeque1B {
 //                 assertEquals("2nd MESSAGE!!!!!", studentA.removeLast(), rightA.removeLast());
             }
         }
-        for (int i = 0; i < 10; i += 1) {
+        for (int i = 0; i < 18; i += 1) {
             int randomN2 = StdRandom.uniform(9);
             if (randomN2 < 4) {
                 saveString("removeFirst()");
@@ -62,5 +62,11 @@ public class TestArrayDeque1B {
     static void saveString(String s) {
         message += s + "\n";
     }
+
+
+    public static void main(String... args) {
+        jh61b.junit.TestRunner.runTests("all", TestArrayDeque1B.class);
+    }
 }
+
 
