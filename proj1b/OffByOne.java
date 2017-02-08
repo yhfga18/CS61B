@@ -7,9 +7,6 @@ public class OffByOne implements CharacterComparator {
         if (x - y == -1 || y - x == 1) {
             return true;
         }
-//        else if (x - y == 26 || y - x == 26) {
-//            return true;
-//        }
         return false;
     }
 }

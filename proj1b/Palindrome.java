@@ -29,11 +29,11 @@ public class Palindrome {
     }
 
     public static boolean isPalindrome(String word, CharacterComparator cc) {
-        int j = word.length() - 1;
+        int j = word.length();
         if (j <= 1) {
             return true;
         }
-        for (int i = 0; i <= j / 2; i++) {
+        for (int i = 0; i <= (j - 1) / 2; i++) {
             if (j < 1) {
                 return true;
             }
