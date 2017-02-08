@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 public class TestArrayDeque1B {
     static String message = "";
     @Test
-    public static void main(String[] args) {
+    public void main() {
         StudentArrayDeque<Integer> studentA = new StudentArrayDeque<Integer>();
         ArrayDequeSolution<Integer> rightA = new ArrayDequeSolution<Integer>();
         for (int i = 0; i < 10; i += 1) {
