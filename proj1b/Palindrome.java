@@ -30,12 +30,12 @@ public class Palindrome {
 
     public static boolean isPalindrome(String word, CharacterComparator cc) {
         int j = word.length() - 1;
-        for (int i = 0; i < word.length() - 2; ) {
+        for (int i = 0; i < word.length() / 2;) {
             if (!(cc.equalChars(word.charAt(i), word.charAt(j)))) {
                 return false;
             }
             i += 1;
-            j -= 1; // i += 1;
+            j -= 1;
         }
         return true;
     }
