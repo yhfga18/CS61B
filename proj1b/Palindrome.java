@@ -29,15 +29,25 @@ public class Palindrome {
     }
 
     public static boolean isPalindrome(String word, CharacterComparator cc) {
-        int j = word.length();
-        if (j <= 1) {
-            return true;
-        }
-        for (int i = 0; i < (j - 1) / 2; i++) {
-            if (!(cc.equalChars(word.charAt(i), word.charAt(j - 1 - i)))) {
+        Deque d = wordToDeque(word);
+        for (int i = 0; i < d.size() / 2; i++) {
+            Object item1 = d.get(i);
+            Object item2 = d.get(d.size() - 1 - i);
+            if (!cc.equalChars(((Character) item1), ((Character) item2))) {
                 return false;
             }
         }
         return true;
+
+//        int j = word.length();
+//        if (j <= 1) {
+//            return true;
+//        }
+//        for (int i = 0; i < (j - 1) / 2; i++) {
+//            if (!(cc.equalChars(word.charAt(i), word.charAt(j - 1 - i)))) {
+//                return false;
+//            }
+//        }
+//        return true;
     }
 }
