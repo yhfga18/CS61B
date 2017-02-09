@@ -8,7 +8,7 @@ A:
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A: Just found out that the number of line of my code was fewer than other people’s project. Not a lot different but still I am proud of it because I worked on simplifying my code. 
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
@@ -16,11 +16,11 @@ A:
 
 Q: What do you wish you would have known before writing ArrayDeque, if anything?
 
-A:
+A: 
 
 Q: If you wrote ArrayDeque again, what would you do differently, if anything?
 
-A:
+A: I will start this.first and this.last from somewhere not 0th. I am not entirely sure how it benefit but it might makes some methods simpler.
 
 -----
 
@@ -32,7 +32,7 @@ A:
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A: Fast coding. After completely understanding Circular Linked List, I coded with no stopping and it didn’t have many error.
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
@@ -44,7 +44,7 @@ A:
 
 Q: If you wrote LinkedListDeque again, what would you do differently, if anything?
 
-A:
+A: 
 
 -----
 
