@@ -34,10 +34,9 @@ public class Palindrome {
             return true;
         }
         for (int i = 0; i < (j - 1) / 2; i++) {
-            if (!(cc.equalChars(word.charAt(i), word.charAt(j - 1)))) {
+            if (!(cc.equalChars(word.charAt(i), word.charAt(j - 1 - i)))) {
                 return false;
             }
-            j -= 1;
         }
         return true;
     }
