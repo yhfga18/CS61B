@@ -14,7 +14,7 @@ public class GuitarString {
     private BoundedQueue<Double> buffer;
 
     /* Create a guitar string of the given frequency.  */
-    public GuitarString(Double frequency) {
+    public GuitarString(double frequency) {
         int capa = (int) Math.round(SR / frequency);
         buffer = new ArrayRingBuffer<Double>(capa);
         while (!(buffer.isFull())) {
