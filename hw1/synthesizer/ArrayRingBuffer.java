@@ -42,8 +42,8 @@ public class ArrayRingBuffer<T>  extends AbstractBoundedQueue<T> {
             throw new RuntimeException("Ring Buffer Overflow");
         }
         rb[last] = x;
-        last = (last + 1) % capacity;
         fillCount += 1;
+        last = (last + 1) % capacity;
     }
 
     /**
@@ -58,6 +58,11 @@ public class ArrayRingBuffer<T>  extends AbstractBoundedQueue<T> {
         T itemToReturn = rb[first];
         rb[first] = null;
         fillCount -= 1;
+        if (isEmpty()) {
+            first = 0;
+            last = 0;
+            return itemToReturn;
+        }
         first = (first + 1) % capacity;
         return itemToReturn;
 
@@ -68,7 +73,7 @@ public class ArrayRingBuffer<T>  extends AbstractBoundedQueue<T> {
      * Return oldest item, but don't remove it.
      */
     public T peek() {
-        if (isEmpty()){
+        if (isEmpty()) {
             throw new RuntimeException("Ring buffer underflow");
         }
         return rb[first];
@@ -79,25 +84,21 @@ public class ArrayRingBuffer<T>  extends AbstractBoundedQueue<T> {
         return new ArrayRingBufferIterator<T>(this);
     }
 
-    private class ArrayRingBufferIterator<T> implements Iterator<T>{
+    private class ArrayRingBufferIterator<T> implements Iterator<T> {
         private int counter;
-        private ArrayRingBuffer<T> bq;
-        public ArrayRingBufferIterator(ArrayRingBuffer<T> bq) {
+        private ArrayRingBuffer<T> buff;
+        ArrayRingBufferIterator(ArrayRingBuffer<T> bq) {
             counter = 0;
-            this.bq = bq;
+            this.buff = bq;
 
         }
         public boolean hasNext() {
-            return counter <= bq.capacity;
+            return counter < buff.capacity;
         }
         public T next() {
             counter += 1;
-            return bq.rb[(bq.first + counter)%capacity];
+            return buff.rb[(buff.first + counter) % capacity];
         }
-
-
-
-
     }
 
     // When you get to part 5, implement the needed code to support iteration.

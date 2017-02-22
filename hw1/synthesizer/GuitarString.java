@@ -14,10 +14,10 @@ public class GuitarString {
     private BoundedQueue<Double> buffer;
 
     /* Create a guitar string of the given frequency.  */
-    public GuitarString(double frequency) {
-        Integer capa = (int) Math.round(SR / frequency);
+    public GuitarString(Double frequency) {
+        int capa = (int) Math.round(SR / frequency);
         buffer = new ArrayRingBuffer<Double>(capa);
-        while (!(buffer.isFull())){
+        while (!(buffer.isFull())) {
             buffer.enqueue(0.0);
         }
         //  Create a buffer with capacity = SR / frequency. You'll need to
@@ -30,11 +30,11 @@ public class GuitarString {
     /* Pluck the guitar string by replacing the buffer with white noise. */
     public void pluck() {
 
-        while (!(buffer.isEmpty())){
+        while (!(buffer.isEmpty())) {
             buffer.dequeue();
         }
 
-        for (int i = 0; i < buffer.fillCount(); i++) {
+        while (!(buffer.isFull())) {
             double r = Math.random() - 0.5;
             buffer.enqueue(r);
         }
@@ -51,7 +51,7 @@ public class GuitarString {
     public void tic() {
 
         double front = buffer.dequeue();
-        double newFront = ((front + buffer.peek())/2) * DECAY;
+        double newFront = ((front + buffer.peek()) / 2) * DECAY;
         buffer.enqueue(newFront);
 
         // Dequeue the front sample and enqueue a new sample that is
