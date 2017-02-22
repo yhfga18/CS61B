@@ -82,7 +82,7 @@ public class ArrayRingBuffer<T>  extends AbstractBoundedQueue<T> {
     private class ArrayRingBufferIterator<T> implements Iterator<T>{
         private int counter;
         private ArrayRingBuffer<T> bq;
-        public ArrayRingBufferIterator(ArrayRingBuffer bq) {
+        public ArrayRingBufferIterator(ArrayRingBuffer<T> bq) {
             counter = 0;
             this.bq = bq;
 
