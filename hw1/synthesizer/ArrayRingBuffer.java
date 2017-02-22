@@ -1,4 +1,4 @@
-// TODO: Make sure to make this class a part of the synthesizer package
+// : Make sure to make this class a part of the synthesizer package
 // package <package name>;
 package synthesizer;
 import synthesizer.AbstractBoundedQueue;
@@ -88,7 +88,7 @@ public class ArrayRingBuffer<T>  extends AbstractBoundedQueue<T> {
 
         }
         public boolean hasNext() {
-            return counter <= bq.fillCount;
+            return counter <= bq.capacity;
         }
         public T next() {
             counter += 1;
