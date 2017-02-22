@@ -89,7 +89,7 @@ public class ArrayRingBuffer<T>  extends AbstractBoundedQueue<T> {
         private ArrayRingBuffer<T> buff;
         ArrayRingBufferIterator(ArrayRingBuffer<T> bq) {
             counter = 0;
-            this.buff = bq;
+            buff = bq;
 
         }
         public boolean hasNext() {
@@ -97,7 +97,7 @@ public class ArrayRingBuffer<T>  extends AbstractBoundedQueue<T> {
         }
         public T next() {
             counter += 1;
-            return buff.rb[(buff.first + counter) % capacity];
+            return buff.rb[(buff.first + counter - 1) % capacity];
         }
     }
 
