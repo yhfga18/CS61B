@@ -246,7 +246,7 @@ public class Parse {
         if (!m.matches()) {
             System.err.printf("Malformed select: %s\n", expr);
         }
-        String[] columnTitle = m.group(1).split(", "); // x
+        String[] columnTitle = m.group(1).split("\\s*,\\s*"); // x
         String tableName = m.group(2);   // T1
         String condition = m.group(3);   // x > 2
         return Dealer.dealSelect(columnTitle, tableName, condition);
