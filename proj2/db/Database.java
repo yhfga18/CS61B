@@ -30,10 +30,4 @@ public class Database {
         database.remove(tableName);
     }
 
-
-
-
-//    public void add(Table table) {
-//        temp.add(table);
-//    }
 }
