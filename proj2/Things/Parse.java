@@ -1,4 +1,4 @@
-package Things;
+package things;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -9,29 +9,29 @@ import java.util.StringJoiner;
 public class Parse {
     // Various common constructs, simplifies parsing.
     private static final String REST  = "\\s*(.*)\\s*",
-                                COMMA = "\\s*,\\s*",
-                                AND   = "\\s+and\\s+";
+            COMMA = "\\s*,\\s*",
+            AND   = "\\s+and\\s+";
 
     // Stage 1 syntax, contains the command name.
     private static final Pattern CREATE_CMD = Pattern.compile("create table " + REST),
-                                 LOAD_CMD   = Pattern.compile("load " + REST),
-                                 STORE_CMD  = Pattern.compile("store " + REST),
-                                 DROP_CMD   = Pattern.compile("drop table " + REST),
-                                 INSERT_CMD = Pattern.compile("insert into " + REST),
-                                 PRINT_CMD  = Pattern.compile("print " + REST),
-                                 SELECT_CMD = Pattern.compile("select " + REST);
+            LOAD_CMD   = Pattern.compile("load " + REST),
+            STORE_CMD  = Pattern.compile("store " + REST),
+            DROP_CMD   = Pattern.compile("drop table " + REST),
+            INSERT_CMD = Pattern.compile("insert into " + REST),
+            PRINT_CMD  = Pattern.compile("print " + REST),
+            SELECT_CMD = Pattern.compile("select " + REST);
 
     // Stage 2 syntax, contains the clauses of commands.
     private static final Pattern CREATE_NEW  = Pattern.compile("(\\S+)\\s+\\((\\S+\\s+\\S+\\s*" +
-                                               "(?:,\\s*\\S+\\s+\\S+\\s*)*)\\)"),
-                                 SELECT_CLS  = Pattern.compile("([^,]+?(?:,[^,]+?)*)\\s+from\\s+" +
-                                               "(\\S+\\s*(?:,\\s*\\S+\\s*)*)(?:\\s+where\\s+" +
-                                               "([\\w\\s+\\-*/'<>=!]+?(?:\\s+and\\s+" +
-                                               "[\\w\\s+\\-*/'<>=!]+?)*))?"),
-                                 CREATE_SEL  = Pattern.compile("(\\S+)\\s+as select\\s+" +
-                                                   SELECT_CLS.pattern()),
-                                 INSERT_CLS  = Pattern.compile("(\\S+)\\s+values\\s+(.+?" +
-                                               "\\s*(?:,\\s*.+?\\s*)*)");
+            "(?:,\\s*\\S+\\s+\\S+\\s*)*)\\)"),
+            SELECT_CLS  = Pattern.compile("([^,]+?(?:,[^,]+?)*)\\s+from\\s+" +
+                    "(\\S+\\s*(?:,\\s*\\S+\\s*)*)(?:\\s+where\\s+" +
+                    "([\\w\\s+\\-*/'<>=!]+?(?:\\s+and\\s+" +
+                    "[\\w\\s+\\-*/'<>=!]+?)*))?"),
+            CREATE_SEL  = Pattern.compile("(\\S+)\\s+as select\\s+" +
+                    SELECT_CLS.pattern()),
+            INSERT_CLS  = Pattern.compile("(\\S+)\\s+values\\s+(.+?" +
+                    "\\s*(?:,\\s*.+?\\s*)*)");
 
     /*create table が patternで、それをpattern.compileしたものは
     Javaがプログラムの中で使うための、Java用のpatternだと思えばいいらしい
@@ -59,7 +59,6 @@ public class Parse {
      */
 
     public static String eval(String query) {
-
         Matcher m;
         if ((m = CREATE_CMD.matcher(query)).matches()) {
             return createTable(m.group(1));
@@ -92,10 +91,10 @@ public class Parse {
         // expr = T1 as select * from T2 where x > y
         Matcher m;
         if ((m = CREATE_NEW.matcher(expr)).matches()) { // new table を作る
-                    //System.out.println("in createTable method, ");
-                    //System.out.println("group1 is : " + m.group(1)); // T1
-                    //System.out.println("group2 is : " + m.group(2));
-                    //System.out.println(m.group(2).split(COMMA));
+            //System.out.println("in createTable method, ");
+            //System.out.println("group1 is : " + m.group(1)); // T1
+            //System.out.println("group2 is : " + m.group(2));
+            //System.out.println(m.group(2).split(COMMA));
             String Tname = m.group(1);
             String[] Tcolumns = m.group(2).split(COMMA);
             return Dealer.dealCreateTable(Tname, Tcolumns);
@@ -110,11 +109,21 @@ public class Parse {
             System.out.println("m.group4 = " + m.group(4)); // x > y
             */
             String newTableName = m.group(1); // T2
-            String[] columnName = m.group(2).split(", "); // x, y ...
-            String originalTableName = m.group(3); // T1
+            String[] columnTitle;
+            String newColTitle;
+            System.out.println(m.group(2));
+            if (m.group(2).contains("as")) {
+                String[] temp = m.group(2).split("\\s* as \\s*");
+                columnTitle = temp[0].split("\\s*,\\s*");
+                newColTitle = temp[1];
+            } else {
+                columnTitle = m.group(2).split("\\s*,\\s*"); // x
+                newColTitle = null;
+            }
+     /*       String[] columnName = m.group(2).split("\\s*, \\s*"); // x, y ... */
+            String[] originalTableName = m.group(3).split("\\s*, \\s*"); // T1
             String condition = m.group(4); // x > 2
-
-            String result = Dealer.dealSelect(columnName, originalTableName, condition); // handling select
+            String result = Dealer.dealSelect(columnTitle, originalTableName, condition, newColTitle); // handling select
             String[] s = result.split("\n"); // putting string repr into array
             //for (String elem : s) {System.out.println("elem!! : " + elem); }
             //System.out.println("s.length == " + s.length);
@@ -171,8 +180,8 @@ public class Parse {
         // うえのStringJoiner joiner から "You are tring..." まで全部適当。動くように適当に
         // 与えられてるだけ。以下からメインのコード
 
-        // Things.Dealer に飛ばす
-        //String result = Things.Dealer.dealCreateTable(name, cols);
+        // things.Dealer に飛ばす
+        //String result = things.Dealer.dealCreateTable(name, cols);
 
         return name;
 
@@ -242,14 +251,22 @@ public class Parse {
 
     private static String select(String expr) {
         Matcher m = SELECT_CLS.matcher(expr);
-        //System.out.println("expr is ... " + expr);
         if (!m.matches()) {
             System.err.printf("Malformed select: %s\n", expr);
         }
-        String[] columnTitle = m.group(1).split("\\s*,\\s*"); // x
-        String tableName = m.group(2);   // T1
+        String[] columnTitle;
+        String newColTitle;
+        if (m.group(1).contains("as")) {
+            String[] temp = m.group(1).split("\\s* as \\s*");
+            columnTitle = temp[0].split("\\s*,\\s*");
+            newColTitle = temp[1];
+        } else {
+            columnTitle = m.group(1).split("\\s*,\\s*"); // x
+            newColTitle = null;
+        }
+        String[] tableName = m.group(2).split("\\s*,\\s*");   // T1
         String condition = m.group(3);   // x > 2
-        return Dealer.dealSelect(columnTitle, tableName, condition);
+        return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle);
 
         // System.out.println(m.group(1) + "-2-" + m.group(2) + m.group(3));
         // select x from T1 where x > 2 をした時は、

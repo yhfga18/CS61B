@@ -1,4 +1,4 @@
-package Things;
+package things;
 import java.util.*;
 
 
@@ -25,9 +25,13 @@ public class Table<T> {
         for (String s : columnTitles) {
             zeroRow.add(s);
         }
-        //System.out.println("zeroRow is now: ");
-        //System.out.println(zeroRow.toString());
+//        System.out.println("zeroRow is now: ");
+//        System.out.println(zeroRow.toString());
         // size() method でelement(row)の個数はわかる！
+    }
+
+    public String[] getColumnName(){
+        return this.zeroRow.toArray(new String[0]);
     }
 
     public String getName(){
@@ -36,12 +40,43 @@ public class Table<T> {
 
     public int getNumCol() {return  this.zeroRow.size();}
 
-    public String[] getColumnName(){
-        return this.zeroRow.toArray(new String[0]);
-    }
+    public int getNumRow() { return this.zeroColumn.size(); }
 
     public boolean isFull(){
         return this.zeroColumn.size() >= this.columnCap;
+    }
+
+    public String getExactColName(String colName) {
+        String[] array = getColumnName();
+        for (int i = 0; i < this.zeroRow.size(); i++) {
+            if (array[i].split(" ")[0].equals(colName)) {
+                return this.zeroRow.get(i);
+            }
+        }
+ /*       System.out.println("no such column"); */
+        return null;
+    }
+
+    public boolean checkType(String colName, String type) {
+        if (getExactColName(colName).split(" ")[1].equals(type)) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean hasColumnType(String str) {
+        String[] colTitles = getColumnName();
+        for (int i = 0; i < colTitles.length; i++) {
+            if (colTitles[i].split(" ")[1].equals(str)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void deleteColumn(int i) {
+        this.zeroRow.remove(i);
+        return;
     }
 
     // trimToSize() method でarrayListのcontainer減らせる
@@ -104,6 +139,11 @@ public class Table<T> {
         }
     }
 
+    public void removeColmnTitle(int i) {
+        this.zeroRow.remove(i);
+        return;
+    }
+
     // get column or row
 
     public LinkedList<T> getRow(int ith) {
@@ -120,10 +160,17 @@ public class Table<T> {
         return returnList;
     }
 
+    private boolean contain(String str0, String str1) {
+        if (str0.split("\\s* \\s*")[0].equals(str1)) {
+            return true;
+        }
+        return false;
+    }
+
     public List<T> getColumn(String columnName) { // for column name
         int counter = 0;
         for (int i = 0; i < zeroRow.size(); i++) {
-            if ((zeroRow.get(i).equals(columnName))) {
+            if ((contain(zeroRow.get(i), columnName))) {
                 counter = i;
                 break;
             }
@@ -135,12 +182,12 @@ public class Table<T> {
 //        LinkedList<T> stringList = new LinkedList();
         String returnString = "";
         for (int i = 0; i < this.zeroRow.size() - 1; i ++) {
-            returnString = returnString + this.zeroRow.get(i) + ", ";
+            returnString = returnString + this.zeroRow.get(i) + ",";
         }
         returnString = returnString + this.zeroRow.get(this.zeroRow.size() - 1) + "\n";
         for (LinkedList elem : this.zeroColumn) {
             for (int i = 0; i < elem.size() - 1; i++) {
-                returnString = returnString + elem.get(i) + ", ";
+                returnString = returnString + elem.get(i) + ",";
             }
             returnString = returnString + elem.get(elem.size() - 1) + "\n";
         }
