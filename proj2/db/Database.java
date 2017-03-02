@@ -1,6 +1,6 @@
 package db;
-import Things.Parse;
-import Things.Table;
+import things.Parse;
+import things.Table;
 
 import java.util.Map;
 import java.util.HashMap;
