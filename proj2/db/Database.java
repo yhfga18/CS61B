@@ -11,7 +11,7 @@ public class Database {
     // no constructor because fuck you that's why
 
     public static String transact(String query) {
-        return Parse.eval(query);
+        return things.Parse.eval(query);
     }
 
     public static void saveTable(Table t) {
