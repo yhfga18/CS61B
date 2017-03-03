@@ -111,17 +111,49 @@ public class Dealer {
         return "";
     }
 
-    public static String dealInsert(String tableName, String[] values){
+    public static String dealInsert(String tableName, String[] values) {
         if (!(Database.hasTable(tableName))) {
-            System.out.println("There isn't table called " + tableName + " in database..." + " from dealInsert in Dealer");
-            return "";
-
+            return "There isn't table called " + tableName + " in database...";
         }
         Table t = Database.getTable(tableName);
+        String[] colTitles = t.getColumnName();
+        if (!typeCheck(t, values)) {
+            return "Error: wrong type";
+        }
         t.addRowLast(values);
         return "";
     }
 
+
+    private static boolean typeCheck(Table t, String values[]) {
+        String[] colTitles = t.getColumnName();
+        try {
+            for (int i = 0; i < colTitles.length; i++) {
+                if (colTitles[i].split(" ")[1].equals("int")) {
+                    if (!(values[i].equals("NOVALUE") || values[i].equals("NaN"))) {
+                        Integer.parseInt(values[i]);
+                    }
+                } else if (colTitles[i].split(" ")[1].equals("string")) {
+                    if (!values[i].contains("\"")) {
+                        throw new NumberFormatException("Erorr: wrong type");
+                    }
+                } else { // float type should be put
+                    if (!(values[i].equals("NOVALUE") || values[i].equals("NaN"))) {
+                        if (values[i].contains("\"")) {
+                            throw new NumberFormatException("Erorr: wrong type"); // must be string
+                        }
+                        if (!values[i].contains(".")) {
+                            throw new NumberFormatException("Erorr: wrong type"); // cannot be float
+                        }
+                        Float.parseFloat(values[i]);  // catch "abc"  no double quotation inside
+                    }
+                }
+            }
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
+    }
     public static String dealPrint(String tableName){
         if (Database.hasTable(tableName)) {
             Table t = Database.getTable(tableName);
@@ -139,8 +171,7 @@ public class Dealer {
         // checks if such tables exist
         for (int i = 0; i < tableName.length; i++) {
             if (!(Database.hasTable(tableName[i]))) {
-                System.out.println("ERROR: There isn't such the table called " + tableName + " in database..." + " from dealSelect in Dealer");
-                return "";
+                return "There isn't table called " + tableName + " in database...";
             }
         }
 
@@ -184,10 +215,31 @@ public class Dealer {
         for (int j = 0; j < columnTitle.length; j++) {
             String[] colChank = columnTitle[j].split("\\s* as \\s*");
             String name = temp.getExactColName(colChank[0]);
-            if (colChank.length != 1) {
-                exactColTitle[j] = colChank[1];
+            if (colChank.length != 1) {         // x+y as w int
+                try {
+                    String type = colChank[1].split(" ")[1];
+                    if (!(type.equals("int") || type.equals("float"))) {
+                        return "Error: wrong type";
+                    }
+                    exactColTitle[j] = colChank[1];
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    return "Error: wrong type";
+                }
             } else if (name == null) {
-                exactColTitle[j] = colChank[0];
+                String[] array = containOperator(colChank[0]);
+                if (array ==  null) {
+                    return "no such column";
+                }
+                String firstType = temp.getExactColName(array[0]).split(" ")[1];
+                String secondType = temp.getExactColName(array[2]).split(" ")[1];
+                if (firstType.equals("string") || secondType.equals("string")) {
+                    return "Error: wrong type";
+                }
+                if (firstType.equals("int") && secondType.equals("int")) {
+                    exactColTitle[j] = colChank[0] + " int";
+                } else {
+                    exactColTitle[j] = colChank[0] + " float";
+                }
             } else {
                 exactColTitle[j] = name;
             }
@@ -207,12 +259,12 @@ public class Dealer {
             boolean flagSecond = false;  // e.g. y int -> flagSecond = true
 
             // if it has operator
-            if (array !=  null) {
+            if (array != null) {
                 if (temp.getExactColName(array[0]) == null) {
-                    return "ERROR: There isn't a column called " + array[0] + " in " + tableName + " from dealSelect";
+                    return "There isn't a column called " + array[0] + " in " + tableName;
                 }
                 if (temp.getExactColName(array[2]) == null) {
-                    return "ERROR: There isn't a column called " + array[2] + " in " + tableName + " from dealSelect";
+                    return "There isn't a column called " + array[2] + " in " + tableName;
                 }
 
                 // checks the type of x
@@ -279,17 +331,27 @@ public class Dealer {
                     anonTable.addColumnLast(convertFloatToString(convertedFloat));
                 }
 
+
                 // if no operator
             } else {
                 if (temp.getExactColName(columnTitle[k]) == null) {
-                    return "ERROR: There isn't a column called " + columnTitle[k] + " in " + tableName + " from dealSelect";
+                    return "There isn't a column called " + columnTitle[k] + " in " + tableName;
                 }
                 anonTable.addColumnLast(temp.getColumn(columnTitle[k]));
             }
         }
+
+        for (int x = 0; x < anonTable.getNumRow(); x++) {
+            String[] row = new String[anonTable.getNumCol()];
+            for (int w = 0; w < anonTable.getNumCol(); w++) {
+                row[w] = anonTable.getRow(w).get(w).toString();
+            }
+            if (!typeCheck(anonTable, row)) {
+                return "Error; wrong type";
+            }
+        }
         return anonTable.toString();
-    }
-    // converts float column to String column
+    }    // converts float column to String column
     // if it has zero division error (represented as null in operateFloat or operateInt method),
     // put Nal
     private static String[] convertFloatToString(Float[] array) {
