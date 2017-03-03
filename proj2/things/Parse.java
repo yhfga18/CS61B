@@ -102,6 +102,9 @@ public class Parse {
             }
             String Tname = m.group(1);
             String[] Tcolumns = m.group(2).split(COMMA);
+            for (int i = 0; i < Tcolumns.length; i++) {
+                Tcolumns[i] = Tcolumns[i].replaceAll("\\s+"," ");
+            }
             return Dealer.dealCreateTable(Tname, Tcolumns);
 
         } else if ((m = CREATE_SEL.matcher(expr)).matches()) { // selectを含む
