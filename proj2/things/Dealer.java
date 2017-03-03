@@ -139,7 +139,8 @@ public class Dealer {
         // checks if such tables exist
         for (int i = 0; i < tableName.length; i++) {
             if (!(Database.hasTable(tableName[i]))) {
-                return "ERROR: There isn't such the table called " + tableName + " in database..." + " from dealSelect in Dealer";
+                System.out.println("ERROR: There isn't such the table called " + tableName + " in database..." + " from dealSelect in Dealer");
+                return "";
             }
         }
 

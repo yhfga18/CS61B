@@ -13,11 +13,12 @@ public class Database {
         return things.Parse.eval(query);
     }
 
-    public static void saveTable(Table t) {
+    public static String saveTable(Table t) {
         if (hasTable(t.getName())) {
-            System.out.println("ERROR: Table called " + t.getName() + " does not exist.");
+            return "ERROR: Table called " + t.getName() + " does not exist.";
         } else {
             database.put(t.getName(), t);
+            return "";
         }
     }
 

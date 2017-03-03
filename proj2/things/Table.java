@@ -216,8 +216,10 @@ public class Table<T> {
     public ArrayList<Integer> floatColumnIndexList() {
         ArrayList<Integer> floatColumn = new ArrayList<>(zeroRow.size());
         for (int i = 0; i < zeroRow.size(); i++) {
+
             String type = zeroRow.get(i).split(" ")[1];
-            //System.out.println("type : " + type);
+            System.out.println("column name : " + zeroRow.get(i).split(" ")[0]);
+            System.out.println("type : " + type);
             if (type.equals("float")){
                 floatColumn.add(i);
             }
@@ -227,8 +229,11 @@ public class Table<T> {
     }
 
     public String floatHandle(String f) {
+        if (f.equals("NOVALUE")){
+            return f;
+        }
         DecimalFormat df = new DecimalFormat("#.000");
-        String realFloat = df.format(Float.parseFloat(f));
+        String realFloat = df.format(Float.parseFloat(f)); // 切り捨てじゃなくて四捨五入になってる！！！！！！！！！
         if (realFloat.startsWith(".")){ //((Character.toString(realFloat.charAt(0))).equals("."))
             realFloat = "0" + realFloat;
         }
