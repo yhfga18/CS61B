@@ -35,6 +35,9 @@ public class Dealer {
     public static String dealStore(String tableName) {
         Table t = Database.getTable(tableName);
 
+        if (t == null) {
+            return "ERROR: There isn't table in database called " + tableName;
+        }
         try{
             File file0 = new File(tableName + ".tbl");
             if (!file0.exists()) {

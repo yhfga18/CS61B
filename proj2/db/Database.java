@@ -23,7 +23,10 @@ public class Database {
     }
 
     public static Table getTable(String tableName) {
-        return database.get(tableName);
+        if (hasTable(tableName)) {
+            return database.get(tableName);
+        }
+        return null;
     }
 
     public static void removeTable(String tableName) {
