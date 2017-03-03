@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+
 
 /*import com.sun.scenario.effect.impl.state.LinearConvolveKernel;*/
 /*import com.sun.xml.internal.ws.api.ha.StickyFeature;*/
@@ -30,10 +32,28 @@ public class Dealer {
         return "";
     }
 
-    public static String dealStore(String tableName){
+    public static String dealStore(String tableName) {
         Table t = Database.getTable(tableName);
-        // make a file for the table somehow.
-        return "dealStore!!, Table t = " + tableName;
+
+        try{
+            File file0 = new File(t.getName() + ".tbl");
+            File file1 = new File ("examples/" + t.getName() + ".tbl");
+            FileWriter filewriter;
+            if (checkBeforeReadfile(file0)) {
+                filewriter = new FileWriter(file0);
+                filewriter.write(t.toString());
+                filewriter.close();
+            } else if (checkBeforeReadfile(file1)) {
+                filewriter = new FileWriter(file1);
+                filewriter.write(t.toString());
+                filewriter.close();
+            }else{
+                System.out.println("cannot write");
+            }
+        }catch(IOException e){
+            System.out.println(e);
+        }
+        return "";
     }
 
     public static String dealLoad(String fileName){
@@ -70,9 +90,9 @@ public class Dealer {
     }
 
     // checks if the file exists and works
-    private static boolean checkBeforeReadfile(File file){
-        if (file.exists()){
-            if (file.isFile() && file.canRead()){
+    private static boolean checkBeforeReadfile(File file) {
+        if (file.exists()) {
+            if (file.isFile() && file.canRead() && file.canWrite()) {
                 return true;
             }
         }

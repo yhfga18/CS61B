@@ -63,7 +63,7 @@ public class Parse {
         if ((m = CREATE_CMD.matcher(query)).matches()) {
             return createTable(m.group(1));
         } else if ((m = LOAD_CMD.matcher(query)).matches()) {
-            System.out.println("group 1 ____ : " + m.group(1)); // T1
+            //System.out.println("group 1 ____ : " + m.group(1)); // T1
             return loadTable(m.group(1));
         } else if ((m = STORE_CMD.matcher(query)).matches()) {
             return storeTable(m.group(1));
@@ -236,9 +236,21 @@ public class Parse {
             //System.out.println("m.group1, m.group2 are ...... : " + m.group(1) + " and " + m.group(2));
             String tableName = m.group(1);
             String[] values = m.group(2).split(COMMA);
-            values[0] = values[0].substring(1, values[0].length());
+            /*
+            for (int i = 0; i < values.length; i++) {
+                System.out.println("values[" + i +"]: " + values[i]);
+            }
+            */
+            if (values[0].contains("(")) {
+                values[0] = values[0].substring(1, values[0].length());
+            }
+
             int len = values.length;
-            values[len - 1] = values[len - 1].substring(0, values[len - 1].length()-1);
+
+            if (values[1].contains(")")) {
+                values[len - 1] = values[len - 1].substring(0, values[len - 1].length()-1);
+
+            }
             //System.out.println("value[0]: " + values[0] + ", ... values[0]: " + values[1] + ", ... values[2]: " + values[2] + " ...DONE!");
             return Dealer.dealInsert(tableName, values);
         }
@@ -256,6 +268,8 @@ public class Parse {
         }
         String[] columnTitle;
         String newColTitle;
+        System.out.println(" m.group1 = " + m.group(1) + "  m.group2 = " +  m.group(2) + "  m.group3 = "+ m.group(3));
+
         if (m.group(1).contains("as")) {
             String[] temp = m.group(1).split("\\s* as \\s*");
             columnTitle = temp[0].split("\\s*,\\s*");
@@ -266,9 +280,12 @@ public class Parse {
         }
         String[] tableName = m.group(2).split("\\s*,\\s*");   // T1
         String condition = m.group(3);   // x > 2
-        return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle);
+        for (int i = 0; i < columnTitle.length; i++) {
+            System.out.println("columnTitle[" + i +"]: " + columnTitle[i]);
+            System.out.println("tableName[" + i +"]: " + tableName[i]);
+        }
 
-        // System.out.println(m.group(1) + "-2-" + m.group(2) + m.group(3));
+        return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle);
         // select x from T1 where x > 2 をした時は、
         // group1 = x つまり columnのtitle
         // group2 = T1 つまり table の名前
