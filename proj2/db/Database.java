@@ -15,7 +15,11 @@ public class Database {
     }
 
     public static void saveTable(Table t) {
-        database.put(t.getName(), t);
+        if (hasTable(t.getName())) {
+            System.out.println("ERROR: Table called " + t.getName() + " does not exist.");
+        } else {
+            database.put(t.getName(), t);
+        }
     }
 
     public static boolean hasTable(String tableName){

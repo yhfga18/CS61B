@@ -189,16 +189,17 @@ public class Table<T> {
         }
         returnString = returnString + this.zeroRow.get(this.zeroRow.size() - 1) + "\n"; //　改行してる
 
-
+        // この上まででtitle部分完成
+        // 以下本体
         DecimalFormat df = new DecimalFormat("#.000");
-
         ArrayList<Integer> fIndex = this.floatColumnIndexList(); // list of index of the float columns
 
         for (LinkedList elem : this.zeroColumn) {
             for (int i = 0; i < elem.size(); i++) {
                 if (fIndex.contains(i)) {
                     //System.out.println("elem.get(i) : " + elem.get(i));
-                    returnString = returnString + df.format(Float.parseFloat(elem.get(i).toString())) + ","; //String.format("%.5g%n", 0.912385);
+                    String floatValue = elem.get(i).toString();
+                    returnString = returnString + floatHandle(floatValue) + ","; //String.format("%.5g%n", 0.912385);
 
                 } else {
                     returnString = returnString + elem.get(i) + ",";
@@ -222,8 +223,17 @@ public class Table<T> {
         return floatColumn;
     }
 
-    //public
-      //      df.format(Float.parseFloat(elem.get(i).toString()))
+    public String floatHandle(String f) {
+        DecimalFormat df = new DecimalFormat("#.000");
+        String realFloat = df.format(Float.parseFloat(f));
+        if ((Character.toString(realFloat.charAt(0))).equals(".")){
+            realFloat = "0" + realFloat;
+        }
+        return realFloat;
+    }
+
+    // "NOVALUE"をhandle
+    // 0.001 とかをhandle
 }
 
    /*

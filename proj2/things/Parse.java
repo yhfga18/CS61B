@@ -8,12 +8,14 @@ import java.util.StringJoiner;
 
 public class Parse {
     // Various common constructs, simplifies parsing.
-    private static final String REST  = "\\s*(.*)\\s*",
+    private static final String
+            REST  = "\\s*(.*)\\s*",
             COMMA = "\\s*,\\s*",
             AND   = "\\s+and\\s+";
 
     // Stage 1 syntax, contains the command name.
-    private static final Pattern CREATE_CMD = Pattern.compile("create table " + REST),
+    private static final Pattern
+            CREATE_CMD = Pattern.compile("create table " + REST),
             LOAD_CMD   = Pattern.compile("load " + REST),
             STORE_CMD  = Pattern.compile("store " + REST),
             DROP_CMD   = Pattern.compile("drop table " + REST),
@@ -95,6 +97,9 @@ public class Parse {
             //System.out.println("group1 is : " + m.group(1)); // T1
             //System.out.println("group2 is : " + m.group(2));
             //System.out.println(m.group(2).split(COMMA));
+            if (m.group(2).equals("")){
+              System.out.println("ERROR: no column specified");
+            }
             String Tname = m.group(1);
             String[] Tcolumns = m.group(2).split(COMMA);
             return Dealer.dealCreateTable(Tname, Tcolumns);
@@ -120,8 +125,8 @@ public class Parse {
                 columnTitle = m.group(2).split("\\s*,\\s*"); // x
                 newColTitle = null;
             } */
-     /*       String[] columnName = m.group(2).split("\\s*, \\s*"); // x, y ... */
-            String[] originalTableName = m.group(3).split("\\s*, \\s*"); // T1
+     /*       String[] columnName = m.group(2).split("\\s*, \\s*"); // x, y ... */  /////ここ聞く！！！！！！！！！！！！！！！！//////////////
+            String[] originalTableName = m.group(3).split("\\s*, \\s*"); // T1 ////////////////////////////////////////////
             String condition = m.group(4); // x > 2
             String result = Dealer.dealSelect(columnTitle, originalTableName, condition); // handling select
             String[] s = result.split("\n"); // putting string repr into array
@@ -143,7 +148,8 @@ public class Parse {
 //            return Dealer.dealCreateTable(newTableName, result2);
 
         } else {
-            System.err.printf("Malformed create: %s\n", expr);
+            //System.err.printf("Malformed create: %s\n", expr);
+            System.out.println("ERROR: Column name not given");
         }
         return expr;
     }    /* Printing stuffs info
