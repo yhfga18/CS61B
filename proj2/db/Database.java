@@ -1,12 +1,11 @@
 package db;
-import things.Parse;
 import things.Table;
 
 import java.util.Map;
 import java.util.HashMap;
 
 public class Database {
-    public static Map<String, Table> database  = new HashMap<String, Table>();
+    private static Map<String, Table> database  = new HashMap<String, Table>();
 
     // no constructor because fuck you that's why
 
@@ -22,7 +21,7 @@ public class Database {
         }
     }
 
-    public static boolean hasTable(String tableName){
+    public static boolean hasTable(String tableName) {
         return Database.database.containsKey(tableName);
     }
 

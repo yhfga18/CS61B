@@ -207,6 +207,9 @@ public class Table<T> {
             }
             returnString = returnString.substring(0, returnString.length() - 1) + "\n";
         }
+
+        returnString = returnString.substring(0, returnString.length() - 1);
+
         return returnString;
     }
 
@@ -226,7 +229,7 @@ public class Table<T> {
     public String floatHandle(String f) {
         DecimalFormat df = new DecimalFormat("#.000");
         String realFloat = df.format(Float.parseFloat(f));
-        if ((Character.toString(realFloat.charAt(0))).equals(".")){
+        if (realFloat.startsWith(".")){ //((Character.toString(realFloat.charAt(0))).equals("."))
             realFloat = "0" + realFloat;
         }
         return realFloat;

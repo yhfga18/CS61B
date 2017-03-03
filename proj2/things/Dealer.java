@@ -113,7 +113,9 @@ public class Dealer {
 
     public static String dealInsert(String tableName, String[] values){
         if (!(Database.hasTable(tableName))) {
-            return "There isn't table called " + tableName + " in database...";
+            System.out.println("There isn't table called " + tableName + " in database...");
+            return "";
+
         }
         Table t = Database.getTable(tableName);
 

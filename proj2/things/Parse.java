@@ -151,7 +151,7 @@ public class Parse {
             //System.err.printf("Malformed create: %s\n", expr);
             System.out.println("ERROR: Column name not given");
         }
-        return expr;
+        return "";
     }    /* Printing stuffs info
     for "" create table T1 (x int, y int) "" ,
     System.out.println("in createTable method, ");
