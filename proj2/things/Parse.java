@@ -269,7 +269,7 @@ public class Parse {
         String[] columnTitle;
         String newColTitle;
         System.out.println(" m.group1 = " + m.group(1) + "  m.group2 = " +  m.group(2) + "  m.group3 = "+ m.group(3));
-
+        // m.group3 = condition.
         if (m.group(1).contains("as")) {
             String[] temp = m.group(1).split("\\s* as \\s*");
             columnTitle = temp[0].split("\\s*,\\s*");
@@ -283,6 +283,14 @@ public class Parse {
         for (int i = 0; i < columnTitle.length; i++) {
             System.out.println("columnTitle[" + i +"]: " + columnTitle[i]);
             System.out.println("tableName[" + i +"]: " + tableName[i]);
+        }
+
+        // change
+        if (m.group(3) == null) {
+            return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle);
+        } else {
+            return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle, m.group(3));
+
         }
 
         return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle);

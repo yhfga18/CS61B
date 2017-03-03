@@ -190,7 +190,7 @@ public class Table<T> {
         returnString = returnString + this.zeroRow.get(this.zeroRow.size() - 1) + "\n"; //　改行してる
 
 
-        DecimalFormat df = new DecimalFormat("#.###");
+        DecimalFormat df = new DecimalFormat("#.000");
 
         ArrayList<Integer> fIndex = this.floatColumnIndexList(); // list of index of the float columns
 
