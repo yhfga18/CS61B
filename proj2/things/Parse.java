@@ -1,5 +1,7 @@
 package things;
 
+import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
+
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -110,12 +112,12 @@ public class Parse {
         } else if ((m = CREATE_SEL.matcher(expr)).matches()) { // selectを含む
             // *** createSelectedTable(m.group(1), m.group(2), m.group(3), m.group(4));
             //create table T1 as select x from T2 where x > y
-            /*
+
             System.out.println("m.group1 = " + m.group(1)); // T1
             System.out.println("m.group2 = " + m.group(2)); // x
             System.out.println("m.group3 = " + m.group(3)); // T2
             System.out.println("m.group4 = " + m.group(4)); // x > y
-            */
+
             String newTableName = m.group(1); // T2
             String[] columnTitle = m.group(2).split("\\s*,\\s*");
 
@@ -129,8 +131,8 @@ public class Parse {
                 newColTitle = null;
             } */
      /*       String[] columnName = m.group(2).split("\\s*, \\s*"); // x, y ... */  /////ここ聞く！！！！！！！！！！！！！！！！//////////////
-            String[] originalTableName = m.group(3).split("\\s*, \\s*"); // T1 ////////////////////////////////////////////
-            String condition = m.group(4); // x > 2
+            String[] originalTableName = m.group(3).split("\\s*,\\s*"); // T1 ////////////////////////////////////////////
+            String[] condition = m.group(4).split("\\s* \\s*"); // x > 2
             String result = Dealer.dealSelect(columnTitle, originalTableName, condition); // handling select
             String[] s = result.split("\n"); // putting string repr into array
             //for (String elem : s) {System.out.println("elem!! : " + elem); }
@@ -142,9 +144,9 @@ public class Parse {
 
             Dealer.dealCreateTable(newTableName, NewcolumnName);
             for (String elem : s2) {
-                Dealer.dealInsert(newTableName, elem.split(", "));
+                Dealer.dealInsert(newTableName, elem.split("\\s*,\\s*"));
             }
-            return Dealer.dealPrint(newTableName);
+            return "";
 
             //String result2 = eval(result);
             //System.out.println("result2 be like ... : " + result2);
@@ -266,7 +268,8 @@ public class Parse {
 
     private static String printTable(String name) {
         //System.out.printf("You are trying to print the table named %s\n", name);
-        return Dealer.dealPrint(name);
+        String realName = name.replaceAll("\\s+","");
+        return Dealer.dealPrint(realName);
     }
 
     private static String select(String expr) {
@@ -278,7 +281,10 @@ public class Parse {
         // m.group(1) ... x, y, x + y as w int
         String[] columnTitle = m.group(1).split("\\s*,\\s*");
         String[] tableName = m.group(2).split("\\s*,\\s*");   // T1
-        String condition = m.group(3);   // x > 2
+        String[] condition = m.group(3).split("\\s* \\s*");   // x > 2
+        for (String elem: condition) {
+            System.out.println("elem = " +elem);
+        }
         return Dealer.dealSelect(columnTitle, tableName, condition);
 
         // System.out.println(m.group(1) + "-2-" + m.group(2) + m.group(3));

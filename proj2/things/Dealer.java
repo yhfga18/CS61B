@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.util.Arrays;
 
 import java.text.DecimalFormat;
 
@@ -116,7 +117,6 @@ public class Dealer {
             return "There isn't table called " + tableName + " in database...";
         }
         Table t = Database.getTable(tableName);
-        String[] colTitles = t.getColumnName();
         if (!typeCheck(t, values)) {
             return "Error: wrong type";
         }
@@ -134,12 +134,12 @@ public class Dealer {
                         Integer.parseInt(values[i]);
                     }
                 } else if (colTitles[i].split(" ")[1].equals("string")) {
-                    if (!values[i].contains("\"")) {
+                    if (!values[i].contains("\'")) {
                         throw new NumberFormatException("Erorr: wrong type");
                     }
                 } else { // float type should be put
                     if (!(values[i].equals("NOVALUE") || values[i].equals("NaN"))) {
-                        if (values[i].contains("\"")) {
+                        if (values[i].contains("\'")) {
                             throw new NumberFormatException("Erorr: wrong type"); // must be string
                         }
                         if (!values[i].contains(".")) {
@@ -163,11 +163,16 @@ public class Dealer {
         return "ERROR: There isn't such the table called " + tableName + " from dealPrint in Dealer";
     }
     public static String dealSelect(String[] columnTitle,
-                                    String[] tableName, String condition) {
+                                    String[] tableName, String[] condition) {
 //        String columnTitle = m.group(1); // x ( -- different case for * !)
 //        String tableName = m.group(2);   // T1
-//        String condition = m.group(3);   // x > 2
-
+//        String[] condition = m.group(3).split(space);   // x,>,2,
+        /*
+        if (!(isValidCondition(condition))){
+            return "ERROR: Malformed where in dealSelect in Dealer";
+        }
+        */
+//        UranyFunction
         // checks if such tables exist
         for (int i = 0; i < tableName.length; i++) {
             if (!(Database.hasTable(tableName[i]))) {
@@ -344,7 +349,7 @@ public class Dealer {
         for (int x = 0; x < anonTable.getNumRow(); x++) {
             String[] row = new String[anonTable.getNumCol()];
             for (int w = 0; w < anonTable.getNumCol(); w++) {
-                row[w] = anonTable.getRow(w).get(w).toString();
+                row[w] = anonTable.getRow(x).get(w).toString();
             }
             if (!typeCheck(anonTable, row)) {
                 return "Error; wrong type";
@@ -502,7 +507,7 @@ public class Dealer {
     }
 
     // joins two tables
-    private static Table joinSelect(String[] columnTitle, String[] tableName, String condition) {
+    private static Table joinSelect(String[] columnTitle, String[] tableName, String[] condition) { // condition ...STRING ARRAY!!!
         Table tempTableP =  Database.getTable(tableName[0]);
         Table tempTableQ = Database.getTable(tableName[1]);
         String[] tempColNameP = tempTableP.getColumnName();
@@ -592,5 +597,15 @@ public class Dealer {
 
     }
 */
+
+    private static boolean isValidCondition(String[] condition){
+        String operators[] = {"=", "!=", "<", ">", "<=", ">="};
+        List<String> operatorsList = Arrays.asList(operators);
+        if (condition.length == 3 && operatorsList.contains(condition[1])){
+            return true;
+        }
+        return false;
+    }
+
 }
 
