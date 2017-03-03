@@ -1,5 +1,6 @@
 package things;
 import java.util.*;
+import java.text.DecimalFormat;
 
 
 
@@ -182,17 +183,43 @@ public class Table<T> {
     public String toString(){
 //        LinkedList<T> stringList = new LinkedList();
         String returnString = "";
+
         for (int i = 0; i < this.zeroRow.size() - 1; i ++) {
             returnString = returnString + this.zeroRow.get(i) + ",";
         }
-        returnString = returnString + this.zeroRow.get(this.zeroRow.size() - 1) + "\n";
+        returnString = returnString + this.zeroRow.get(this.zeroRow.size() - 1) + "\n"; //　改行してる
+
+
+        DecimalFormat df = new DecimalFormat("#.###");
+
+        ArrayList<Integer> fIndex = this.floatColumnIndexList(); // list of index of the float columns
+
         for (LinkedList elem : this.zeroColumn) {
-            for (int i = 0; i < elem.size() - 1; i++) {
-                returnString = returnString + elem.get(i) + ",";
+            for (int i = 0; i < elem.size(); i++) {
+                if (fIndex.contains(i)) {
+                    //System.out.println("elem.get(i) : " + elem.get(i));
+                    returnString = returnString + df.format(Float.parseFloat(elem.get(i).toString())) + ","; //String.format("%.5g%n", 0.912385);
+
+                } else {
+                    returnString = returnString + elem.get(i) + ",";
+                }
             }
-            returnString = returnString + elem.get(elem.size() - 1) + "\n";
+            returnString = returnString.substring(0, returnString.length() - 1) + "\n";
         }
         return returnString;
+    }
+
+    public ArrayList<Integer> floatColumnIndexList() {
+        ArrayList<Integer> floatColumn = new ArrayList<>(zeroRow.size());
+        for (int i = 0; i < zeroRow.size(); i++) {
+            String type = zeroRow.get(i).split(" ")[1];
+            //System.out.println("type : " + type);
+            if (type.equals("float")){
+                floatColumn.add(i);
+            }
+        }
+        //System.out.println("floatColumn is : "+floatColumn.toString());
+        return floatColumn;
     }
 }
 

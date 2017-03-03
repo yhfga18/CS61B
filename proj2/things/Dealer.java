@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 
+import java.text.DecimalFormat;
+
 
 /*import com.sun.scenario.effect.impl.state.LinearConvolveKernel;*/
 /*import com.sun.xml.internal.ws.api.ha.StickyFeature;*/
@@ -114,6 +116,7 @@ public class Dealer {
             return "There isn't table called " + tableName + " in database...";
         }
         Table t = Database.getTable(tableName);
+
         t.addRowLast(values);
 
         return "";
@@ -402,6 +405,7 @@ public class Dealer {
         }
         return array;
     }
+
 
     // checks if the given String array has empty space
     private static boolean containsSpace(String[] array) {
