@@ -113,14 +113,12 @@ public class Dealer {
 
     public static String dealInsert(String tableName, String[] values){
         if (!(Database.hasTable(tableName))) {
-            System.out.println("There isn't table called " + tableName + " in database...");
+            System.out.println("There isn't table called " + tableName + " in database..." + " from dealInsert in Dealer");
             return "";
 
         }
         Table t = Database.getTable(tableName);
-
         t.addRowLast(values);
-
         return "";
     }
 
@@ -130,7 +128,7 @@ public class Dealer {
             return t.toString();
         }
         // make a string to return. ここちゃんとできてない
-        return "There isn't such the table";
+        return "ERROR: There isn't such the table called " + tableName + " from dealPrint in Dealer";
     }
     public static String dealSelect(String[] columnTitle,
                                     String[] tableName, String condition) {
@@ -141,7 +139,7 @@ public class Dealer {
         // checks if such tables exist
         for (int i = 0; i < tableName.length; i++) {
             if (!(Database.hasTable(tableName[i]))) {
-                return "There isn't table called " + tableName + " in database...";
+                return "ERROR: There isn't such the table called " + tableName + " in database..." + " from dealSelect in Dealer";
             }
         }
 
@@ -210,10 +208,10 @@ public class Dealer {
             // if it has operator
             if (array !=  null) {
                 if (temp.getExactColName(array[0]) == null) {
-                    return "There isn't a column called " + array[0] + " in " + tableName;
+                    return "ERROR: There isn't a column called " + array[0] + " in " + tableName + " from dealSelect";
                 }
                 if (temp.getExactColName(array[2]) == null) {
-                    return "There isn't a column called " + array[2] + " in " + tableName;
+                    return "ERROR: There isn't a column called " + array[2] + " in " + tableName + " from dealSelect";
                 }
 
                 // checks the type of x
@@ -283,7 +281,7 @@ public class Dealer {
                 // if no operator
             } else {
                 if (temp.getExactColName(columnTitle[k]) == null) {
-                    return "There isn't a column called " + columnTitle[k] + " in " + tableName;
+                    return "ERROR: There isn't a column called " + columnTitle[k] + " in " + tableName + " from dealSelect";
                 }
                 anonTable.addColumnLast(temp.getColumn(columnTitle[k]));
             }
