@@ -218,8 +218,8 @@ public class Table<T> {
         for (int i = 0; i < zeroRow.size(); i++) {
 
             String type = zeroRow.get(i).split(" ")[1];
-            System.out.println("column name : " + zeroRow.get(i).split(" ")[0]);
-            System.out.println("type : " + type);
+            //System.out.println("column name : " + zeroRow.get(i).split(" ")[0]);
+            //System.out.println("type : " + type);
             if (type.equals("float")){
                 floatColumn.add(i);
             }
