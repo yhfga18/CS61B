@@ -109,26 +109,26 @@ public class Parse {
             System.out.println("m.group4 = " + m.group(4)); // x > y
             */
             String newTableName = m.group(1); // T2
-            String[] columnTitle;
-            String newColTitle;
-            System.out.println(m.group(2));
-            if (m.group(2).contains("as")) {
+            String[] columnTitle = m.group(2).split("\\s*,\\s*");
+
+
+ /*           if (m.group(2).contains("as")) {
                 String[] temp = m.group(2).split("\\s* as \\s*");
                 columnTitle = temp[0].split("\\s*,\\s*");
                 newColTitle = temp[1];
             } else {
                 columnTitle = m.group(2).split("\\s*,\\s*"); // x
                 newColTitle = null;
-            }
+            } */
      /*       String[] columnName = m.group(2).split("\\s*, \\s*"); // x, y ... */
             String[] originalTableName = m.group(3).split("\\s*, \\s*"); // T1
             String condition = m.group(4); // x > 2
-            String result = Dealer.dealSelect(columnTitle, originalTableName, condition, newColTitle); // handling select
+            String result = Dealer.dealSelect(columnTitle, originalTableName, condition); // handling select
             String[] s = result.split("\n"); // putting string repr into array
             //for (String elem : s) {System.out.println("elem!! : " + elem); }
             //System.out.println("s.length == " + s.length);
             //for (String elem : s){System.out.println("s elem! : " + elem);}
-            String[] NewcolumnName = java.util.Arrays.copyOfRange(s, 0, 1);
+            String[] NewcolumnName = s[0].split("\\s*,\\s*");
             String[] s2 = java.util.Arrays.copyOfRange(s, 1, s.length);
             //for (String elem : s2){System.out.println("s2 elem! : " + elem);}
 
@@ -146,8 +146,7 @@ public class Parse {
             System.err.printf("Malformed create: %s\n", expr);
         }
         return expr;
-    }
-    /* Printing stuffs info
+    }    /* Printing stuffs info
     for "" create table T1 (x int, y int) "" ,
     System.out.println("in createTable method, ");
     System.out.println("group1 is : " + m.group(1)); // group1 is T1 (table's name)
@@ -266,34 +265,14 @@ public class Parse {
         if (!m.matches()) {
             System.err.printf("Malformed select: %s\n", expr);
         }
-        String[] columnTitle;
-        String newColTitle;
-        System.out.println(" m.group1 = " + m.group(1) + "  m.group2 = " +  m.group(2) + "  m.group3 = "+ m.group(3));
-        // m.group3 = condition.
-        if (m.group(1).contains("as")) {
-            String[] temp = m.group(1).split("\\s* as \\s*");
-            columnTitle = temp[0].split("\\s*,\\s*");
-            newColTitle = temp[1];
-        } else {
-            columnTitle = m.group(1).split("\\s*,\\s*"); // x
-            newColTitle = null;
-        }
+
+        // m.group(1) ... x, y, x + y as w int
+        String[] columnTitle = m.group(1).split("\\s*,\\s*");
         String[] tableName = m.group(2).split("\\s*,\\s*");   // T1
         String condition = m.group(3);   // x > 2
-        for (int i = 0; i < columnTitle.length; i++) {
-            System.out.println("columnTitle[" + i +"]: " + columnTitle[i]);
-            System.out.println("tableName[" + i +"]: " + tableName[i]);
-        }
+        return Dealer.dealSelect(columnTitle, tableName, condition);
 
-        // change
-        //if (m.group(3) == null) {
-        //    return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle);
-        //} else {
-          //  return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle, m.group(3));
-
-        //}
-
-        return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle);
+        // System.out.println(m.group(1) + "-2-" + m.group(2) + m.group(3));
         // select x from T1 where x > 2 をした時は、
         // group1 = x つまり columnのtitle
         // group2 = T1 つまり table の名前

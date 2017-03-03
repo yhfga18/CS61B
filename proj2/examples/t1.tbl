@@ -1,4 +1,4 @@
-x int,y int
-2,5
-8,3
+x int,y float
+2,5.0
+8,.2
 13,7

@@ -221,6 +221,9 @@ public class Table<T> {
         //System.out.println("floatColumn is : "+floatColumn.toString());
         return floatColumn;
     }
+
+    //public
+      //      df.format(Float.parseFloat(elem.get(i).toString()))
 }
 
    /*

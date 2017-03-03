@@ -130,7 +130,8 @@ public class Dealer {
         // make a string to return. ここちゃんとできてない
         return "There isn't such the table";
     }
-    public static String dealSelect(String[] columnTitle, String[] tableName, String condition, String newColTitle){
+    public static String dealSelect(String[] columnTitle,
+                                    String[] tableName, String condition) {
 //        String columnTitle = m.group(1); // x ( -- different case for * !)
 //        String tableName = m.group(2);   // T1
 //        String condition = m.group(3);   // x > 2
@@ -172,19 +173,20 @@ public class Dealer {
             temp = Database.getTable(tableName[0]);
         }
 
-        // if column is *, uses all columns (original table itself)
+        // if oolumn is *, uses all columns (original table itself)
         if (columnTitle[0].equals("*")) {
-            return temp.toString(); // この時点で新しいテーブルは作っていない
+            return temp.toString();
         }
 
         String[] exactColTitle = new String[columnTitle.length];
         // puts exact column names into exactColTitle (x -> x int)
         for (int j = 0; j < columnTitle.length; j++) {
-            String name = temp.getExactColName(columnTitle[j]);
-            if (newColTitle != null) {
-                exactColTitle[j] = newColTitle;
+            String[] colChank = columnTitle[j].split("\\s* as \\s*");
+            String name = temp.getExactColName(colChank[0]);
+            if (colChank.length != 1) {
+                exactColTitle[j] = colChank[1];
             } else if (name == null) {
-                exactColTitle[j] = columnTitle[j];
+                exactColTitle[j] = colChank[0];
             } else {
                 exactColTitle[j] = name;
             }
@@ -192,13 +194,12 @@ public class Dealer {
 
         // creates a new table
         Table anonTable = new Table("anon", exactColTitle);
-
         // sees the given columns one by one
         for (int k = 0; k < columnTitle.length; k++) {
             // checks if the given column name has operator
             // if it exits, separates it into three elements (see below)
             // if not, array = null
-            String[] array = containOperator(columnTitle[k]); // e.g. array = ["x", "+", "y"]
+            String[] array = containOperator(columnTitle[k].split("\\s* as \\s*")[0]); // e.g. array = ["x", "+", "y"]
             Integer[] convertedInt = new Integer[temp.getNumRow()];
             Float[] convertedFloat = new Float[temp.getNumRow()];
             boolean flagFirst = false;   // e.g. x int -> flagFirst = true
@@ -225,14 +226,17 @@ public class Dealer {
 
                 // checks the type of y
                 // converts string column into int or float column
-                // if x and y have the same type, combines the the column created above with the new converted column
+                /* if x and y have the same type,
+                   combines the the column created above with the new converted column
+                 */
                 // if not, creates another column
                 if (temp.checkType(array[2], "int")) {
                     if (flagFirst) {
                         flagSecond = true;
                         Integer[] tempIntArray = convertInt(temp.getColumn(array[2]));
                         for (int t = 0; t < tempIntArray.length; t++) {
-                            convertedInt[t] = operateInt(convertedInt[t], tempIntArray[t], array[1]);
+                            convertedInt[t] = operateInt(convertedInt[t],
+                                    tempIntArray[t], array[1]);
                         }
                     } else {
                         convertedInt = convertInt(temp.getColumn(array[2]));
@@ -242,7 +246,8 @@ public class Dealer {
                     if (!(flagFirst)) {
                         Float[] tempFloatArray = convertFloat(temp.getColumn(array[2]));
                         for (int t = 0; t < tempFloatArray.length; t++) {
-                            convertedFloat[t] = operateFloat(convertedFloat[t], tempFloatArray[t], array[1]);
+                            convertedFloat[t] = operateFloat(convertedFloat[t],
+                                    tempFloatArray[t], array[1]);
                         }
                     } else {
                         flagSecond = true;
@@ -283,7 +288,6 @@ public class Dealer {
         }
         return anonTable.toString();
     }
-
     // converts float column to String column
     // if it has zero division error (represented as null in operateFloat or operateInt method),
     // put Nal
