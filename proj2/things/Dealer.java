@@ -37,14 +37,9 @@ public class Dealer {
 
         try{
             File file0 = new File(t.getName() + ".tbl");
-            File file1 = new File ("examples/" + t.getName() + ".tbl");
             FileWriter filewriter;
             if (checkBeforeReadfile(file0)) {
                 filewriter = new FileWriter(file0);
-                filewriter.write(t.toString());
-                filewriter.close();
-            } else if (checkBeforeReadfile(file1)) {
-                filewriter = new FileWriter(file1);
                 filewriter.write(t.toString());
                 filewriter.close();
             }else{
@@ -56,18 +51,14 @@ public class Dealer {
         return "";
     }
 
-    public static String dealLoad(String fileName){
-        try{
-            File file;
-            File tempFile0 = new File(fileName + ".tbl");
-            File tempFile1 = new File("examples/" + fileName + ".tbl");
+    public static String dealLoad(String fileName) {
+        try {
+
+            File file = new File(fileName + ".tbl");
+          /*  File tempFile1 = new File("examples/" + fileName + ".tbl"); */
             //checks if file exists in the current directory or examples
-            if (!(checkBeforeReadfile(tempFile0) || checkBeforeReadfile(tempFile1))) {
+            if (!(checkBeforeReadfile(file))) {
                 return "ERROR: .*"; //couldn't open or find the file.
-            } else if (checkBeforeReadfile(tempFile0)) {
-                file = tempFile0;
-            } else {
-                file = tempFile1;
             }
             BufferedReader br = new BufferedReader(new FileReader(file));
             // creates column titles by reading the first line
@@ -75,15 +66,15 @@ public class Dealer {
             Table newTable = new Table(fileName, columnTitles);
             String str = br.readLine();
             // reads files line by line and adds rows
-            while(str != null){
+            while (str != null) {
                 newTable.addRowLast(str.split("\\s*,\\s*"));
                 str = br.readLine();
             }
             Database.saveTable(newTable);
             br.close();
-        }catch(FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             System.out.println("ERROR: " + e);
-        }catch(IOException e){
+        } catch (IOException e) {
             System.out.println(e);
         }
         return "";
