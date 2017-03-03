@@ -286,12 +286,12 @@ public class Parse {
         }
 
         // change
-        if (m.group(3) == null) {
-            return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle);
-        } else {
-            return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle, m.group(3));
+        //if (m.group(3) == null) {
+        //    return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle);
+        //} else {
+          //  return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle, m.group(3));
 
-        }
+        //}
 
         return Dealer.dealSelect(columnTitle, tableName, condition, newColTitle);
         // select x from T1 where x > 2 をした時は、
