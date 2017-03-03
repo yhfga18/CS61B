@@ -36,13 +36,16 @@ public class Dealer {
         Table t = Database.getTable(tableName);
 
         try{
-            File file0 = new File(t.getName() + ".tbl");
+            File file0 = new File(tableName + ".tbl");
+            if (!file0.exists()) {
+                file0.createNewFile();
+            }
             FileWriter filewriter;
-            if (checkBeforeReadfile(file0)) {
+            if (checkBeforeWritefile(file0)) {
                 filewriter = new FileWriter(file0);
                 filewriter.write(t.toString());
                 filewriter.close();
-            }else{
+            } else {
                 System.out.println("cannot write");
             }
         }catch(IOException e){
@@ -80,12 +83,19 @@ public class Dealer {
         return "";
     }
 
-    // checks if the file exists and works
+// checks if the file exists and works
     private static boolean checkBeforeReadfile(File file) {
         if (file.exists()) {
-            if (file.isFile() && file.canRead() && file.canWrite()) {
+            if (file.isFile() && file.canRead()) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    private static boolean checkBeforeWritefile(File file) {
+        if (file.isFile() && file.canWrite()) {
+            return true;
         }
         return false;
     }
@@ -156,9 +166,9 @@ public class Dealer {
             temp = Database.getTable(tableName[0]);
         }
 
-        // if oolumn is *, uses all columns (original table itself)
+        // if column is *, uses all columns (original table itself)
         if (columnTitle[0].equals("*")) {
-            return temp.toString();
+            return temp.toString(); // この時点で新しいテーブルは作っていない
         }
 
         String[] exactColTitle = new String[columnTitle.length];
@@ -384,7 +394,7 @@ public class Dealer {
             if (p.get(i) == "NOVALUE") {
                 array[i] = 0.0f;
             } else {
-                array[i] = Float.parseFloat(p.get(i));
+                array[i] = Float.parseFloat(String.format(p.get(i)));
             }
         }
         return array;

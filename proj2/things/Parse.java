@@ -247,7 +247,7 @@ public class Parse {
 
             int len = values.length;
 
-            if (values[1].contains(")")) {
+            if (values[len - 1].contains(")")) {
                 values[len - 1] = values[len - 1].substring(0, values[len - 1].length()-1);
 
             }
