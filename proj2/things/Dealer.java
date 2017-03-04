@@ -1,30 +1,27 @@
 package things;
 
+/*import com.sun.scenario.effect.impl.state.LinearConvolveKernel;*/
+/*import com.sun.xml.internal.ws.api.ha.StickyFeature;*/
 import db.Database;
+/*import sun.awt.image.ImageWatched;*/
+
+/*import java.util.ArrayList; */
 import java.util.LinkedList;
+import java.util.List;
+/*import java.util.*; */
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.util.Arrays;
-
-import java.text.DecimalFormat;
-
-
-/*import com.sun.scenario.effect.impl.state.LinearConvolveKernel;*/
-/*import com.sun.xml.internal.ws.api.ha.StickyFeature;*/
-/*import sun.awt.image.ImageWatched;*/
-
-import java.util.List;
-
+import java.io.FileNotFoundException;
 import java.io.IOException;
+/* import java.util.StringJoiner; */
 
 
 public class Dealer {
 
-    public static String dealCreateTable(String tableName, String[] columnTitles){
+    public static String dealCreateTable(String tableName, String[] columnTitles) {
 
         Table newTable = new Table(tableName, columnTitles);
         Database.saveTable(newTable);
@@ -38,9 +35,6 @@ public class Dealer {
     public static String dealStore(String tableName) {
         Table t = Database.getTable(tableName);
 
-        if (t == null) {
-            return "ERROR: There isn't table in database called " + tableName;
-        }
         try{
             File file0 = new File(tableName + ".tbl");
             if (!file0.exists()) {
@@ -89,7 +83,7 @@ public class Dealer {
         return "";
     }
 
-// checks if the file exists and works
+    // checks if the file exists and works
     private static boolean checkBeforeReadfile(File file) {
         if (file.exists()) {
             if (file.isFile() && file.canRead()) {
@@ -107,7 +101,7 @@ public class Dealer {
     }
 
 
-    public static String dealDrop(String tableName){
+    public static String dealDrop(String tableName) {
         Database.removeTable(tableName);
         return "";
     }
@@ -154,25 +148,21 @@ public class Dealer {
         }
         return true;
     }
-    public static String dealPrint(String tableName){
+
+    public static String dealPrint(String tableName) {
         if (Database.hasTable(tableName)) {
             Table t = Database.getTable(tableName);
             return t.toString();
         }
         // make a string to return. ここちゃんとできてない
-        return "ERROR: There isn't such the table called " + tableName + " from dealPrint in Dealer";
+        return "There isn't such the table";
     }
     public static String dealSelect(String[] columnTitle,
                                     String[] tableName, String[] condition) {
 //        String columnTitle = m.group(1); // x ( -- different case for * !)
 //        String tableName = m.group(2);   // T1
-//        String[] condition = m.group(3).split(space);   // x,>,2,
-        /*
-        if (!(isValidCondition(condition))){
-            return "ERROR: Malformed where in dealSelect in Dealer";
-        }
-        */
-//        UranyFunction
+//        String condition = m.group(3);   // x > 2
+
         // checks if such tables exist
         for (int i = 0; i < tableName.length; i++) {
             if (!(Database.hasTable(tableName[i]))) {
@@ -210,10 +200,99 @@ public class Dealer {
             temp = Database.getTable(tableName[0]);
         }
 
-        // if oolumn is *, uses all columns (original table itself)
+// Where を行う
+        Table anonT;
+        if (condition != null){
+            anonT = new Table("anon", temp.getColumnName());
+            String operator = condition[1];
+            String column1 = condition[0];
+            String column2 = condition[2];
+            Integer secondIntElem = null;
+            Float secondFloatElem = null;
+            String secondStringElem = null;
+
+            CheckClass checker0 = new CheckClass(condition, temp);
+            if (!(checker0.isFirstElemColumn())){
+                return "ERROR: there isn't a column called " + column1;
+            } else if (!(checker0.isSecondElemColumn())){ // second が normal value (non column)
+                String type1 = checker0.getFirstElemType();
+                String type2 = checker0.getSecondElemType();
+                if (type2.equals("int")){
+                    if (type1.equals("String")) {
+                        return "ERROR: int and String cannot be compared";
+                    }
+                    secondIntElem = checker0.getIntSecondElem();
+                } else if (type2.equals("float")){
+                    if (type1.equals("String")) {
+                        return "ERROR: float and String cannot be compared";
+                    }
+                    secondFloatElem = checker0.getFloatSecondElem();
+                } else {
+                    if (type1.equals("int") || type1.equals("float")) {
+                        return "ERROR: String and number cannot be compared";
+                    }
+                    secondStringElem = checker0.getStringSecondElem();
+                }
+
+                WhereFunction wf = new WhereFunction(operator, type1, type2);
+                // function func をここで作って、first columnに対してfor loop
+
+
+                for (int i = 0; i < temp.getNumRow(); i++) {
+                    List<String> colValues= temp.getColumn(column1);
+                    if (secondFloatElem != null){
+                        if ((wf.function.apply(colValues.get(i), secondFloatElem.toString()))){
+                            anonT.addRowLast(temp.getRow(i));
+                        }
+                    } else if (secondIntElem != null){
+                        if ((wf.function.apply(colValues.get(i), secondIntElem.toString()))){
+                            anonT.addRowLast(temp.getRow(i));
+                        }
+                    } else if (secondStringElem != null){
+                        if ((wf.function.apply(colValues.get(i).substring(1, colValues.get(i).length()-1), secondStringElem.toString()))){
+                            anonT.addRowLast(temp.getRow(i));
+                        }
+                    }
+                }
+
+            } else if (checker0.isSecondElemColumn()){
+                String type1 = checker0.getFirstElemType();
+                String type2 = checker0.getSecondElemType();
+                if (type2.equals("int")){
+                    if (type1.equals("String")) {
+                        return "ERROR: int and String cannot be compared";
+                    }
+                } else if (type2.equals("float")){
+                    if (type1.equals("String")) {
+                        return "ERROR: float and String cannot be compared";
+                    }
+                } else {
+                    if (type1.equals("int") || type1.equals("float")) {
+                        return "ERROR: String and number cannot be compared";
+                    }
+                }
+
+                WhereFunction wf = new WhereFunction(operator, type1, type2);
+
+                for (int i = 0; i < temp.getNumRow(); i++) {
+                    List<String> col1Values= temp.getColumn(column1);
+                    List<String> col2Values= temp.getColumn(column2);
+                    if ((wf.function.apply(col1Values.get(i),col2Values.get(i)))){
+                        anonT.addRowLast(temp.getRow(i));
+                    }
+                }
+            }
+        } else {
+            anonT = temp;
+        }
+
+
+
+        // if column is *, uses all columns (original table itself)
         if (columnTitle[0].equals("*")) {
             return temp.toString();
         }
+
 
         String[] exactColTitle = new String[columnTitle.length];
         // puts exact column names into exactColTitle (x -> x int)
@@ -221,34 +300,46 @@ public class Dealer {
             String[] colChank = columnTitle[j].split("\\s* as \\s*");
             String name = temp.getExactColName(colChank[0]);
             if (colChank.length != 1) {         // x+y as w int
-                try {
-                    String type = colChank[1].split(" ")[1];
-                    if (!(type.equals("int") || type.equals("float"))) {
-                        return "Error: wrong type";
+                String NewColName = colChank[1];
+                String[] array = containOperator(colChank[0]);
+                if (array == null) {
+                    return "Error: already has column name";
+                }
+                if (temp.getExactColName(array[0]) == null) {
+                    return "ERROR: first element should be a column";
+                }
+                String firstType = temp.getExactColName(array[0]).split(" ")[1];
+                if (temp.getExactColName(array[2]) ==  null) {
+                    String result = singleTypeCheck(array[2]);
+                    if (result.equals("int") || result.equals("float") || result.equals("string")) {
+                        exactColTitle[j] = colChank[1] + " " + firstType;
+                    } else {
+                        return "ERROR: such column does not exists";
                     }
-                    exactColTitle[j] = colChank[1];
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    return "Error: wrong type";
+                } else {
+                    String secondType = temp.getExactColName(array[2]).split(" ")[1];
+                    String newType;
+                    if (firstType.equals("int") && secondType.equals("int")) {
+                        newType = "int";
+                    } else if (firstType.equals("string")) {
+                        newType = "string";
+                    } else {
+                        newType = "float";
+                    }
+                    exactColTitle[j] = colChank[1] + " " + newType;
                 }
             } else if (name == null) {
                 String[] array = containOperator(colChank[0]);
                 if (array ==  null) {
-                    return "no such column";
+                    return "Erorr: no such column";
                 }
-                String firstType = temp.getExactColName(array[0]).split(" ")[1];
-                String secondType = temp.getExactColName(array[2]).split(" ")[1];
-                if (firstType.equals("string") || secondType.equals("string")) {
-                    return "Error: wrong type";
-                }
-                if (firstType.equals("int") && secondType.equals("int")) {
-                    exactColTitle[j] = colChank[0] + " int";
-                } else {
-                    exactColTitle[j] = colChank[0] + " float";
-                }
+                return "Error: needs column name";
             } else {
                 exactColTitle[j] = name;
             }
         }
+
+
 
         // creates a new table
         Table anonTable = new Table("anon", exactColTitle);
@@ -258,28 +349,29 @@ public class Dealer {
             // if it exits, separates it into three elements (see below)
             // if not, array = null
             String[] array = containOperator(columnTitle[k].split("\\s* as \\s*")[0]); // e.g. array = ["x", "+", "y"]
-            Integer[] convertedInt = new Integer[temp.getNumRow()];
-            Float[] convertedFloat = new Float[temp.getNumRow()];
-            boolean flagFirst = false;   // e.g. x int -> flagFirst = true
-            boolean flagSecond = false;  // e.g. y int -> flagSecond = true
+            Integer[] convertedInt = new Integer[anonT.getNumRow()];
+            Float[] convertedFloat = new Float[anonT.getNumRow()];
+            String[] convertedString = new String[anonT.getNumRow()];
 
             // if it has operator
             if (array != null) {
-                if (temp.getExactColName(array[0]) == null) {
-                    return "There isn't a column called " + array[0] + " in " + tableName;
+                CheckClass checker = new CheckClass(array, anonT);
+                if (!checker.isFirstElemColumn()) {
+                    return "ERROR: First operand should be column name or such column name does\'t exit";
                 }
-                if (temp.getExactColName(array[2]) == null) {
-                    return "There isn't a column called " + array[2] + " in " + tableName;
+                if (!checker.isSecondElemColumn()) {
+                    checker.getSecondElemType();
                 }
+
 
                 // checks the type of x
                 // converts string column into int or float column
-                if (temp.checkType(array[0], "int")) {
-                    convertedInt = convertInt(temp.getColumn(array[0]));
-                    flagFirst = true;
-                }
-                if (temp.checkType(array[0], "float")) {
-                    convertedFloat = convertFloat(temp.getColumn(array[0]));
+                if (checker.getFirstElemType().equals("int")) {
+                    convertedInt = convertInt(anonT.getColumn(array[0]));
+                } else if (checker.getFirstElemType().equals("float")) {
+                    convertedFloat = convertFloat(anonT.getColumn(array[0]));
+                } else  {
+                    convertedString = convertString(anonT.getColumn(array[0]));
                 }
 
                 // checks the type of y
@@ -288,61 +380,110 @@ public class Dealer {
                    combines the the column created above with the new converted column
                  */
                 // if not, creates another column
-                if (temp.checkType(array[2], "int")) {
-                    if (flagFirst) {
-                        flagSecond = true;
-                        Integer[] tempIntArray = convertInt(temp.getColumn(array[2]));
-                        for (int t = 0; t < tempIntArray.length; t++) {
-                            convertedInt[t] = operateInt(convertedInt[t],
-                                    tempIntArray[t], array[1]);
-                        }
-                    } else {
-                        convertedInt = convertInt(temp.getColumn(array[2]));
-                    }
-                }
-                if (temp.checkType(array[2], "float")) {
-                    if (!(flagFirst)) {
-                        Float[] tempFloatArray = convertFloat(temp.getColumn(array[2]));
-                        for (int t = 0; t < tempFloatArray.length; t++) {
-                            convertedFloat[t] = operateFloat(convertedFloat[t],
-                                    tempFloatArray[t], array[1]);
-                        }
-                    } else {
-                        flagSecond = true;
-                        convertedFloat = convertFloat(temp.getColumn(array[2]));
-                    }
-                }
 
-                // Accoding to the types of x and y, add their columns into the new table
-                // x int, y int
-                if (flagFirst && flagSecond) {
-                    anonTable.addColumnLast(convertIntToString(convertedInt));
-                    // x int,  y float
-                } else if (flagFirst && !flagSecond) {
-                    Float[] tempNewCol = new Float[temp.getNumRow()];
-                    for (int a = 0; a < tempNewCol.length; a++) {
-                        tempNewCol[a] = operateFloatInt(convertedFloat[a], convertedInt[a], array[1], false);
+
+                // second int
+                if (checker.getSecondElemType().equals("int")) {
+                    if (checker.getFirstElemType().equals("string")) {
+                        return "ERROR: does not match types";
                     }
-                    anonTable.addColumnLast(convertFloatToString(tempNewCol));
-                    // x float, y int
-                } else if (!flagFirst && flagSecond) {
-                    Float[] tempNewCol = new Float[temp.getNumRow()];
-                    for (int b = 0; b < tempNewCol.length; b++) {
-                        tempNewCol[b] = operateFloatInt(convertedFloat[b], convertedInt[b], array[1], true);
+                    if (checker.getFirstElemType().equals("int")) {    // int, int
+                        if (!checker.isSecondElemColumn()) {
+                            for (int r = 0; r < convertedInt.length; r++) {
+                                convertedInt[r] = operateInt(convertedInt[r], checker.getIntSecondElem(), array[1]);
+                            }
+                            anonTable.addColumnLast(convertIntToString(convertedInt));
+                        } else {
+                            Integer[] tempIntArray = convertInt(anonT.getColumn(array[2]));
+                            for (int t = 0; t < tempIntArray.length; t++) {
+                                convertedInt[t] = operateInt(convertedInt[t],
+                                        tempIntArray[t], array[1]);
+                            }
+                            anonTable.addColumnLast(convertIntToString(convertedInt));
+                        }
+
+
+                    } else {                                         // float, int
+                        if (!checker.isSecondElemColumn()) {
+                            for (int r = 0; r < convertedInt.length; r++) {
+                                convertedFloat[r] = operateFloatInt(convertedFloat[r], checker.getIntSecondElem(), array[1], true);
+                            }
+                            anonTable.addColumnLast(convertIntToString(convertedInt));
+                        } else {
+                            convertedInt = convertInt(anonT.getColumn(array[2]));
+                            Float[] tempNewCol = new Float[anonT.getNumRow()];
+                            for (int b = 0; b < tempNewCol.length; b++) {
+                                tempNewCol[b] = operateFloatInt(convertedFloat[b], convertedInt[b], array[1], true);
+                            }
+                            anonTable.addColumnLast(convertFloatToString(tempNewCol));
+                        }
                     }
-                    anonTable.addColumnLast(convertFloatToString(tempNewCol));
-                    // x float, y float
-                } else {
-                    anonTable.addColumnLast(convertFloatToString(convertedFloat));
+
+                    // second float
+                } else if (checker.getSecondElemType().equals("float")) {
+                    if (checker.getFirstElemType().equals("string")) {
+                        return "ERROR: does not match types";
+                    }
+                    if (checker.getFirstElemType().equals("float")) { //foat, float
+                        if (!checker.isSecondElemColumn()) {
+                            for (int r = 0; r < convertedInt.length; r++) {
+                                convertedFloat[r] = operateFloat(convertedFloat[r], checker.getFloatSecondElem(), array[1]);
+                            }
+                            anonTable.addColumnLast(convertFloatToString(convertedFloat));
+                        } else {
+                            Float[] tempFloatArray = convertFloat(anonT.getColumn(array[2]));
+                            for (int t = 0; t < tempFloatArray.length; t++) {
+                                convertedFloat[t] = operateFloat(convertedFloat[t],
+                                        tempFloatArray[t], array[1]);
+                            }
+                            anonTable.addColumnLast(convertFloatToString(convertedFloat));
+                        }
+                    } else {                                          // int, float
+                        if (!checker.isSecondElemColumn()) {
+                            for (int r = 0; r < convertedInt.length; r++) {
+                                convertedFloat[r] = operateFloat(convertedFloat[r], checker.getFloatSecondElem(), array[1]);
+                            }
+                            anonTable.addColumnLast(convertFloatToString(convertedFloat));
+                        } else {
+                            convertedFloat = convertFloat(anonT.getColumn(array[2]));
+                            Float[] tempNewCol = new Float[anonT.getNumRow()];
+                            for (int a = 0; a < tempNewCol.length; a++) {
+                                tempNewCol[a] = operateFloatInt(convertedFloat[a], convertedInt[a], array[1], false);
+                            }
+                            anonTable.addColumnLast(convertFloatToString(tempNewCol));
+                        }
+                    }
+
+
+                } else {                                           // second is String
+                    if (!checker.getFirstElemType().equals("string")) {
+                        return "ERROR: does not match types";
+                    }                                              // string, string
+                    if (!array[1].equals("+")) {
+                        return "ERROR: only stirng + string is allowed";
+                    }
+                    if (!checker.isSecondElemColumn()) {
+                        for (int e = 0; e < convertedString.length; e++) {
+                            convertedString[e] = stringAddition(convertedString[e], checker.getStringSecondElem());
+                        }
+                        anonTable.addColumnLast(convertedString);
+                    } else {
+                        String[] secondString = convertString(anonT.getColumn(array[2]));
+                        for (int e = 0; e < convertedString.length; e++) {
+                            convertedString[e] = stringAddition(convertedString[e], secondString[e]);
+                        }
+                        anonTable.addColumnLast(convertedString);
+                    }
+
                 }
 
 
                 // if no operator
             } else {
-                if (temp.getExactColName(columnTitle[k]) == null) {
+                if (anonT.getExactColName(columnTitle[k].split("\\s* as \\s*")[0]) == null ) {
                     return "There isn't a column called " + columnTitle[k] + " in " + tableName;
                 }
-                anonTable.addColumnLast(temp.getColumn(columnTitle[k]));
+                anonTable.addColumnLast(anonT.getColumn(columnTitle[k]));
             }
         }
 
@@ -355,8 +496,28 @@ public class Dealer {
                 return "Error; wrong type";
             }
         }
+
+
         return anonTable.toString();
-    }    // converts float column to String column
+    }
+
+
+
+    private static String singleTypeCheck(String str) {
+        if (str.contains("\'")) {
+            return "string";
+        } else if (str.contains(".")) {
+            return "float";
+        }
+        try {
+            Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            return "ERROR: Type of the operand is wrong or such column does not exist";
+        }
+        return "int";
+    }
+
+    // converts float column to String column
     // if it has zero division error (represented as null in operateFloat or operateInt method),
     // put Nal
     private static String[] convertFloatToString(Float[] array) {
@@ -386,9 +547,21 @@ public class Dealer {
         return result;
     }
 
+    private static String[] convertStringToString(String[] array) {
+        String[] result = new String[array.length];
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == null) {
+                result[i] = "NaN";
+            } else {
+                result[i] = "'" + array[i] + "'";
+            }
+        }
+        return result;
+    }
+
     // takes in float and int input.
     // changes the operatino oder depending on flag (e.g. flag = true -> a operator b)
-    // accoding to the given operator, return the computed result as float number \
+    // according to the given operator, return the computed result as float number
     // if it has zero division error, return null. This will be handled in convertFloatToString or convertToIntString
     private static Float operateFloatInt(Float a, Integer b, String operator, boolean flag) {
         if (operator.equals("+")) {
@@ -450,6 +623,18 @@ public class Dealer {
         }
     }
 
+    private static String[] convertString(List<String> p) {
+        String[] array = new String[p.size()];
+        for (int i = 0; i < p.size(); i++) {
+            if (p.get(i).equals("NOVALUE")) {
+                array[i] = "";
+            } else {
+                array[i] = p.get(i).substring(1, p.get(i).length() - 1);
+            }
+        }
+        return array;
+    }
+
     // converts String column to int column
     // if it has NOVALUE, changes it to 0
     private static Integer[] convertInt(List<String> p) {
@@ -472,12 +657,11 @@ public class Dealer {
             if (p.get(i) == "NOVALUE") {
                 array[i] = 0.0f;
             } else {
-                array[i] = Float.parseFloat(String.format(p.get(i)));
+                array[i] = Float.parseFloat(p.get(i));
             }
         }
         return array;
     }
-
 
     // checks if the given String array has empty space
     private static boolean containsSpace(String[] array) {
@@ -489,9 +673,28 @@ public class Dealer {
         return false;
     }
 
+
+    private static String stringAddition(String a, String b) {
+        String a0;
+        String b0;
+        String result;
+        if (a == "NOVALUE") {
+            a0 = "";
+        } else {
+            a0 = a;
+        }
+        if (b == "NOVALUE") {
+            b0 = "";
+        } else  {
+            b0 = b;
+        }
+        result = a0 + b0;
+        return "\'" + result + "\'";
+    }
+
     // check if the string has any operator
     // handles both cases where "x + y" and "x+y"
-    private static String[] containOperator(String str) {
+    public static String[] containOperator(String str) {
         String[] array;
         if (!containsSpace(str.split(""))) {
             array = str.split("");
@@ -507,7 +710,7 @@ public class Dealer {
     }
 
     // joins two tables
-    private static Table joinSelect(String[] columnTitle, String[] tableName, String[] condition) { // condition ...STRING ARRAY!!!
+    private static Table joinSelect(String[] columnTitle, String[] tableName, String[] condition) {
         Table tempTableP =  Database.getTable(tableName[0]);
         Table tempTableQ = Database.getTable(tableName[1]);
         String[] tempColNameP = tempTableP.getColumnName();
@@ -535,7 +738,7 @@ public class Dealer {
         }
         // drops duplicated column
         for (int i = 0; i < joited.getNumCol(); i++) {
-            for (int indexToBeDeleted = i + 1; indexToBeDeleted < joited.getNumCol(); indexToBeDeleted++){
+            for (int indexToBeDeleted = i + 1; indexToBeDeleted < joited.getNumCol(); indexToBeDeleted++) {
                 if (joited.getColumnName()[i].equals(joited.getColumnName()[indexToBeDeleted])) {
                     joited.removeColmnTitle(indexToBeDeleted);
                     joited.removeColumn(indexToBeDeleted);
@@ -597,15 +800,5 @@ public class Dealer {
 
     }
 */
-
-    private static boolean isValidCondition(String[] condition){
-        String operators[] = {"=", "!=", "<", ">", "<=", ">="};
-        List<String> operatorsList = Arrays.asList(operators);
-        if (condition.length == 3 && operatorsList.contains(condition[1])){
-            return true;
-        }
-        return false;
-    }
-
 }
 

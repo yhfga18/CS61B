@@ -1,23 +1,20 @@
 package things;
 
-import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
-
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-
+import java.util.Arrays;
+import java.util.List;
 import java.util.StringJoiner;
 
 
 public class Parse {
     // Various common constructs, simplifies parsing.
-    private static final String
-            REST  = "\\s*(.*)\\s*",
+    private static final String REST  = "\\s*(.*)\\s*",
             COMMA = "\\s*,\\s*",
             AND   = "\\s+and\\s+";
 
     // Stage 1 syntax, contains the command name.
-    private static final Pattern
-            CREATE_CMD = Pattern.compile("create table " + REST),
+    private static final Pattern CREATE_CMD = Pattern.compile("create table " + REST),
             LOAD_CMD   = Pattern.compile("load " + REST),
             STORE_CMD  = Pattern.compile("store " + REST),
             DROP_CMD   = Pattern.compile("drop table " + REST),
@@ -67,7 +64,7 @@ public class Parse {
         if ((m = CREATE_CMD.matcher(query)).matches()) {
             return createTable(m.group(1));
         } else if ((m = LOAD_CMD.matcher(query)).matches()) {
-            //System.out.println("group 1 ____ : " + m.group(1)); // T1
+            System.out.println("group 1 ____ : " + m.group(1)); // T1
             return loadTable(m.group(1));
         } else if ((m = STORE_CMD.matcher(query)).matches()) {
             return storeTable(m.group(1));
@@ -100,7 +97,7 @@ public class Parse {
             //System.out.println("group2 is : " + m.group(2));
             //System.out.println(m.group(2).split(COMMA));
             if (m.group(2).equals("")){
-              System.out.println("ERROR: no column specified");
+                System.out.println("ERROR: no column specified");
             }
             String Tname = m.group(1);
             String[] Tcolumns = m.group(2).split(COMMA);
@@ -112,12 +109,12 @@ public class Parse {
         } else if ((m = CREATE_SEL.matcher(expr)).matches()) { // selectを含む
             // *** createSelectedTable(m.group(1), m.group(2), m.group(3), m.group(4));
             //create table T1 as select x from T2 where x > y
-
+            /*
             System.out.println("m.group1 = " + m.group(1)); // T1
             System.out.println("m.group2 = " + m.group(2)); // x
             System.out.println("m.group3 = " + m.group(3)); // T2
             System.out.println("m.group4 = " + m.group(4)); // x > y
-
+            */
             String newTableName = m.group(1); // T2
             String[] columnTitle = m.group(2).split("\\s*,\\s*");
 
@@ -130,9 +127,17 @@ public class Parse {
                 columnTitle = m.group(2).split("\\s*,\\s*"); // x
                 newColTitle = null;
             } */
-     /*       String[] columnName = m.group(2).split("\\s*, \\s*"); // x, y ... */  /////ここ聞く！！！！！！！！！！！！！！！！//////////////
-            String[] originalTableName = m.group(3).split("\\s*,\\s*"); // T1 ////////////////////////////////////////////
-            String[] condition = m.group(4).split("\\s* \\s*"); // x > 2
+     /*       String[] columnName = m.group(2).split("\\s*, \\s*"); // x, y ... */
+            String[] originalTableName = m.group(3).split("\\s*,\\s*"); // T1
+            String condition[];
+            if (m.group(4) == null) {
+                condition = null;
+            } else {
+                condition = m.group(4).split("\\s* \\s*"); // x > 2
+                if (!(isValidWhere(condition))) {
+                    return "ERROR : Invalid where clause, from select in Parse class";
+                }
+            }
             String result = Dealer.dealSelect(columnTitle, originalTableName, condition); // handling select
             String[] s = result.split("\n"); // putting string repr into array
             //for (String elem : s) {System.out.println("elem!! : " + elem); }
@@ -153,11 +158,11 @@ public class Parse {
 //            return Dealer.dealCreateTable(newTableName, result2);
 
         } else {
-            //System.err.printf("Malformed create: %s\n", expr);
             System.out.println("ERROR: Column name not given");
         }
         return "";
-    }    /* Printing stuffs info
+    }
+    /* Printing stuffs info
     for "" create table T1 (x int, y int) "" ,
     System.out.println("in createTable method, ");
     System.out.println("group1 is : " + m.group(1)); // group1 is T1 (table's name)
@@ -174,7 +179,7 @@ public class Parse {
     に飛ばすか決めて飛ばした先でそれぞれにappropriateな操作を施す。
     */
 
-    private static String createNewTable(String name, String[] cols) {
+/*    private static String createNewTable(String name, String[] cols) {
         // name = table's name,
         // cols = rest of the input
         StringJoiner joiner = new StringJoiner(", "); // package String Joiner
@@ -195,40 +200,39 @@ public class Parse {
 
         return name;
 
-        /* format:
+         format:
         create table <table name> (<column0 name> <type0>, <column1 name> <type1>, ...)
          つまり上のcolにはcolumn name と type が入りまくってる。
-         */
+
 
 
 
     }
 
+*/
 
-    private static String createSelectedTable(String name, String exprs, String tables, String conds) {
-        System.out.printf("You are trying to create a table named %s by selecting these expressions:" +
-                " '%s' from the join of these tables: '%s', filtered by these conditions: '%s'\n", name, exprs, tables, conds);
-        return name;
-    }
 
     private static String loadTable(String fileName) {
         // System.out.printf("You are trying to load the table named %s\n", name);
 
         // load a file called name, somehow.
-        System.out.println("LOAD fileName is: " + fileName);
-        return Dealer.dealLoad(fileName);
+        //   System.out.println("LOAD fileName is: " + fileName);
+        String realName = fileName.replaceAll("\\s+","");
+        return Dealer.dealLoad(realName);
     }
 
     private static String storeTable(String name) {
-        System.out.printf("You are trying to store the table named %s\n", name);
-        return Dealer.dealStore(name);
+/*        System.out.printf("You are trying to store the table named %s\n", name); */
+        String realName = name.replaceAll("\\s+","");
+        return Dealer.dealStore(realName);
         // パソコンにどうにかして入れ戻す (String file にする iteration でやればいい)
 
     }
 
     private static String dropTable(String name) {
-        System.out.printf("You are trying to drop the table named %s\n", name);
-        return Dealer.dealDrop(name);
+        //  System.out.printf("You are trying to drop the table named %s\n", name);
+        String realName = name.replaceAll("\\s+","");
+        return Dealer.dealDrop(realName);
 
     }
 
@@ -281,10 +285,16 @@ public class Parse {
         // m.group(1) ... x, y, x + y as w int
         String[] columnTitle = m.group(1).split("\\s*,\\s*");
         String[] tableName = m.group(2).split("\\s*,\\s*");   // T1
-        String[] condition = m.group(3).split("\\s* \\s*");   // x > 2
-        for (String elem: condition) {
-            System.out.println("elem = " +elem);
+        String[] condition;
+        if (m.group(3) == null) {
+            condition = null;
+        }else {
+            condition = m.group(3).split("\\s* \\s*");// x > 2;
+            if (!(isValidWhere(condition))) {
+                return "ERROR : Invalid where clause, from select in Parse class";
+            }
         }
+
         return Dealer.dealSelect(columnTitle, tableName, condition);
 
         // System.out.println(m.group(1) + "-2-" + m.group(2) + m.group(3));
@@ -294,11 +304,6 @@ public class Parse {
         // group3 = x > 2 つまり whereの中
     }
 
-    private static void commaSeparator(String str) {
-        for (int i = 0; i < str.length(); i++) {
-
-        }
-    }
     /*
     private static String select(String exprs, String tables, String conds) {
         System.out.printf("You are trying to select these expressions:" +
@@ -306,6 +311,18 @@ public class Parse {
         return exprs;
     }
     */
+
+
+    private static boolean isValidWhere(String[] condition){
+        String operators[] = {"=", "!=", "<", ">", "<=", ">="};
+        List<String> operatorsList = Arrays.asList(operators);
+        if (condition.length == 3 && operatorsList.contains(condition[1])){
+            if ( (!(operatorsList.contains(condition[0]))) && (!(operatorsList.contains(condition[0])))){
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 
@@ -355,6 +372,7 @@ public class Parse {
 //    public static String evalSelect(String rest){
 //        return "evalSelect!";
 //    }
+
 
 
 
