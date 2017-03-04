@@ -241,15 +241,29 @@ public class Dealer {
                 for (int i = 0; i < temp.getNumRow(); i++) {
                     List<String> colValues= temp.getColumn(column1);
                     if (secondFloatElem != null){
-                        if ((wf.function.apply(colValues.get(i), secondFloatElem.toString()))){
+                        String a = colValues.get(i);
+                        if (a.equals("NOVALUE") || a.equals("NaN")) {
+                            a = "0.0f";
+                        }
+                        if ((wf.function.apply(a, secondFloatElem.toString()))){
                             anonT.addRowLast(temp.getRow(i));
                         }
                     } else if (secondIntElem != null){
-                        if ((wf.function.apply(colValues.get(i), secondIntElem.toString()))){
+                        String a = colValues.get(i);
+                        if (a.equals("NOVALUE") || a.equals("NaN")) {
+                            a = "0";
+                        }
+                        if ((wf.function.apply(a, secondIntElem.toString()))){
                             anonT.addRowLast(temp.getRow(i));
                         }
                     } else if (secondStringElem != null){
-                        if ((wf.function.apply(colValues.get(i).substring(1, colValues.get(i).length()-1), secondStringElem.toString()))){
+                        String a = colValues.get(i);
+                        if (a.equals("NOVALUE") || a.equals("NaN")) {
+                            a = "";
+                            if ((wf.function.apply(a, secondStringElem.toString()))){
+                                anonT.addRowLast(temp.getRow(i));
+                            }
+                        } else if (wf.function.apply(a.substring(1, a.length()-1), secondStringElem.toString())) {
                             anonT.addRowLast(temp.getRow(i));
                         }
                     }

@@ -33,8 +33,13 @@ public class Database {
         return null;
     }
 
-    public static void removeTable(String tableName) {
-        database.remove(tableName);
+    public static String removeTable(String tableName) {
+        if (hasTable(tableName)) {
+            return "ERROR: Table called " + tableName + " does not exist.";
+        } else {
+            database.remove(tableName);
+            return "";
+        }
     }
 
 }
