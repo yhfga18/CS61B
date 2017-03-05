@@ -15,7 +15,7 @@ public class Database {
 
     public static String saveTable(Table t) {
         if (hasTable(t.getName())) {
-            return "ERROR: Table called " + t.getName() + " already exist";
+            return "Already Exist!";// "ERROR: Table called " + t.getName() + " already exist";
         } else {
             database.put(t.getName(), t);
             return "";

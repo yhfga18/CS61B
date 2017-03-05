@@ -51,7 +51,7 @@ public class WhereFunction {
 
 interface Function {
     default boolean finalApply(float diff, String operator) { // a compare to b  = -1  a < b ... a.compareTo(b) = -1
-        if (operator.equals("=")) {
+        if (operator.equals("==")) {
             return (diff == 0);
         } else if (operator.equals("!=")) {
             return (diff != 0);

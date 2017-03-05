@@ -22,17 +22,26 @@ import java.io.IOException;
 public class Dealer {
 
     public static String dealCreateTable(String tableName, String[] columnTitles) {
-
         Table newTable = new Table(tableName, columnTitles);
-        return Database.saveTable(newTable);
+        if (!isTable(newTable)) {
+            return "ERROR: invalid column type";
+        }
+        Database.saveTable(newTable);
         /*
         newTable.addNameRow(tableName);
         newTable.addItemRow(tableColumns);
         */
+        return "";
     }
 
     public static String dealStore(String tableName) {
+        if (!Database.hasTable(tableName)) {
+            return "ERROR: such table does not exist";
+        }
         Table t = Database.getTable(tableName);
+        if (!isTable(t)) {
+            return "ERROR: this is not a valid table";
+        }
 
         try{
             File file0 = new File(tableName + ".tbl");
@@ -73,7 +82,7 @@ public class Dealer {
                 str = br.readLine();
             }
             if (!isTable(newTable)) {
-                return "ERROR: wrong table";
+                return "ERROR: invalid column type or invalid contents";
             }
             Database.saveTable(newTable);
             br.close();
@@ -116,6 +125,9 @@ public class Dealer {
             return "There isn't table called " + tableName + " in database...";
         }
         Table t = Database.getTable(tableName);
+        if (values.length != t.getNumCol()) {
+            return "ERROR: the number of inputs is invalid";
+        }
         if (!typeCheck(t, values)) {
             return "ERROR: wrong type";
         }
@@ -157,6 +169,9 @@ public class Dealer {
     }
 
 
+
+
+
     private static boolean typeCheck(Table t, String values[]) {
         String[] colTitles = t.getColumnName();
         try {
@@ -182,6 +197,8 @@ public class Dealer {
                 }
             }
         } catch (NumberFormatException e) {
+            return false;
+        } catch (ArrayIndexOutOfBoundsException e) {
             return false;
         }
         return true;
@@ -247,9 +264,6 @@ public class Dealer {
 
         if (conditions != null) {
             for (String[] condition : conditions) {
-                if (condition == null) {
-                    break;
-                }
                 if (condition[0] == null) {
                     break;
                 }
@@ -276,10 +290,9 @@ public class Dealer {
             String[] colChank = columnTitle[j].split("\\s* as \\s*");
             String name = temp.getExactColName(colChank[0]);
             if (colChank.length != 1) {         // x+y as w int
-                String NewColName = colChank[1];
                 String[] array = containOperator(colChank[0]);
                 if (array == null) {
-                    return "Error: already has column name";
+                    return "ERROR: already has column name";
                 }
                 if (temp.getExactColName(array[0]) == null) {
                     return "ERROR: first element should be a column";
@@ -469,7 +482,7 @@ public class Dealer {
                 row[w] = anonTable.getRow(x).get(w).toString();
             }
             if (!typeCheck(anonTable, row)) {
-                return "ERROR; wrong type";
+                return "Error; wrong type";
             }
         }
 
@@ -616,7 +629,7 @@ public class Dealer {
     private static Integer[] convertInt(List<String> p) {
         Integer[] array = new Integer[p.size()];
         for (int i = 0; i < p.size(); i++) {
-            if (p.get(i) == "NOVALUE") {
+            if (p.get(i).equals("NOVALUE")) {
                 array[i] = 0;
             } else {
                 array[i] = Integer.parseInt((p.get(i)));
@@ -630,7 +643,7 @@ public class Dealer {
     private static Float[] convertFloat(List<String> p) {
         Float[] array = new Float[p.size()];
         for (int i = 0; i < p.size(); i++) {
-            if (p.get(i) == "NOVALUE") {
+            if (p.get(i).equals("NOVALUE")) {
                 array[i] = 0.0f;
             } else {
                 array[i] = Float.parseFloat(p.get(i));
@@ -654,12 +667,12 @@ public class Dealer {
         String a0;
         String b0;
         String result;
-        if (a == "NOVALUE") {
+        if (a.equals("NOVALUE")) {
             a0 = "";
         } else {
             a0 = a;
         }
-        if (b == "NOVALUE") {
+        if (b.equals("NOVALUE")) {
             b0 = "";
         } else  {
             b0 = b;

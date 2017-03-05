@@ -102,7 +102,10 @@ public class Parse {
             for (int i = 0; i < Tcolumns.length; i++) {
                 Tcolumns[i] = Tcolumns[i].replaceAll("\\s+"," ");
             }
-            return Dealer.dealCreateTable(Tname, Tcolumns);
+            String existCheck = Dealer.dealCreateTable(Tname, Tcolumns);
+            if (existCheck.length() > 0) {
+                return "";
+            }
 
         } else if ((m = CREATE_SEL.matcher(expr)).matches()) { // selectを含む
             // *** createSelectedTable(m.group(1), m.group(2), m.group(3), m.group(4));
@@ -115,7 +118,7 @@ public class Parse {
             */
             String newTableName = m.group(1); // T2
             if (Database.hasTable(newTableName)){
-                return "ERROR: Table called " + newTableName + " already exist";
+                return "";
             }
             String[] columnTitle = m.group(2).split("\\s*,\\s*");
             String s3 = m.group(3);
@@ -154,10 +157,11 @@ public class Parse {
             String[] s2 = java.util.Arrays.copyOfRange(s, 1, s.length);
             //for (String elem : s2){System.out.println("s2 elem! : " + elem);}
 
-            String tableExistence = Dealer.dealCreateTable(newTableName, NewcolumnName);
-            if (tableExistence.length() > 0){
-                return "ERROR: Table called " + newTableName + " already exist";
+            if (Database.hasTable(newTableName)){
+                return "";
             }
+            Dealer.dealCreateTable(newTableName, NewcolumnName);
+
             for (String elem : s2) {
                 Dealer.dealInsert(newTableName, elem.split("\\s*,\\s*"));
             }
@@ -168,7 +172,7 @@ public class Parse {
 //            return Dealer.dealCreateTable(newTableName, result2);
 
         } else {
-            System.out.println("ERROR: Column name not given");
+            return "ERROR: Column name not given";
         }
         return "";
     }
@@ -329,7 +333,7 @@ public class Parse {
 
 
     private static boolean isValidWhere(String[] condition){
-        String operators[] = {"=", "!=", "<", ">", "<=", ">="};
+        String operators[] = {"==", "!=", "<", ">", "<=", ">="};
         List<String> operatorsList = Arrays.asList(operators);
         if (condition.length == 3 && operatorsList.contains(condition[1])){
             if ( (!(operatorsList.contains(condition[0]))) && (!(operatorsList.contains(condition[0])))){
