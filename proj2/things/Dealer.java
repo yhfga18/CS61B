@@ -267,6 +267,10 @@ public class Dealer {
                 if (condition == null) {
                     break;
                 }
+                if (condition[0] == null) {
+                    break;
+                }
+
                 String errorString = whereHandle(anonT, condition);
                 if (errorString.length() > 1) {
                     return errorString;
