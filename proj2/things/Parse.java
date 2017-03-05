@@ -1,5 +1,7 @@
 package things;
 
+import db.Database;
+
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.Arrays;
@@ -92,10 +94,6 @@ public class Parse {
         // expr = T1 as select * from T2 where x > y
         Matcher m;
         if ((m = CREATE_NEW.matcher(expr)).matches()) { // new table を作る
-            //System.out.println("in createTable method, ");
-            //System.out.println("group1 is : " + m.group(1)); // T1
-            //System.out.println("group2 is : " + m.group(2));
-            //System.out.println(m.group(2).split(COMMA));
             if (m.group(2).equals("")){
                 System.out.println("ERROR: no column specified");
             }
@@ -116,8 +114,12 @@ public class Parse {
             System.out.println("m.group4 = " + m.group(4)); // x > y
             */
             String newTableName = m.group(1); // T2
+            if (Database.hasTable(newTableName)){
+                return "ERROR: Table called " + newTableName + " already exist";
+            }
             String[] columnTitle = m.group(2).split("\\s*,\\s*");
-
+            String s3 = m.group(3);
+            String s4 = m.group(4);
 
  /*           if (m.group(2).contains("as")) {
                 String[] temp = m.group(2).split("\\s* as \\s*");
@@ -129,13 +131,18 @@ public class Parse {
             } */
      /*       String[] columnName = m.group(2).split("\\s*, \\s*"); // x, y ... */
             String[] originalTableName = m.group(3).split("\\s*,\\s*"); // T1
-            String condition[];
+            String[][] condition = new String[10][];
             if (m.group(4) == null) {
                 condition = null;
-            } else {
-                condition = m.group(4).split("\\s* \\s*"); // x > 2
-                if (!(isValidWhere(condition))) {
-                    return "ERROR : Invalid where clause, from select in Parse class";
+            }else {
+                String[] andSeparatedCondition = m.group(4).split("\\s*and\\s*");// x > 2 and y > 5 → {x > 2,  x < 5};
+                for (int i = 0; i < andSeparatedCondition.length; i++){
+                    //condition = new String[andSeparatedCondition.length][andSeparatedCondition.length*3];
+                    String[] eachCondition = andSeparatedCondition[i].split("\\s* \\s*");// x > 2;
+                    if (!(isValidWhere(eachCondition))) {
+                        return "ERROR : Invalid where clause, from select in Parse class";
+                    }
+                    condition[i] = eachCondition;
                 }
             }
             String result = Dealer.dealSelect(columnTitle, originalTableName, condition); // handling select
@@ -147,7 +154,10 @@ public class Parse {
             String[] s2 = java.util.Arrays.copyOfRange(s, 1, s.length);
             //for (String elem : s2){System.out.println("s2 elem! : " + elem);}
 
-            Dealer.dealCreateTable(newTableName, NewcolumnName);
+            String tableExistence = Dealer.dealCreateTable(newTableName, NewcolumnName);
+            if (tableExistence.length() > 0){
+                return "ERROR: Table called " + newTableName + " already exist";
+            }
             for (String elem : s2) {
                 Dealer.dealInsert(newTableName, elem.split("\\s*,\\s*"));
             }
@@ -285,13 +295,18 @@ public class Parse {
         // m.group(1) ... x, y, x + y as w int
         String[] columnTitle = m.group(1).split("\\s*,\\s*");
         String[] tableName = m.group(2).split("\\s*,\\s*");   // T1
-        String[] condition;
+        String[][] condition = new String[10][3];
         if (m.group(3) == null) {
             condition = null;
         }else {
-            condition = m.group(3).split("\\s* \\s*");// x > 2;
-            if (!(isValidWhere(condition))) {
-                return "ERROR : Invalid where clause, from select in Parse class";
+            String[] andSeparatedCondition = m.group(3).split("\\s*and\\s*");// x > 2 and y > 5 → {x > 2,  x < 5};
+            for (int i = 0; i < andSeparatedCondition.length; i++){
+                //condition = new String[andSeparatedCondition.length][3];
+                String[] eachCondition = andSeparatedCondition[i].split("\\s* \\s*");// x > 2;
+                if (!(isValidWhere(eachCondition))) {
+                    return "ERROR : Invalid where clause, from select in Parse class";
+                }
+                condition[i] = eachCondition;
             }
         }
 
@@ -314,7 +329,7 @@ public class Parse {
 
 
     private static boolean isValidWhere(String[] condition){
-        String operators[] = {"==", "!=", "<", ">", "<=", ">="};
+        String operators[] = {"=", "!=", "<", ">", "<=", ">="};
         List<String> operatorsList = Arrays.asList(operators);
         if (condition.length == 3 && operatorsList.contains(condition[1])){
             if ( (!(operatorsList.contains(condition[0]))) && (!(operatorsList.contains(condition[0])))){

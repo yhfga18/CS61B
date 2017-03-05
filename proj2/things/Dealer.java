@@ -24,12 +24,11 @@ public class Dealer {
     public static String dealCreateTable(String tableName, String[] columnTitles) {
 
         Table newTable = new Table(tableName, columnTitles);
-        Database.saveTable(newTable);
+        return Database.saveTable(newTable);
         /*
         newTable.addNameRow(tableName);
         newTable.addItemRow(tableColumns);
         */
-        return "";
     }
 
     public static String dealStore(String tableName) {
@@ -61,7 +60,7 @@ public class Dealer {
           /*  File tempFile1 = new File("examples/" + fileName + ".tbl"); */
             //checks if file exists in the current directory or examples
             if (!(checkBeforeReadfile(file))) {
-                return "ERROR: .*"; //couldn't open or find the file.
+                return "ERROR: couldn't open or find the file"; //couldn't open or find the file.
             }
             BufferedReader br = new BufferedReader(new FileReader(file));
             // creates column titles by reading the first line
@@ -72,6 +71,9 @@ public class Dealer {
             while (str != null) {
                 newTable.addRowLast(str.split("\\s*,\\s*"));
                 str = br.readLine();
+            }
+            if (!isTable(newTable)) {
+                return "ERROR: wrong table";
             }
             Database.saveTable(newTable);
             br.close();
@@ -102,6 +104,9 @@ public class Dealer {
 
 
     public static String dealDrop(String tableName) {
+        if (!Database.hasTable(tableName)) {
+            return "ERROR: such table does not exist";
+        }
         Database.removeTable(tableName);
         return "";
     }
@@ -112,10 +117,43 @@ public class Dealer {
         }
         Table t = Database.getTable(tableName);
         if (!typeCheck(t, values)) {
-            return "Error: wrong type";
+            return "ERROR: wrong type";
         }
         t.addRowLast(values);
         return "";
+    }
+
+
+
+
+    private static boolean isTable(Table t) {
+        if (isValidColumn(t)) {
+            for (int i = 0; i < t.getNumRow(); i++) {
+                String[] rowArray = new String[t.getNumCol()];
+                for (int k = 0; k < t.getNumCol(); k++) {
+                    rowArray[k] = (String) t.getRow(i).get(k);
+                }
+                if (!typeCheck(t, rowArray)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isValidColumn(Table t) {
+        for (int i = 0; i < t.getNumCol(); i++) {
+            String[] array = t.getColumnName()[i].split("\\s* \\s*");
+            if (array.length == 1) {
+                return false;
+            }
+            String type = array[1];
+            if (!(type.equals("int") || type.equals("float") || type.equals("string"))) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
@@ -128,16 +166,16 @@ public class Dealer {
                         Integer.parseInt(values[i]);
                     }
                 } else if (colTitles[i].split(" ")[1].equals("string")) {
-                    if (!values[i].contains("\'")) {
-                        throw new NumberFormatException("Erorr: wrong type");
+                    if (!(values[i].contains("\'") || values[i].equals("NOVALUE"))) {
+                        throw new NumberFormatException("ERROR: wrong type");
                     }
                 } else { // float type should be put
                     if (!(values[i].equals("NOVALUE") || values[i].equals("NaN"))) {
                         if (values[i].contains("\'")) {
-                            throw new NumberFormatException("Erorr: wrong type"); // must be string
+                            throw new NumberFormatException("ERROR: wrong type"); // must be string
                         }
                         if (!values[i].contains(".")) {
-                            throw new NumberFormatException("Erorr: wrong type"); // cannot be float
+                            throw new NumberFormatException("ERROR: wrong type"); // cannot be float
                         }
                         Float.parseFloat(values[i]);  // catch "abc"  no double quotation inside
                     }
@@ -155,10 +193,10 @@ public class Dealer {
             return t.toString();
         }
         // make a string to return. ここちゃんとできてない
-        return "There isn't such the table";
+        return "ERROR: .*";
     }
     public static String dealSelect(String[] columnTitle,
-                                    String[] tableName, String[] condition) {
+                                    String[] tableName, String[][] conditions) {
 //        String columnTitle = m.group(1); // x ( -- different case for * !)
 //        String tableName = m.group(2);   // T1
 //        String condition = m.group(3);   // x > 2
@@ -180,13 +218,13 @@ public class Dealer {
                 // if there two tables
                 if (tableNameLen == 2) {
                     String[] newTableName = new String[]{tableName[0], tableName[1]};
-                    temp = joinSelect(columnTitle, newTableName, condition);
+                    temp = joinSelect(columnTitle, newTableName);
                     break;
                     // if there are more than two table.
                     // uses recursion
                 } else {
                     String[] newTableName = new String[]{tableName[0], tableName[1]};
-                    joinSelect(columnTitle, newTableName, condition);
+                    joinSelect(columnTitle, newTableName);
                     for (int i = 2; i < tableName.length; i++) {
                         tableName[i - 1] = tableName[i];
                     }
@@ -201,99 +239,23 @@ public class Dealer {
         }
 
 // Where を行う
-        Table anonT;
-        if (condition != null){
-            anonT = new Table("anon", temp.getColumnName());
-            String operator = condition[1];
-            String column1 = condition[0];
-            String column2 = condition[2];
-            Integer secondIntElem = null;
-            Float secondFloatElem = null;
-            String secondStringElem = null;
+        Table anonT = new Table("anon", temp.getColumnName());
+        for (int i = 0; i < temp.getNumRow(); i++) {
+            anonT.addRowLast(temp.getRow(i));
+        }
+        // これで anonT は temp と名前以外全く同じ内容のテーブルになった。これに対してforでwhereのconditionで引っかかる部分を抜いていく
 
-            CheckClass checker0 = new CheckClass(condition, temp);
-            if (!(checker0.isFirstElemColumn())){
-                return "ERROR: there isn't a column called " + column1;
-            } else if (!(checker0.isSecondElemColumn())){ // second が normal value (non column)
-                String type1 = checker0.getFirstElemType();
-                String type2 = checker0.getSecondElemType();
-                if (type2.equals("int")){
-                    if (type1.equals("String")) {
-                        return "ERROR: int and String cannot be compared";
-                    }
-                    secondIntElem = checker0.getIntSecondElem();
-                } else if (type2.equals("float")){
-                    if (type1.equals("String")) {
-                        return "ERROR: float and String cannot be compared";
-                    }
-                    secondFloatElem = checker0.getFloatSecondElem();
-                } else {
-                    if (type1.equals("int") || type1.equals("float")) {
-                        return "ERROR: String and number cannot be compared";
-                    }
-                    secondStringElem = checker0.getStringSecondElem();
+        if (conditions != null) {
+            for (String[] condition : conditions) {
+                if (condition == null) {
+                    break;
                 }
-
-                WhereFunction wf = new WhereFunction(operator, type1, type2);
-                // function func をここで作って、first columnに対してfor loop
-
-
-                for (int i = 0; i < temp.getNumRow(); i++) {
-                    List<String> colValues= temp.getColumn(column1);
-                    if (secondFloatElem != null){
-                        String a = colValues.get(i);
-                        if (a.equals("NOVALUE") || a.equals("NaN")) {
-                            a = "0.0f";
-                        }
-                        if ((wf.function.apply(a, secondFloatElem.toString()))){
-                            anonT.addRowLast(temp.getRow(i));
-                        }
-                    } else if (secondIntElem != null){
-                        String a = colValues.get(i);
-                        if (a.equals("NOVALUE") || a.equals("NaN")) {
-                            a = "0";
-                        }
-                        if ((wf.function.apply(a, secondIntElem.toString()))){
-                            anonT.addRowLast(temp.getRow(i));
-                        }
-                    } else if (secondStringElem != null){
-                        String a = colValues.get(i);
-                        if (a.equals("NOVALUE") || a.equals("NaN")) {
-                            a = "";
-                            if ((wf.function.apply(a, secondStringElem.toString()))){
-                                anonT.addRowLast(temp.getRow(i));
-                            }
-                        } else if (wf.function.apply(a.substring(1, a.length()-1), secondStringElem.toString())) {
-                            anonT.addRowLast(temp.getRow(i));
-                        }
-                    }
+                if (condition[0] == null) {
+                    break;
                 }
-
-            } else if (checker0.isSecondElemColumn()){
-                String type1 = checker0.getFirstElemType();
-                String type2 = checker0.getSecondElemType();
-                if (type2.equals("int")){
-                    if (type1.equals("String")) {
-                        return "ERROR: int and String cannot be compared";
-                    }
-                } else if (type2.equals("float")){
-                    if (type1.equals("String")) {
-                        return "ERROR: float and String cannot be compared";
-                    }
-                } else {
-                    if (type1.equals("int") || type1.equals("float")) {
-                        return "ERROR: String and number cannot be compared";
-                    }
-                }
-
-                WhereFunction wf = new WhereFunction(operator, type1, type2);
-
-                for (int i = 0; i < temp.getNumRow(); i++) {
-                    List<String> col1Values= temp.getColumn(column1);
-                    List<String> col2Values= temp.getColumn(column2);
-                    if ((wf.function.apply(col1Values.get(i),col2Values.get(i)))){
-                        anonT.addRowLast(temp.getRow(i));
-                    }
+                String errorString = whereHandle(anonT, condition);
+                if (errorString.length() > 1) {
+                    return errorString;
                 }
             }
         } else {
@@ -304,7 +266,7 @@ public class Dealer {
 
         // if column is *, uses all columns (original table itself)
         if (columnTitle[0].equals("*")) {
-            return temp.toString();
+            return anonT.toString();
         }
 
 
@@ -345,9 +307,9 @@ public class Dealer {
             } else if (name == null) {
                 String[] array = containOperator(colChank[0]);
                 if (array ==  null) {
-                    return "Erorr: no such column";
+                    return "ERROR: no such column";
                 }
-                return "Error: needs column name";
+                return "ERROR: needs column name";
             } else {
                 exactColTitle[j] = name;
             }
@@ -507,7 +469,7 @@ public class Dealer {
                 row[w] = anonTable.getRow(x).get(w).toString();
             }
             if (!typeCheck(anonTable, row)) {
-                return "Error; wrong type";
+                return "ERROR; wrong type";
             }
         }
 
@@ -708,23 +670,83 @@ public class Dealer {
 
     // check if the string has any operator
     // handles both cases where "x + y" and "x+y"
+
     public static String[] containOperator(String str) {
         String[] array;
-        if (!containsSpace(str.split(""))) {
-            array = str.split("");
-        } else {
-            array = str.split(" ");
-        }
-        for (int i = 0; i < array.length; i++) {
-            if (array[i].equals("+") || array[i].equals("-") || array[i].equals("*") || array[i].equals("/")) {
-                return array;
-            }
+        String[] result = new String[3];
+        if (hasPlus(str)) {
+            array = str.split("[+]");
+            result[0] = array[0].trim();
+            result[2] = array[1].trim();
+            result[1] = "+";
+            return result;
+        } else if (hasMinus(str)) {
+            array = str.split("-");
+            result[0] = array[0].trim();
+            result[2] = array[1].trim();
+            result[1] = "-";
+            return result;
+        } else if (hasMultiplication(str)) {
+            array = str.split("[*]");
+            result[0] = array[0].trim();
+            result[2] = array[1].trim();
+            result[1] = "*";
+            return result;
+        } else if (hasDivision(str)) {
+            array = str.split("/");
+            result[0] = array[0].trim();
+            result[2] = array[1].trim();
+            result[1] = "/";
+            return result;
         }
         return null;
     }
 
+    private static boolean hasPlus(String str) {
+        String[] array = str.split("");
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals("+")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasMinus(String str) {
+        String[] array = str.split("");
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals("-")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasMultiplication(String str) {
+        String[] array = str.split("");
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals("*")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasDivision(String str) {
+        String[] array = str.split("");
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals("/")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+
     // joins two tables
-    private static Table joinSelect(String[] columnTitle, String[] tableName, String[] condition) {
+    private static Table joinSelect(String[] columnTitle, String[] tableName) {
         Table tempTableP =  Database.getTable(tableName[0]);
         Table tempTableQ = Database.getTable(tableName[1]);
         String[] tempColNameP = tempTableP.getColumnName();
@@ -807,6 +829,105 @@ public class Dealer {
             }
         }
         return true;
+    }
+
+
+
+
+    private static String whereHandle(Table anonT, String[] condition) {
+        String operator = condition[1];
+        String column1 = condition[0];
+        String column2 = condition[2];
+        Integer secondIntElem = null;
+        Float secondFloatElem = null;
+        String secondStringElem = null;
+
+        CheckClass checker0 = new CheckClass(condition, anonT);
+        if (!(checker0.isFirstElemColumn())) {
+            return "ERROR: there isn't a column called " + column1;
+        } else if (!(checker0.isSecondElemColumn())) { // second が normal value (non column)
+            String type1 = checker0.getFirstElemType();
+            String type2 = checker0.getSecondElemType();
+            if (type2.equals("int")) {
+                if (type1.equals("String")) {
+                    return "ERROR: int and String cannot be compared";
+                }
+                secondIntElem = checker0.getIntSecondElem();
+            } else if (type2.equals("float")) {
+                if (type1.equals("String")) {
+                    return "ERROR: float and String cannot be compared";
+                }
+                secondFloatElem = checker0.getFloatSecondElem();
+            } else {
+                if (type1.equals("int") || type1.equals("float")) {
+                    return "ERROR: String and number cannot be compared";
+                }
+                secondStringElem = checker0.getStringSecondElem();
+            }
+            WhereFunction wf = new WhereFunction(operator, type1, type2);
+            // function func をここで作って、first columnに対してfor loop
+            for (int i = 0; i < anonT.getNumRow(); i++) {
+                List<String> colValues = anonT.getColumn(column1);
+                if (secondFloatElem != null) {
+                    String a = colValues.get(i);
+                    if (a.equals("NOVALUE") || a.equals("NaN")) {
+                        a = "0.0f";
+                    }
+                    if (!((wf.function.apply(a, secondFloatElem.toString())))) {
+                        anonT.removeRow(i);
+                        i -= 1;
+                    }
+                } else if (secondIntElem != null) {
+                    String a = colValues.get(i);
+                    if (a.equals("NOVALUE") || a.equals("NaN")) {
+                        a = "0";
+                    }
+                    if (!(wf.function.apply(a, secondIntElem.toString()))) {
+                        anonT.removeRow(i);
+                        i -= 1;
+                    }
+                } else if (secondStringElem != null) {
+                    String a = colValues.get(i);
+                    if (a.equals("NOVALUE") || a.equals("NaN")) {
+                        a = "";
+                        if (!(wf.function.apply(a, secondStringElem.toString()))) {
+                            anonT.removeRow(i);
+                            i -= 1;
+                        }
+                    } else if (!(wf.function.apply(a.substring(1, a.length() - 1), secondStringElem.toString()))) {
+                        anonT.removeRow(i);
+                        i -= 1;
+                    }
+                }
+            }
+
+        } else if (checker0.isSecondElemColumn()) {
+            String type1 = checker0.getFirstElemType();
+            String type2 = checker0.getSecondElemType();
+            if (type2.equals("int")) {
+                if (type1.equals("String")) {
+                    return "ERROR: int and String cannot be compared";
+                }
+            } else if (type2.equals("float")) {
+                if (type1.equals("String")) {
+                    return "ERROR: float and String cannot be compared";
+                }
+            } else {
+                if (type1.equals("int") || type1.equals("float")) {
+                    return "ERROR: String and number cannot be compared";
+                }
+            }
+            WhereFunction wf = new WhereFunction(operator, type1, type2);
+            for (int i = 0; i < anonT.getNumRow(); i++) {
+                List<String> col1Values = anonT.getColumn(column1);
+                List<String> col2Values = anonT.getColumn(column2);
+                if (!(wf.function.apply(col1Values.get(i), col2Values.get(i)))) {
+                    anonT.removeRow(i);
+                    i -= 1;
+                }
+            }
+        }
+        return "";
     }
 
 /*

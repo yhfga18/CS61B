@@ -15,7 +15,7 @@ public class Database {
 
     public static String saveTable(Table t) {
         if (hasTable(t.getName())) {
-            return "ERROR: Table called " + t.getName() + " does not exist.";
+            return "ERROR: Table called " + t.getName() + " already exist";
         } else {
             database.put(t.getName(), t);
             return "";
@@ -34,7 +34,7 @@ public class Database {
     }
 
     public static String removeTable(String tableName) {
-        if (hasTable(tableName)) {
+        if (!(hasTable(tableName))) {
             return "ERROR: Table called " + tableName + " does not exist.";
         } else {
             database.remove(tableName);
