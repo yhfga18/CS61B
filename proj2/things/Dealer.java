@@ -210,7 +210,7 @@ public class Dealer {
             return t.toString();
         }
         // make a string to return. ここちゃんとできてない
-        return "ERROR: .*";
+        return "ERROR: no table called " + tableName + " in dealPrint in Dealer";
     }
     public static String dealSelect(String[] columnTitle,
                                     String[] tableName, String[][] conditions) {
@@ -270,7 +270,6 @@ public class Dealer {
                 if (condition[0] == null) {
                     break;
                 }
-
                 String errorString = whereHandle(anonT, condition);
                 if (errorString.length() > 1) {
                     return errorString;
@@ -568,12 +567,12 @@ public class Dealer {
             return a * b;
         } else {
             if (flag) {
-                if (b == 0) {
+                if (b == 0.0f || b == 0) {
                     return null;
                 }
                 return a / b;
             }
-            if (a == 0) {
+            if (a == 0.0f || a == 0) {
                 return null;
             }
             return b / a;
@@ -953,4 +952,3 @@ public class Dealer {
     }
 */
 }
-
