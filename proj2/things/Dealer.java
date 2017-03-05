@@ -126,7 +126,7 @@ public class Dealer {
         }
         Table t = Database.getTable(tableName);
         if (values.length != t.getNumCol()) {
-            return "ERROR: the number of inputs is invalid";
+            return ""; //"ERROR: the number of inputs is invalid";
         }
         if (!typeCheck(t, values)) {
             return "ERROR: wrong type";
@@ -264,7 +264,7 @@ public class Dealer {
 
         if (conditions != null) {
             for (String[] condition : conditions) {
-                if (condition[0] == null) {
+                if (condition == null) {
                     break;
                 }
                 String errorString = whereHandle(anonT, condition);

@@ -80,7 +80,7 @@ public class Parse {
             return select(m.group(1));
         } else {
             // System.err.printf("Malformed query: %s\n", query);
-            return "Malformed!!!";
+            return "ERROR: Malformed!!!";
         }
     }
 
