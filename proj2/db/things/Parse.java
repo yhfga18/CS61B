@@ -135,8 +135,14 @@ public class Parse {
             }else {
                 String[] andSeparatedCondition = m.group(4).split("\\s*and\\s*");// x > 2 and y > 5 → {x > 2,  x < 5};
                 for (int i = 0; i < andSeparatedCondition.length; i++){
-//u                    condition = new String[andSeparatedCondition.length][andSeparatedCondition.length*3];
-                    String[] eachCondition = andSeparatedCondition[i].split("\\s* \\s*");// x > 2;
+                    if (andSeparatedCondition[i] == null){
+                        return "ERROR: invalid operation 1";
+                    }
+                    String[] eachCondition = conditionMaker(andSeparatedCondition[i]);
+                    if (eachCondition == null) {
+                        return "ERROR: invalid operation 2";
+                    }
+                    //String[] eachCondition = andSeparatedCondition[i].split("\\s* \\s*");// x > 2;
                     if (!(isValidWhere(eachCondition))) {
                         return "ERROR : Invalid where clause, from select in Parse class";
                     }
@@ -296,13 +302,28 @@ public class Parse {
         }else {
             String[] andSeparatedCondition = m.group(3).split("\\s*and\\s*");// x > 2 and y > 5 → {x > 2,  x < 5};
             for (int i = 0; i < andSeparatedCondition.length; i++){
+                if (andSeparatedCondition[i] == null){
+                    return "ERROR: invalid operation 1";
+                }
+                String[] eachCondition = conditionMaker(andSeparatedCondition[i]);
+                if (eachCondition == null) {
+                    return "ERROR: invalid operation 2";
+                }
+                //String[] eachCondition = andSeparatedCondition[i].split("\\s* \\s*");// x > 2;
+                if (!(isValidWhere(eachCondition))) {
+                    return "ERROR : Invalid where clause, from select in Parse class";
+                }
+                condition[i] = eachCondition;
+            }
+            /*String[] andSeparatedCondition = m.group(3).split("\\s*and\\s*");// x > 2 and y > 5 → {x > 2,  x < 5};
+            for (int i = 0; i < andSeparatedCondition.length; i++){
                 //condition = new String[andSeparatedCondition.length][3];
                 String[] eachCondition = andSeparatedCondition[i].split("\\s* \\s*");// x > 2;
                 if (!(isValidWhere(eachCondition))) {
                     return "ERROR : Invalid where clause, from select in Parse class";
                 }
                 condition[i] = eachCondition;
-            }
+            }*/
         }
 
         return Dealer.dealSelect(columnTitle, tableName, condition, database);
@@ -333,7 +354,39 @@ public class Parse {
         }
         return false;
     }
+
+    private static String[] conditionMaker(String s){
+        String[] resultS = new String[3];
+        String[] splitS = new String[2];
+        if (s.contains("==")) {
+            splitS = s.split("==");
+            resultS[1] = "==";
+        } else if (s.contains("!=")) {
+            splitS = s.split("!=");
+            resultS[1] = "!=";
+        } else if (s.contains("<")) {
+            splitS = s.split("<");
+            resultS[1] = "<";
+        } else if (s.contains("<=")) {
+            splitS = s.split("<=");
+            resultS[1] = "<=";
+        } else if (s.contains(">")) {
+            splitS = s.split(">");
+            resultS[1] = ">";
+        } else if (s.contains(">=")) {
+            splitS = s.split(">=");
+            resultS[1] = ">=";
+        } else {
+            return null;
+        }
+        resultS[0] = splitS[0].trim();
+        resultS[2] = splitS[1].trim();
+        return resultS;
+    }
+
 }
+
+
 
 
 
@@ -387,4 +440,80 @@ public class Parse {
 
 
 
+
+    /*
+
+
+
+    public static String[] containOperator(String str) {
+        String[] array;
+        String[] result = new String[3];
+        if (hasPlus(str)) {
+            array = str.split("[+]");
+            result[0] = array[0].trim();
+            result[2] = array[1].trim();
+            result[1] = "+";
+            return result;
+        } else if (hasMinus(str)) {
+            array = str.split("-");
+            result[0] = array[0].trim();
+            result[2] = array[1].trim();
+            result[1] = "-";
+            return result;
+        } else if (hasMultiplication(str)) {
+            array = str.split("[*]");
+            result[0] = array[0].trim();
+            result[2] = array[1].trim();
+            result[1] = "*";
+            return result;
+        } else if (hasDivision(str)) {
+            array = str.split("/");
+            result[0] = array[0].trim();
+            result[2] = array[1].trim();
+            result[1] = "/";
+            return result;
+        }
+        return null;
+    }
+
+    private static boolean hasPlus(String str) {
+        String[] array = str.split("");
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals("+")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasMinus(String str) {
+        String[] array = str.split("");
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals("-")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasMultiplication(String str) {
+        String[] array = str.split("");
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals("*")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasDivision(String str) {
+        String[] array = str.split("");
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals("/")) {
+                return true;
+            }
+        }
+        return false;
+    }
+*/
 
