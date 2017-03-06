@@ -1,4 +1,4 @@
-package things;
+package db.things;
 
 /*import com.sun.scenario.effect.impl.state.LinearConvolveKernel;*/
 /*import com.sun.xml.internal.ws.api.ha.StickyFeature;*/

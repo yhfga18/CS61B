@@ -1,5 +1,5 @@
 package db;
-import things.Table;
+import db.things.Table;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -10,7 +10,7 @@ public class Database {
     // no constructor because fuck you that's why
 
     public String transact(String query) {
-        return things.Parse.eval(query, this);
+        return db.things.Parse.eval(query, this);
     }
 
     public String saveTable(Table t) {

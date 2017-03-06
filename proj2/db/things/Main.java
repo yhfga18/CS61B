@@ -1,4 +1,4 @@
-package things;
+package db.things;
 import db.Database;
 
 import java.io.BufferedReader;

@@ -1,11 +1,10 @@
-package things;
+package db.things;
 
 import db.Database;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 
 
 public class Parse {
@@ -201,8 +200,8 @@ public class Parse {
         // うえのStringJoiner joiner から "You are tring..." まで全部適当。動くように適当に
         // 与えられてるだけ。以下からメインのコード
 
-        // things.Dealer に飛ばす
-        //String result = things.Dealer.dealCreateTable(name, cols);
+        // db.things.Dealer に飛ばす
+        //String result = db.things.Dealer.dealCreateTable(name, cols);
 
         return name;
 
