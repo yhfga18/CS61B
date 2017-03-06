@@ -1,7 +1,6 @@
 package things;
 
 import db.Database;
-
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.Arrays;
@@ -61,26 +60,26 @@ public class Parse {
 
      */
 
-    public static String eval(String query) {
+    public static String eval(String query, Database database) {
         Matcher m;
         if ((m = CREATE_CMD.matcher(query)).matches()) {
-            return createTable(m.group(1));
+            return createTable(m.group(1), database);
         } else if ((m = LOAD_CMD.matcher(query)).matches()) {
             System.out.println("group 1 ____ : " + m.group(1)); // T1
-            return loadTable(m.group(1));
+            return loadTable(m.group(1), database);
         } else if ((m = STORE_CMD.matcher(query)).matches()) {
-            return storeTable(m.group(1));
+            return storeTable(m.group(1), database);
         } else if ((m = DROP_CMD.matcher(query)).matches()) {
-            return dropTable(m.group(1));
+            return dropTable(m.group(1), database);
         } else if ((m = INSERT_CMD.matcher(query)).matches()) {
-            return insertRow(m.group(1));
+            return insertRow(m.group(1), database);
         } else if ((m = PRINT_CMD.matcher(query)).matches()) {
-            return printTable(m.group(1));
+            return printTable(m.group(1), database);
         } else if ((m = SELECT_CMD.matcher(query)).matches()) {
-            return select(m.group(1));
+            return select(m.group(1), database);
         } else {
             // System.err.printf("Malformed query: %s\n", query);
-            return "ERROR: Malformed!!!";
+            return "Malformed!!!";
         }
     }
 
@@ -89,11 +88,15 @@ public class Parse {
 
     // create table seasonRatios as select City,Season,Wins/Losses as Ratio from teams,records
 
-    private static String createTable(String expr) {
+    private static String createTable(String expr, Database database) {
         // expr = T1 (x int, y int), for create table T1 (x int, y int)
         // expr = T1 as select * from T2 where x > y
         Matcher m;
         if ((m = CREATE_NEW.matcher(expr)).matches()) { // new table を作る
+            //System.out.println("in createTable method, ");
+            //System.out.println("group1 is : " + m.group(1)); // T1
+            //System.out.println("group2 is : " + m.group(2));
+            //System.out.println(m.group(2).split(COMMA));
             if (m.group(2).equals("")){
                 System.out.println("ERROR: no column specified");
             }
@@ -102,10 +105,7 @@ public class Parse {
             for (int i = 0; i < Tcolumns.length; i++) {
                 Tcolumns[i] = Tcolumns[i].replaceAll("\\s+"," ");
             }
-            String existCheck = Dealer.dealCreateTable(Tname, Tcolumns);
-            if (existCheck.length() > 0) {
-                return "";
-            }
+            return Dealer.dealCreateTable(Tname, Tcolumns, database);
 
         } else if ((m = CREATE_SEL.matcher(expr)).matches()) { // selectを含む
             // *** createSelectedTable(m.group(1), m.group(2), m.group(3), m.group(4));
@@ -117,12 +117,8 @@ public class Parse {
             System.out.println("m.group4 = " + m.group(4)); // x > y
             */
             String newTableName = m.group(1); // T2
-            if (Database.hasTable(newTableName)){
-                return "";
-            }
             String[] columnTitle = m.group(2).split("\\s*,\\s*");
-            String s3 = m.group(3);
-            String s4 = m.group(4);
+
 
  /*           if (m.group(2).contains("as")) {
                 String[] temp = m.group(2).split("\\s* as \\s*");
@@ -140,7 +136,7 @@ public class Parse {
             }else {
                 String[] andSeparatedCondition = m.group(4).split("\\s*and\\s*");// x > 2 and y > 5 → {x > 2,  x < 5};
                 for (int i = 0; i < andSeparatedCondition.length; i++){
-                    //condition = new String[andSeparatedCondition.length][andSeparatedCondition.length*3];
+//u                    condition = new String[andSeparatedCondition.length][andSeparatedCondition.length*3];
                     String[] eachCondition = andSeparatedCondition[i].split("\\s* \\s*");// x > 2;
                     if (!(isValidWhere(eachCondition))) {
                         return "ERROR : Invalid where clause, from select in Parse class";
@@ -148,7 +144,7 @@ public class Parse {
                     condition[i] = eachCondition;
                 }
             }
-            String result = Dealer.dealSelect(columnTitle, originalTableName, condition); // handling select
+            String result = Dealer.dealSelect(columnTitle, originalTableName, condition, database); // handling select
             String[] s = result.split("\n"); // putting string repr into array
             //for (String elem : s) {System.out.println("elem!! : " + elem); }
             //System.out.println("s.length == " + s.length);
@@ -157,13 +153,9 @@ public class Parse {
             String[] s2 = java.util.Arrays.copyOfRange(s, 1, s.length);
             //for (String elem : s2){System.out.println("s2 elem! : " + elem);}
 
-            if (Database.hasTable(newTableName)){
-                return "";
-            }
-            Dealer.dealCreateTable(newTableName, NewcolumnName);
-
+            Dealer.dealCreateTable(newTableName, NewcolumnName, database);
             for (String elem : s2) {
-                Dealer.dealInsert(newTableName, elem.split("\\s*,\\s*"));
+                Dealer.dealInsert(newTableName, elem.split("\\s*,\\s*"), database);
             }
             return "";
 
@@ -172,7 +164,7 @@ public class Parse {
 //            return Dealer.dealCreateTable(newTableName, result2);
 
         } else {
-            return "ERROR: Column name not given";
+            System.out.println("ERROR: Column name not given");
         }
         return "";
     }
@@ -226,31 +218,31 @@ public class Parse {
 */
 
 
-    private static String loadTable(String fileName) {
+    private static String loadTable(String fileName, Database database) {
         // System.out.printf("You are trying to load the table named %s\n", name);
 
         // load a file called name, somehow.
         //   System.out.println("LOAD fileName is: " + fileName);
         String realName = fileName.replaceAll("\\s+","");
-        return Dealer.dealLoad(realName);
+        return Dealer.dealLoad(realName, database);
     }
 
-    private static String storeTable(String name) {
+    private static String storeTable(String name, Database database) {
 /*        System.out.printf("You are trying to store the table named %s\n", name); */
         String realName = name.replaceAll("\\s+","");
-        return Dealer.dealStore(realName);
+        return Dealer.dealStore(realName, database);
         // パソコンにどうにかして入れ戻す (String file にする iteration でやればいい)
 
     }
 
-    private static String dropTable(String name) {
+    private static String dropTable(String name, Database database) {
         //  System.out.printf("You are trying to drop the table named %s\n", name);
         String realName = name.replaceAll("\\s+","");
-        return Dealer.dealDrop(realName);
+        return Dealer.dealDrop(realName, database);
 
     }
 
-    private static String insertRow(String expr) {
+    private static String insertRow(String expr, Database database) {
         /*
         original = insert into tname values (1,2,3,4)
         expr = tname values (1,2,3,4)
@@ -280,17 +272,17 @@ public class Parse {
 
             }
             //System.out.println("value[0]: " + values[0] + ", ... values[0]: " + values[1] + ", ... values[2]: " + values[2] + " ...DONE!");
-            return Dealer.dealInsert(tableName, values);
+            return Dealer.dealInsert(tableName, values, database);
         }
     }
 
-    private static String printTable(String name) {
+    private static String printTable(String name, Database database) {
         //System.out.printf("You are trying to print the table named %s\n", name);
         String realName = name.replaceAll("\\s+","");
-        return Dealer.dealPrint(realName);
+        return Dealer.dealPrint(realName, database);
     }
 
-    private static String select(String expr) {
+    private static String select(String expr, Database database) {
         Matcher m = SELECT_CLS.matcher(expr);
         if (!m.matches()) {
             System.err.printf("Malformed select: %s\n", expr);
@@ -314,7 +306,7 @@ public class Parse {
             }
         }
 
-        return Dealer.dealSelect(columnTitle, tableName, condition);
+        return Dealer.dealSelect(columnTitle, tableName, condition, database);
 
         // System.out.println(m.group(1) + "-2-" + m.group(2) + m.group(3));
         // select x from T1 where x > 2 をした時は、
@@ -333,7 +325,7 @@ public class Parse {
 
 
     private static boolean isValidWhere(String[] condition){
-        String operators[] = {"==", "!=", "<", ">", "<=", ">="};
+        String operators[] = {"=", "!=", "<", ">", "<=", ">="};
         List<String> operatorsList = Arrays.asList(operators);
         if (condition.length == 3 && operatorsList.contains(condition[1])){
             if ( (!(operatorsList.contains(condition[0]))) && (!(operatorsList.contains(condition[0])))){

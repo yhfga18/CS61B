@@ -45,7 +45,11 @@ public class CheckClass {
         return exactTitle.split(" ")[1];
     }
 
-    private String singleTypeChecker(String str) {
+    public String getSecondElem() {
+        return this.secondElem;
+    }
+
+    public String singleTypeChecker(String str) {
         if (str.contains("\'")) {
             return "string";
         } else if (str.contains(".")) {
@@ -54,7 +58,7 @@ public class CheckClass {
         try {
             Integer.parseInt(str);
         } catch (NumberFormatException e) {
-            return "ERROR: Type of the operand is wrong";
+            return "ERROR: Type of the operand is wrong in singleTypeChecker in CheckClass";
         }
         return "int";
     }

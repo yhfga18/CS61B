@@ -5,35 +5,35 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class Database {
-    private static Map<String, Table> database  = new HashMap<String, Table>();
+    private Map<String, Table> database  = new HashMap<String, Table>();
 
     // no constructor because fuck you that's why
 
-    public static String transact(String query) {
-        return things.Parse.eval(query);
+    public String transact(String query) {
+        return things.Parse.eval(query, this);
     }
 
-    public static String saveTable(Table t) {
+    public String saveTable(Table t) {
         if (hasTable(t.getName())) {
-            return "Already Exist!"; // "ERROR: Table called " + t.getName() + " already exist";
+            return ""; // "ERROR: Table called " + t.getName() + " already exist";
         } else {
             database.put(t.getName(), t);
             return "";
         }
     }
 
-    public static boolean hasTable(String tableName) {
-        return Database.database.containsKey(tableName);
+    public boolean hasTable(String tableName) {
+        return database.containsKey(tableName);
     }
 
-    public static Table getTable(String tableName) {
+    public Table getTable(String tableName) {
         if (hasTable(tableName)) {
             return database.get(tableName);
         }
         return null;
     }
 
-    public static String removeTable(String tableName) {
+    public String removeTable(String tableName) {
         if (!(hasTable(tableName))) {
             return "ERROR: Table called " + tableName + " does not exist.";
         } else {

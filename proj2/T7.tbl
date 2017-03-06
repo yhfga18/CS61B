@@ -1,0 +1,4 @@
+name string,age int,birthdat int
+'Tom',20,1204
+'John',22,0813
+'Ally',21,0921
