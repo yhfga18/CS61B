@@ -90,4 +90,3 @@ public class CheckClass {
         return this.secondElem.substring(1,this.secondElem.length()-1);
     }
 }
-

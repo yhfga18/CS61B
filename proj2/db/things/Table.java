@@ -29,7 +29,7 @@ public class Table<T> {
         }
 //        System.out.println("zeroRow is now: ");
 //        System.out.println(zeroRow.toString());
-        // size() method でelement(row)の個数はわかる！
+        // size() method ã§element(row)ã®å€‹æ•°ã¯ã‚ã‹ã‚‹ï¼
     }
 
     public String[] getColumnName(){
@@ -81,7 +81,7 @@ public class Table<T> {
         return;
     }
 
-    // trimToSize() method でarrayListのcontainer減らせる
+    // trimToSize() method ã§arrayListã®containeræ¸›ã‚‰ã›ã‚‹
 
 
     // add row or column
@@ -187,10 +187,10 @@ public class Table<T> {
         for (int i = 0; i < this.zeroRow.size() - 1; i ++) {
             returnString = returnString + this.zeroRow.get(i) + ",";
         }
-        returnString = returnString + this.zeroRow.get(this.zeroRow.size() - 1) + "\n"; //　改行してる
+        returnString = returnString + this.zeroRow.get(this.zeroRow.size() - 1) + "\n"; //ã€€æ”¹è¡Œã—ã¦ã‚‹
 
-        // この上まででtitle部分完成
-        // 以下本体
+        // ã“ã®ä¸Šã¾ã§ã§titleéƒ¨åˆ†å®Œæˆ
+        // ä»¥ä¸‹æœ¬ä½“
         //DecimalFormat df = new DecimalFormat("#.000");
         ArrayList<Integer> fIndex = this.floatColumnIndexList(); // list of index of the float columns
 
@@ -233,7 +233,7 @@ public class Table<T> {
             return f;
         }
         float fl = Float.parseFloat(f);
-        String realFloat = String.format("%.03f", fl); // 切り捨てじゃなくて四捨五入になってる！！！！！！！！！
+        String realFloat = String.format("%.03f", fl); // åˆ‡ã‚Šæ¨ã¦ã˜ã‚ƒãªãã¦å››æ¨äº”å…¥ã«ãªã£ã¦ã‚‹ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼ï¼
 /*        if (realFloat.startsWith(".")){ //((Character.toString(realFloat.charAt(0))).equals("."))
             realFloat = "0" + realFloat;
         }
@@ -241,8 +241,8 @@ public class Table<T> {
         return realFloat;
     }
 
-    // "NOVALUE"をhandle
-    // 0.001 とかをhandle
+    // "NOVALUE"ã‚’handle
+    // 0.001 ã¨ã‹ã‚’handle
 }
 
    /*
@@ -287,6 +287,5 @@ public class Table<T> {
         }
     }
     */
-
 
 
