@@ -1,6 +1,6 @@
 package db.things;
 import java.util.*;
-import java.text.DecimalFormat;
+//import java.text.DecimalFormat;
 
 
 
@@ -191,7 +191,7 @@ public class Table<T> {
 
         // この上まででtitle部分完成
         // 以下本体
-        DecimalFormat df = new DecimalFormat("#.000");
+        //DecimalFormat df = new DecimalFormat("#.000");
         ArrayList<Integer> fIndex = this.floatColumnIndexList(); // list of index of the float columns
 
         for (LinkedList elem : this.zeroColumn) {
@@ -229,14 +229,15 @@ public class Table<T> {
     }
 
     public String floatHandle(String f) {
-        if (f.equals("NOVALUE")){
+        if (f.equals("NOVALUE") || f.equals("NaN")){
             return f;
         }
-        DecimalFormat df = new DecimalFormat("#.000");
-        String realFloat = df.format(Float.parseFloat(f)); // 切り捨てじゃなくて四捨五入になってる！！！！！！！！！
-        if (realFloat.startsWith(".")){ //((Character.toString(realFloat.charAt(0))).equals("."))
+        float fl = Float.parseFloat(f);
+        String realFloat = String.format("%.03f", fl); // 切り捨てじゃなくて四捨五入になってる！！！！！！！！！
+/*        if (realFloat.startsWith(".")){ //((Character.toString(realFloat.charAt(0))).equals("."))
             realFloat = "0" + realFloat;
         }
+        */
         return realFloat;
     }
 
