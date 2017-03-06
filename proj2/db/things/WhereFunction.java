@@ -86,8 +86,21 @@ class ApplyFunction implements Function{
         this.operator = oper;
     }
     public boolean apply(String v1, String v2) {
-        float fv1 = Float.parseFloat(v1);
-        float fv2 = Float.parseFloat(v2);
+        float fv1;
+        float fv2;
+        if (v1.equals("NaN") && v2.equals("NaN")) {
+            fv1 = 0.0f;
+            fv2 = 0.0f;
+        } else if (v1.equals("NaN") && (!(v2.equals("NaN")))) {
+            fv1 = 10.0f;
+            fv2 = 0.0f;
+        } else if ((!(v1.equals("NaN"))) && (v2.equals("NaN"))) {
+            fv1 = 0.0f;
+            fv2 = 10.0f;
+        } else {
+            fv1 = Float.parseFloat(v1);
+            fv2 = Float.parseFloat(v2);
+        }
         float diff = this.function.apply(fv1, fv2);
         return finalApply(diff, this.operator);
     }

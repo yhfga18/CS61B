@@ -78,7 +78,7 @@ public class Parse {
             return select(m.group(1), database);
         } else {
             // System.err.printf("Malformed query: %s\n", query);
-            return "Malformed!!!";
+            return "ERROR: Malformed!!";
         }
     }
 

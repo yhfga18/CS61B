@@ -940,30 +940,32 @@ public class Dealer {
                 List<String> colValues = anonT.getColumn(column1);
                 if (secondFloatElem != null) {
                     String a = colValues.get(i);
-                    if (a.equals("NOVALUE") || a.equals("NaN")) {
-                        a = "0.0f";
+                    if (a.equals("NOVALUE")) {
+                        anonT.removeRow(i);
+                        i -= 1;
                     }
-                    if (!((wf.function.apply(a, secondFloatElem.toString())))) {
+                    //else if (a.equals("NaN")) {
+                    //}
+                    else if (!((wf.function.apply(a, secondFloatElem.toString())))) {
                         anonT.removeRow(i);
                         i -= 1;
                     }
                 } else if (secondIntElem != null) {
                     String a = colValues.get(i);
-                    if (a.equals("NOVALUE") || a.equals("NaN")) {
-                        a = "0";
-                    }
-                    if (!(wf.function.apply(a, secondIntElem.toString()))) {
+                    if (a.equals("NOVALUE")) {
+                        anonT.removeRow(i);
+                        i -= 1;
+                    } //else if (a.equals("NaN")) {
+                    //}
+                    else if (!(wf.function.apply(a, secondIntElem.toString()))) {
                         anonT.removeRow(i);
                         i -= 1;
                     }
                 } else if (secondStringElem != null) {
                     String a = colValues.get(i);
-                    if (a.equals("NOVALUE") || a.equals("NaN")) {
-                        a = "";
-                        if (!(wf.function.apply(a, secondStringElem.toString()))) {
-                            anonT.removeRow(i);
-                            i -= 1;
-                        }
+                    if (a.equals("NOVALUE")) {
+                        anonT.removeRow(i);
+                        i -= 1;
                     } else if (!(wf.function.apply(a.substring(1, a.length() - 1), secondStringElem.toString()))) {
                         anonT.removeRow(i);
                         i -= 1;
@@ -991,7 +993,13 @@ public class Dealer {
             for (int i = 0; i < anonT.getNumRow(); i++) {
                 List<String> col1Values = anonT.getColumn(column1);
                 List<String> col2Values = anonT.getColumn(column2);
-                if (!(wf.function.apply(col1Values.get(i), col2Values.get(i)))) {
+                String col1 = col1Values.get(i);
+                String col2 = col2Values.get(i);
+
+                if (col1.equals("NOVALUE") || col2.equals("NOVALUE")) {
+                    anonT.removeRow(i);
+                    i -= 1;
+                } else if (!(wf.function.apply(col1, col2))) {
                     anonT.removeRow(i);
                     i -= 1;
                 }
