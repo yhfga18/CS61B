@@ -324,7 +324,7 @@ public class Parse {
 
 
     private static boolean isValidWhere(String[] condition){
-        String operators[] = {"=", "!=", "<", ">", "<=", ">="};
+        String operators[] = {"==", "!=", "<", ">", "<=", ">="};
         List<String> operatorsList = Arrays.asList(operators);
         if (condition.length == 3 && operatorsList.contains(condition[1])){
             if ( (!(operatorsList.contains(condition[0]))) && (!(operatorsList.contains(condition[0])))){
