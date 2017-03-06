@@ -169,9 +169,8 @@ public class Parse {
 //            return Dealer.dealCreateTable(newTableName, result2);
 
         } else {
-            System.out.println("ERROR: Column name not given");
+            return "ERROR: Column name not given";
         }
-        return "";
     }
     /* Printing stuffs info
     for "" create table T1 (x int, y int) "" ,
@@ -364,18 +363,18 @@ public class Parse {
         } else if (s.contains("!=")) {
             splitS = s.split("!=");
             resultS[1] = "!=";
-        } else if (s.contains("<")) {
-            splitS = s.split("<");
-            resultS[1] = "<";
         } else if (s.contains("<=")) {
             splitS = s.split("<=");
             resultS[1] = "<=";
-        } else if (s.contains(">")) {
-            splitS = s.split(">");
-            resultS[1] = ">";
+        } else if (s.contains("<")) {
+            splitS = s.split("<");
+            resultS[1] = "<";
         } else if (s.contains(">=")) {
             splitS = s.split(">=");
             resultS[1] = ">=";
+        } else if (s.contains(">")) {
+            splitS = s.split(">");
+            resultS[1] = ">";
         } else {
             return null;
         }

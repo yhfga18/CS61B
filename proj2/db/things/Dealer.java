@@ -54,10 +54,12 @@ public class Dealer {
                 filewriter.write(t.toString());
                 filewriter.close();
             } else {
-                System.out.println("cannot write");
+                return "ERROR: cannot write";
             }
-        }catch(IOException e){
-            System.out.println(e);
+        } catch(IOException e) {
+            return "ERROR: IOException";
+        } catch (NullPointerException e) {
+            return "ERROR: NullPointerException";
         }
         return "";
     }
@@ -87,9 +89,11 @@ public class Dealer {
             database.saveTable(newTable);
             br.close();
         } catch (FileNotFoundException e) {
-            System.out.println("ERROR: " + e);
+            return "ERROR: FileNotFoundException";
         } catch (IOException e) {
-            System.out.println(e);
+            return "ERROR: IOException";
+        } catch (NullPointerException e) {
+            return "ERROR: NullPointerException";
         }
         return "";
     }
@@ -139,19 +143,23 @@ public class Dealer {
 
 
     private static boolean isTable(Table t) {
-        if (isValidColumn(t)) {
-            for (int i = 0; i < t.getNumRow(); i++) {
-                String[] rowArray = new String[t.getNumCol()];
-                for (int k = 0; k < t.getNumCol(); k++) {
-                    rowArray[k] = (String) t.getRow(i).get(k);
+        try {
+            if (isValidColumn(t)) {
+                for (int i = 0; i < t.getNumRow(); i++) {
+                    String[] rowArray = new String[t.getNumCol()];
+                    for (int k = 0; k < t.getNumCol(); k++) {
+                        rowArray[k] = (String) t.getRow(i).get(k);
+                    }
+                    if (!typeCheck(t, rowArray)) {
+                        return false;
+                    }
                 }
-                if (!typeCheck(t, rowArray)) {
-                    return false;
-                }
+                return true;
             }
-            return true;
+            return false;
+        } catch (IndexOutOfBoundsException e) {
+            return false;
         }
-        return false;
     }
 
     private static boolean isValidColumn(Table t) {
@@ -162,6 +170,11 @@ public class Dealer {
             }
             String type = array[1];
             if (!(type.equals("int") || type.equals("float") || type.equals("string"))) {
+                return false;
+            }
+        }
+        for (int k = 0; k < t.getNumRow(); k++) {
+            if (t.getRow(k).size() != t.getNumCol()) {
                 return false;
             }
         }
@@ -578,6 +591,9 @@ public class Dealer {
     // according to the given operator, return the computed result as float number
     // if it has zero division error, return null. This will be handled in convertFloatToString or convertToIntString
     private static Float operateFloatInt(Float a, Integer b, String operator, boolean flag) {
+        if (a == null || b == null) {
+            return null;
+        }
         if (operator.equals("+")) {
             return a + b;
         } else if (operator.equals("-")) {
@@ -605,6 +621,9 @@ public class Dealer {
     // accoding to the given operator, return the computed result as int number
     // if it has zero division error, return null. This will be handled in convertFloatToString or convertToIntString
     private static Integer operateInt(Integer a, Integer b, String operator) {
+        if (a == null || b == null) {
+            return null;
+        }
         if (operator.equals("+")) {
             return a + b;
         } else if (operator.equals("-")) {
@@ -623,6 +642,9 @@ public class Dealer {
     // accoding to the given operator, return the computed result as float number
     // if it has zero division error, return null. This will be handled in convertFloatToString or convertToIntString
     private static Float operateFloat(Float a, Float b, String operator) {
+        if (a == null || b == null) {
+            return null;
+        }
         if (operator.equals("+")) {
             return a + b;
         } else if (operator.equals("-")) {
@@ -640,7 +662,7 @@ public class Dealer {
     private static String[] convertString(List<String> p) {
         String[] array = new String[p.size()];
         for (int i = 0; i < p.size(); i++) {
-            if (p.get(i).equals("NOVALUE") || p.get(i).equals("NaN")) {
+            if (p.get(i).equals("NOVALUE")) {
                 array[i] = "";
             } else {
                 array[i] = p.get(i).substring(1, p.get(i).length() - 1);
@@ -654,8 +676,10 @@ public class Dealer {
     private static Integer[] convertInt(List<String> p) {
         Integer[] array = new Integer[p.size()];
         for (int i = 0; i < p.size(); i++) {
-            if (p.get(i).equals("NOVALUE") || p.get(i).equals("NaN")) {
+            if (p.get(i).equals("NOVALUE")) {
                 array[i] = 0;
+            } else if (p.get(i).equals("NaN")) {
+                array[i] = null;
             } else {
                 array[i] = Integer.parseInt((p.get(i)));
             }
@@ -668,8 +692,10 @@ public class Dealer {
     private static Float[] convertFloat(List<String> p) {
         Float[] array = new Float[p.size()];
         for (int i = 0; i < p.size(); i++) {
-            if (p.get(i).equals("NOVALUE") || p.get(i).equals("NaN")) {
+            if (p.get(i).equals("NOVALUE")) {
                 array[i] = 0.0f;
+            } else if ( p.get(i).equals("NaN")){
+                array[i] = null;
             } else {
                 array[i] = Float.parseFloat(p.get(i));
             }
