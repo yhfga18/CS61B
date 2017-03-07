@@ -21,6 +21,8 @@ import java.io.IOException;
 
 public class Dealer {
 
+    private static int joinCount = 0;
+
     public static String dealCreateTable(String tableName, String[] columnTitles, Database database) {
         Table newTable = new Table(tableName, columnTitles);
         if (!isTable(newTable)) {
@@ -238,7 +240,7 @@ public class Dealer {
         // checks if such tables exist
         for (int i = 0; i < tableName.length; i++) {
             if (!(database.hasTable(tableName[i]))) {
-                return "ERROR: There isn't table called " + tableName + " in database...";
+                return "ERROR: There isn't table called " + tableName[0] + tableName[i] + " in database...";
             }
         }
 
@@ -262,7 +264,7 @@ public class Dealer {
                     for (int i = 2; i < tableName.length; i++) {
                         tableName[i - 1] = tableName[i];
                     }
-                    tableName[0] = "joinedTable";
+                    tableName[0] = "joinedTable" + joinCount;
                     tableNameLen -= 1;
                 }
             }
@@ -492,7 +494,7 @@ public class Dealer {
         }
 
 
-
+        joinCount = joinCount + 1;
 
 
 
@@ -820,8 +822,8 @@ public class Dealer {
 
         // creates a new table
         // This will be the result
-        Table joited = new Table("joinedTable", newColTitle);
-
+        Table joited = new Table("joinedTable" + joinCount, newColTitle);
+        //joinCount = joinCount + 1;
         LinkedList<String> pRowContents;
         LinkedList<String> qRowContents;
         // adds all possible rows

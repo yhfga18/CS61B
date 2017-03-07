@@ -288,44 +288,48 @@ public class Parse {
     private static String select(String expr, Database database) {
         Matcher m = SELECT_CLS.matcher(expr);
         if (!m.matches()) {
-            System.err.printf("Malformed select: %s\n", expr);
+            return "ERROR: Malformed select in select in Parse";
         }
-
-        // m.group(1) ... x, y, x + y as w int
-        String[] columnTitle = m.group(1).split("\\s*,\\s*");
-        String[] tableName = m.group(2).split("\\s*,\\s*");   // T1
-        String[][] condition = new String[10][3];
-        if (m.group(3) == null) {
-            condition = null;
-        }else {
-            String[] andSeparatedCondition = m.group(3).split("\\s*and\\s*");// x > 2 and y > 5 → {x > 2,  x < 5};
-            for (int i = 0; i < andSeparatedCondition.length; i++){
-                if (andSeparatedCondition[i] == null){
-                    return "ERROR: invalid operation 1";
+        try {
+            // m.group(1) ... x, y, x + y as w int
+            String[] columnTitle = m.group(1).split("\\s*,\\s*");
+            String[] tableName = m.group(2).split("\\s*,\\s*");   // T1
+            String[][] condition = new String[10][3];
+            if (m.group(3) == null) {
+                condition = null;
+            }else {
+                String[] andSeparatedCondition = m.group(3).split("\\s*and\\s*");// x > 2 and y > 5 → {x > 2,  x < 5};
+                for (int i = 0; i < andSeparatedCondition.length; i++) {
+                    if (andSeparatedCondition[i] == null) {
+                        return "ERROR: invalid operation 1";
+                    }
+                    String[] eachCondition = conditionMaker(andSeparatedCondition[i]);
+                    if (eachCondition == null) {
+                        return "ERROR: invalid operation 2";
+                    }
+                    //String[] eachCondition = andSeparatedCondition[i].split("\\s* \\s*");// x > 2;
+                    if (!(isValidWhere(eachCondition))) {
+                        return "ERROR : Invalid where clause, from select in Parse class";
+                    }
+                    condition[i] = eachCondition;
                 }
-                String[] eachCondition = conditionMaker(andSeparatedCondition[i]);
-                if (eachCondition == null) {
-                    return "ERROR: invalid operation 2";
-                }
-                //String[] eachCondition = andSeparatedCondition[i].split("\\s* \\s*");// x > 2;
-                if (!(isValidWhere(eachCondition))) {
-                    return "ERROR : Invalid where clause, from select in Parse class";
-                }
-                condition[i] = eachCondition;
+                /*String[] andSeparatedCondition = m.group(3).split("\\s*and\\s*");// x > 2 and y > 5 → {x > 2,  x < 5};
+                for (int i = 0; i < andSeparatedCondition.length; i++){
+                    //condition = new String[andSeparatedCondition.length][3];
+                    String[] eachCondition = andSeparatedCondition[i].split("\\s* \\s*");// x > 2;
+                    if (!(isValidWhere(eachCondition))) {
+                        return "ERROR : Invalid where clause, from select in Parse class";
+                    }
+                    condition[i] = eachCondition;
+                }*/
             }
-            /*String[] andSeparatedCondition = m.group(3).split("\\s*and\\s*");// x > 2 and y > 5 → {x > 2,  x < 5};
-            for (int i = 0; i < andSeparatedCondition.length; i++){
-                //condition = new String[andSeparatedCondition.length][3];
-                String[] eachCondition = andSeparatedCondition[i].split("\\s* \\s*");// x > 2;
-                if (!(isValidWhere(eachCondition))) {
-                    return "ERROR : Invalid where clause, from select in Parse class";
-                }
-                condition[i] = eachCondition;
-            }*/
+            return Dealer.dealSelect(columnTitle, tableName, condition, database);
+
+        } catch (IllegalStateException e1) {
+            return "ERROR: " + e1 + " ...IllegalStateException happened in select in Parse!";
+        } catch (Exception e2) {
+            return "ERROR: " + e2 + " happened in select in Parse!";
         }
-
-        return Dealer.dealSelect(columnTitle, tableName, condition, database);
-
         // System.out.println(m.group(1) + "-2-" + m.group(2) + m.group(3));
         // select x from T1 where x > 2 をした時は、
         // group1 = x つまり columnのtitle
