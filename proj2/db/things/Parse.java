@@ -253,8 +253,7 @@ public class Parse {
          */
         Matcher m = INSERT_CLS.matcher(expr);
         if (!m.matches()) {
-            System.err.printf("Malformed insert: %s\n", expr);
-            return null;
+            return "ERROR: Malformed Insert!";
         } else {
             //System.out.printf("You are trying to insert the row \"%s\" into the table %s\n", m.group(2), m.group(1));
             //System.out.println("m.group1, m.group2 are ...... : " + m.group(1) + " and " + m.group(2));

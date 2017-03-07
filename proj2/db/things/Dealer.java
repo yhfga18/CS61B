@@ -318,7 +318,7 @@ public class Dealer {
                 } else if (name == null) {
                     String[] array = containOperator(colChank[0]);
                     if (array ==  null) {
-                        return "ERROR: no such column";
+                        return "ERROR: no such column: " + "colChank = " + colChank[0];
                     }
                     return "ERROR: needs column name";
                 } else {
