@@ -972,38 +972,44 @@ public class Dealer {
             }
             WhereFunction wf = new WhereFunction(operator, type1, type2);
             // function func をここで作って、first columnに対してfor loop
+            List<String> colValues = anonT.getColumn(column1);
             for (int i = 0; i < anonT.getNumRow(); i++) {
-                List<String> colValues = anonT.getColumn(column1);
                 if (secondFloatElem != null) {
                     String a = colValues.get(i);
                     if (a.equals("NOVALUE")) {
                         anonT.removeRow(i);
+                        colValues.remove(i);
                         i -= 1;
                     }
                     //else if (a.equals("NaN")) {
                     //}
                     else if (!((wf.function.apply(a, secondFloatElem.toString())))) {
                         anonT.removeRow(i);
+                        colValues.remove(i);
                         i -= 1;
                     }
                 } else if (secondIntElem != null) {
                     String a = colValues.get(i);
                     if (a.equals("NOVALUE")) {
                         anonT.removeRow(i);
+                        colValues.remove(i);
                         i -= 1;
                     } //else if (a.equals("NaN")) {
                     //}
                     else if (!(wf.function.apply(a, secondIntElem.toString()))) {
                         anonT.removeRow(i);
+                        colValues.remove(i);
                         i -= 1;
                     }
                 } else if (secondStringElem != null) {
                     String a = colValues.get(i);
                     if (a.equals("NOVALUE")) {
                         anonT.removeRow(i);
+                        colValues.remove(i);
                         i -= 1;
                     } else if (!(wf.function.apply(a.substring(1, a.length() - 1), secondStringElem.toString()))) {
                         anonT.removeRow(i);
+                        colValues.remove(i);
                         i -= 1;
                     }
                 }
@@ -1026,17 +1032,23 @@ public class Dealer {
                 }
             }
             WhereFunction wf = new WhereFunction(operator, type1, type2);
+            List<String> col1Values = anonT.getColumn(column1);
+            List<String> col2Values = anonT.getColumn(column2);
             for (int i = 0; i < anonT.getNumRow(); i++) {
-                List<String> col1Values = anonT.getColumn(column1);
-                List<String> col2Values = anonT.getColumn(column2);
+                //List<String> col1Values = anonT.getColumn(column1);
+                //List<String> col2Values = anonT.getColumn(column2);
                 String col1 = col1Values.get(i);
                 String col2 = col2Values.get(i);
 
                 if (col1.equals("NOVALUE") || col2.equals("NOVALUE")) {
                     anonT.removeRow(i);
+                    col1Values.remove(i);
+                    col2Values.remove(i);
                     i -= 1;
                 } else if (!(wf.function.apply(col1, col2))) {
                     anonT.removeRow(i);
+                    col1Values.remove(i);
+                    col2Values.remove(i);
                     i -= 1;
                 }
             }
