@@ -8,6 +8,10 @@ import db.Database;
 /*import java.util.ArrayList; */
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 /*import java.util.*; */
 
 import java.io.File;
@@ -812,46 +816,76 @@ public class Dealer {
 
 
     // joins two tables
+    // joins two tables
     private static Table joinSelect(String[] columnTitle, String[] tableName, Database database) {
         Table tempTableP =  database.getTable(tableName[0]);
         Table tempTableQ = database.getTable(tableName[1]);
         String[] tempColNameP = tempTableP.getColumnName();
         String[] tempColNameQ = tempTableQ.getColumnName();
-        // creates temporary jointed column. Duplicated one will be droped
-        String[] newColTitle = combine(tempColNameP, tempColNameQ);
+        String[] combinedTitle = combine(tempColNameP, tempColNameQ);
+        Table joinedTable = new Table("joinedTable" + joinCount, combinedTitle);
+        for (int rowIndexP = 0; rowIndexP < tempTableP.getNumRow(); rowIndexP++) {
+            for (int rowIndexQ = 0; rowIndexQ < tempTableQ.getNumRow(); rowIndexQ++) {
+                joinedTable.addRowLast(catenate(tempTableP.getRow(rowIndexP), tempTableQ.getRow(rowIndexQ)));
+            }
+        }
 
-        // creates a new table
-        // This will be the result
-        Table joited = new Table("joinedTable" + joinCount, newColTitle);
-        //joinCount = joinCount + 1;
-        LinkedList<String> pRowContents;
-        LinkedList<String> qRowContents;
-        // adds all possible rows
-        // if there are invalid rows, doesn't add it (e.g. jointed table has two x column, but dont't have common values)
-        for (int pRow = 0; pRow < tempTableP.getNumRow(); pRow++) {
-            pRowContents = tempTableP.getRow(pRow);
-            for (int qRow = 0; qRow < tempTableQ.getNumRow(); qRow++) {
-                qRowContents = tempTableQ.getRow(qRow);
-                // check its validity
-                if (check(tempTableP, pRowContents, tempTableQ, qRowContents)) {
-                    joited.addRowLast(catenate(pRowContents, qRowContents));
-                }
+        for (int rowIndex = 0; rowIndex < joinedTable.getNumRow(); rowIndex++) {
+            if (deleteRows(joinedTable, rowIndex, combinedTitle, joinedTable.getRow(rowIndex))) {
+                rowIndex--;
             }
         }
-        // drops duplicated column
-        for (int i = 0; i < joited.getNumCol(); i++) {
-            for (int indexToBeDeleted = i + 1; indexToBeDeleted < joited.getNumCol(); indexToBeDeleted++) {
-                if (joited.getColumnName()[i].equals(joited.getColumnName()[indexToBeDeleted])) {
-                    joited.removeColmnTitle(indexToBeDeleted);
-                    joited.removeColumn(indexToBeDeleted);
-                }
+
+        Integer[] array = duplicatedIndecies(combinedTitle);
+        if (array != null) {
+            for (int i = 0; i < array.length; i++) {
+                joinedTable.removeColmnTitle(array[i] - i);
+                joinedTable.removeColumn(array[i] - i);
             }
         }
+
         // saves it as "jointedTable" in db just in case where it will be call somewhere
-        database.saveTable(joited);
+        database.saveTable(joinedTable);
 
-        return joited;
+        return joinedTable;
     }
+
+
+    private static Integer[] duplicatedIndecies(String[] colTitle) {
+        Set s = new HashSet<>();
+        LinkedList<Integer> indexToBeDeleted = new LinkedList<>();
+        for (int i = 0; i < colTitle.length; i++) {
+            if (!s.contains(colTitle[i])) {
+                s.add(colTitle[i]);
+            } else {
+                indexToBeDeleted.addLast(i);
+            }
+        }
+        if (indexToBeDeleted.size() < 1) {
+            return null;
+        } else if (indexToBeDeleted.get(0) == null) {
+            return null;
+        }
+        return indexToBeDeleted.toArray(new Integer[0]);
+    }
+
+    private static boolean deleteRows(Table t, int rowIndex, String[] colTitle, LinkedList<String> lnk) {
+        Map<String, String> result = new HashMap<>();
+        for (int i = 0; i < lnk.size(); i++) {
+            if (!result.containsKey(colTitle[i])) {
+                result.put(colTitle[i], lnk.get(i));
+            } else {
+                if (!result.get(colTitle[i]).equals(lnk.get(i))) {
+                    t.removeRow(rowIndex);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+
 
     // combines two columns to single one
     // allows duplicated names
