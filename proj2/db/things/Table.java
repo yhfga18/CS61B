@@ -182,12 +182,12 @@ public class Table<T> {
 
     public String toString(){
 //        LinkedList<T> stringList = new LinkedList();
-        String returnString = "";
+        StringBuilder returnString = new StringBuilder();
 
         for (int i = 0; i < this.zeroRow.size() - 1; i ++) {
-            returnString = returnString + this.zeroRow.get(i) + ",";
+            returnString.append(this.zeroRow.get(i) + ",");
         }
-        returnString = returnString + this.zeroRow.get(this.zeroRow.size() - 1) + "\n"; //ã€€æ”¹è¡Œã—ã¦ã‚‹
+        returnString.append(this.zeroRow.get(this.zeroRow.size() - 1) + "\n"); //ã€€æ”¹è¡Œã—ã¦ã‚‹
 
         // ã“ã®ä¸Šã¾ã§ã§titleéƒ¨åˆ†å®Œæˆ
         // ä»¥ä¸‹æœ¬ä½“
@@ -199,18 +199,18 @@ public class Table<T> {
                 if (fIndex.contains(i)) {
                     //System.out.println("elem.get(i) : " + elem.get(i));
                     String floatValue = elem.get(i).toString();
-                    returnString = returnString + floatHandle(floatValue) + ","; //String.format("%.5g%n", 0.912385);
+                    returnString.append(floatHandle(floatValue) + ","); //String.format("%.5g%n", 0.912385);
 
                 } else {
-                    returnString = returnString + elem.get(i) + ",";
+                    returnString.append(elem.get(i) + ",");
                 }
             }
-            returnString = returnString.substring(0, returnString.length() - 1) + "\n";
+            returnString = new StringBuilder(returnString.substring(0, returnString.length() - 1) + "\n");
         }
 
-        returnString = returnString.substring(0, returnString.length() - 1);
+        returnString = new StringBuilder(returnString.substring(0, returnString.length() - 1));
 
-        return returnString;
+        return new String(returnString);
     }
 
     public ArrayList<Integer> floatColumnIndexList() {
