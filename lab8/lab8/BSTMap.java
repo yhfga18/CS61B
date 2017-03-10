@@ -8,7 +8,7 @@ import java.util.Set;
  */
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
-    private class Node{
+    private class Node {
 
         private K key;
         private V value;
@@ -16,16 +16,16 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         private Node left;
         private Node right;
 
-        public Node(K key, V value) {
+        Node(K key, V value) {
             this.key = key;
             this.value = value;
         }
 
-        public V getV(){
+        public V getV() {
             return this.value;
         }
 
-        public K getK(){
+        public K getK() {
             return this.key;
         }
 
@@ -34,18 +34,18 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     private Node root;
     private int size;
 
-    public BSTMap(){
+    public BSTMap() {
         this.clear();
     }
 
     /** Removes all of the mappings from this map. */
-    public void clear(){
+    public void clear() {
         this.root = null;
         this.size = 0;
     }
 
     /* Returns true if this map contains a mapping for the specified key. */
-    public boolean containsKey(K key){
+    public boolean containsKey(K key) {
         Node pointer = this.root;
 
         while (pointer != null) {
@@ -67,7 +67,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      * map contains no mapping for the key.
      */
 
-    public V get(K key){
+    public V get(K key) {
         return getHelper(key, this.root);
     }
 
@@ -77,7 +77,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         }
 
         int diff = key.compareTo(p.getK());
-        if (diff < 0){
+        if (diff < 0) {
             return getHelper(key, p.left);
         } else if (diff > 0) {
             return getHelper(key, p.right);
@@ -88,7 +88,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     }
 
     /* Returns the number of key-value mappings in this map. */
-    public int size(){
+    public int size() {
         return size;
     }
 
@@ -121,13 +121,13 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     }
 
 */
-    public Set<K> keySet(){
+    public Set<K> keySet() {
         throw new UnsupportedOperationException("KeySet");
     }
-    public Iterator iterator(){
+    public Iterator iterator() {
         throw new UnsupportedOperationException("iterator");
     }
-    public V remove(K key){
+    public V remove(K key) {
         throw new UnsupportedOperationException("remove");
     }
     public V remove(K key, V value) {
