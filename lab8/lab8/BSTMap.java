@@ -47,17 +47,19 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     /* Returns true if this map contains a mapping for the specified key. */
     public boolean containsKey(K key){
         Node pointer = this.root;
+
         while (pointer != null) {
-            if (pointer.key == key) {
-                return true;
-            }
             int diff = key.compareTo(pointer.getK());
+
             if (diff < 0) {
                 pointer = pointer.left;
             } else if (diff > 0) {
                 pointer = pointer.right;
+            } else {
+                return true;
             }
         }
+
         return false;
     }
 
@@ -120,16 +122,16 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
 */
     public Set<K> keySet(){
-        return null;
+        throw new UnsupportedOperationException("KeySet");
     }
     public Iterator iterator(){
-        return null;
+        throw new UnsupportedOperationException("iterator");
     }
     public V remove(K key){
-        return null;
+        throw new UnsupportedOperationException("remove");
     }
     public V remove(K key, V value) {
-        return null;
+        throw new UnsupportedOperationException("remove");
     }
 
 
