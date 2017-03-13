@@ -33,7 +33,7 @@ public class PercolationStats {
                         if (perco.percolates()) {
                             double jj = (double) j;
                             x[i] = jj / (N * N);  // "/" でちゃんとdoubleになるか
-                            System.out.println("x[" + i + "] is : " + (x[i]));
+                            //System.out.println("x[" + i + "] is : " + (x[i]));
                         }
                     } else {
                         j--;
