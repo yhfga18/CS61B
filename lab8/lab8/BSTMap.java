@@ -121,6 +121,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     }
 
 */
+
     public Set<K> keySet() {
         throw new UnsupportedOperationException("KeySet");
     }
@@ -134,5 +135,39 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         throw new UnsupportedOperationException("remove");
     }
 
+    private Node removeHelper(Node p, K key) {
+        if (p == null) {
+            return null;
+        }
+        int diff = key.compareTo(p.key);
+        if (diff > 0) {
+            p.right = removeHelper(p.right, key);
+        } else if (diff < 0) {
+            p.left = removeHelper(p.left, key);
+        } else {
+            return deleteNode(p);
+        }
+
+        return p;
+    }
+
+    private Node deleteNode(Node p) {
+        this.size--;
+
+        if (p.left == null && p.right == null) {
+            return null; // p を受け取って、何も返さない、結果としてrecursionを登っていった先でnullが入って終わり
+        } else if (p.left == null) {
+            return p.right;
+        } else if (p.right == null) {
+            return p.left;
+        } else {
+            Node t = p;
+            //t/ =
+        }
+    }
+
+
+
 
 }
+

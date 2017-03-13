@@ -22,7 +22,7 @@ public class TestBSTMap {
 	@Test
     public void sanityClearTest() {
     	BSTMap<String, Integer> b = new BSTMap<String, Integer>();
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 455; i++) {
             b.put("hi" + i, 1);
             //make sure put is working via containsKey and get
             assertTrue( null != b.get("hi" + i)
@@ -30,7 +30,8 @@ public class TestBSTMap {
         }
         b.clear();
         assertEquals(0, b.size());
-        for (int i = 0; i < 1; i++) {
+
+        for (int i = 0; i < 455; i++) {
             assertTrue(null == b.get("hi" + i) && !b.containsKey("hi" + i));
         }
     }
