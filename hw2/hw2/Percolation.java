@@ -12,6 +12,9 @@ public class Percolation {
     private int virtualBottom;
 
     public Percolation(int N) {
+        if (N <= 0) {
+            throw new java.lang.IllegalArgumentException();
+        }
         grid = new boolean[N][N];
         numRow = N;
         numCol = N;
@@ -35,6 +38,9 @@ public class Percolation {
     // isFull = open & connected to virtualTop
 
     public void open(int row, int col) { // modify grid & connect
+        if (row < 0 || col < 0 || row >= numRow || col >= numCol) {
+            throw new  java.lang.IndexOutOfBoundsException();
+        }
         grid[row][col] = true;
         connectAround(to1D(row, col));
     }
@@ -77,17 +83,18 @@ public class Percolation {
     }
 
     public boolean isOpen(int row, int col){ // location T/F
+        if (row < 0 || col < 0 || row >= numRow || col >= numCol) {
+            throw new  java.lang.IndexOutOfBoundsException();
+        }
         return grid[row][col];
     } // is the site (row, col) open?
 
     public boolean isFull(int row, int col) { // # conneced to virtualTop?
-        int target = to1D(row, col);
-        for (int i = 0; i < numRow; i++){
-           if((uni.connected(target, virtualTop))){
-               return true;
-           }
+        if (row < 0 || col < 0 || row >= numRow || col >= numCol) {
+            throw new  java.lang.IndexOutOfBoundsException();
         }
-        return false;
+        int target = to1D(row, col);
+        return uni.connected(target, virtualTop);
     } // is the site (row, col) full?
 
     public int numberOfOpenSites() {
