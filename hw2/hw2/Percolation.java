@@ -35,11 +35,17 @@ public class Percolation {
 
     }
 
-    //二つの次元での話。一つは2D arrayのgrid上でtrue/falseでopen/closeを再現すること
+    //二つの次元での話
 
-    // もう一つはWeightedQuickUnionUFでconnectednessを保存していくこと。
+
+    // 一つは2D arrayのgrid上でtrue/falseでopen/closeを再現する
+
+
+    // もう一つはWeightedQuickUnionUFでconnectednessを保存していく
+
 
     //二つを同時に、別々に進める必要が有る。
+
 
     // isFull = open & connected to virtualTop
 
@@ -58,7 +64,8 @@ public class Percolation {
     private void connectAround(int center) { // takes # of grid (not location)
         if (0 <= center && center < numCol) {
             uni.union(center, virtualTop);
-        } else if ((numRow - 1) * (numCol) <= center && center < (numRow * numCol)) {
+        }
+        if ((numRow - 1) * (numCol) <= center && center < (numRow * numCol)) {
             uni.union(center, virtualBottom);
         }
 

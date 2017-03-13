@@ -31,7 +31,7 @@ public class PercolationStats {
                     if (!(perco.isOpen(randomRow, randomCol))) {
                         perco.open(randomRow, randomCol);
                         if (perco.percolates()) {
-                            double jj = (double) j;
+                            double jj = (double) j + 1;
                             x[i] = jj / (N * N);  // "/" でちゃんとdoubleになるか
                             //System.out.println("x[" + i + "] is : " + (x[i]));
                         }
