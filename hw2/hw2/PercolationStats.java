@@ -20,18 +20,19 @@ public class PercolationStats {
         for (int i = 0; i < T; i++) {
             Percolation perco = new Percolation(N);
             for (int j = 0; j < N * N; j++) {
-                if (perco.percolates()){
-                    return;
-                }
-                int randomRow = StdRandom.uniform(0, N);
-                int randomCol = StdRandom.uniform(0, N);
-                if (!(perco.isOpen(randomRow, randomCol))) {
-                    perco.open(randomRow, randomCol);
-                    if (perco.percolates()) {
-                        x[i] = j / N * N;  // "/" でちゃんとdoubleになるか
-                    }
+                if (perco.percolates()) {
+                    j = N * N;
                 } else {
-                    j--;
+                    int randomRow = StdRandom.uniform(0, N);
+                    int randomCol = StdRandom.uniform(0, N);
+                    if (!(perco.isOpen(randomRow, randomCol))) {
+                        perco.open(randomRow, randomCol);
+                        if (perco.percolates()) {
+                            x[i] = j / N * N;  // "/" でちゃんとdoubleになるか
+                        }
+                    } else {
+                        j--;
+                    }
                 }
             }
         }
