@@ -11,6 +11,7 @@ public class Percolation {
     private int virtualTop;
     private int virtualBottom;
     private int openSite;
+    private boolean percolated;
 
     public Percolation(int N) {
         if (N <= 0) {
@@ -21,8 +22,9 @@ public class Percolation {
         numCol = N;
         virtualTop = numRow * numCol;
         virtualBottom = numRow * numCol + 1;
-        uni = new WeightedQuickUnionUF((numRow*numCol) + 2);
+        uni = new WeightedQuickUnionUF((numRow * numCol) + 2);
         openSite = 0;
+        percolated = false;
 
         /*
         for (int i = 0; i < numCol; i++) {
@@ -43,15 +45,18 @@ public class Percolation {
         if (row < 0 || col < 0 || row >= numRow || col >= numCol) {
             throw new  java.lang.IndexOutOfBoundsException();
         }
+        if (isOpen(row, col)){
+            return;
+        }
         grid[row][col] = true;
-        connectAround(to1D(row, col));
         openSite += 1;
+        connectAround(to1D(row, col));
     }
 
-    private void connectAround(int center){ // takes # of grid (not location)
+    private void connectAround(int center) { // takes # of grid (not location)
         if (0 <= center && center < numCol) {
             uni.union(center, virtualTop);
-        } else if ((numRow-1)*(numCol) <= center && center < (numRow)*numCol) {
+        } else if ((numRow - 1) * (numCol) <= center && center < (numRow * numCol)) {
             uni.union(center, virtualBottom);
         }
 
@@ -59,7 +64,7 @@ public class Percolation {
         for (int i = -1; i <= 1; i += 2) {
             int row = center2D[0] + i;
             int col = center2D[1];
-            if (row >= 0 && row < numRow && col >= 0 && col < numCol){
+            if (row >= 0 && row < numRow && col >= 0 && col < numCol) {
                 if (isOpen(row, col)) {
                     uni.union(center, to1D(row, col));
                 }
@@ -68,7 +73,7 @@ public class Percolation {
         for (int j = -1; j <= 1; j += 2) {
             int row = center2D[0];
             int col = center2D[1] + j;
-            if (row >= 0 && row < numRow && col >= 0 && col < numCol){
+            if (row >= 0 && row < numRow && col >= 0 && col < numCol) {
                 if (isOpen(row, col)) {
                     uni.union(center, to1D(row, col));
                 }
@@ -81,11 +86,11 @@ public class Percolation {
     }
 
     private int[] to2D(int x) { // location → # of grid
-        int[] iArray = {x/numRow, x%numCol};
+        int[] iArray = {x / numRow, x % numCol};
         return iArray;
     }
 
-    public boolean isOpen(int row, int col){ // location T/F
+    public boolean isOpen(int row, int col) { // location T/F
         if (row < 0 || col < 0 || row >= numRow || col >= numCol) {
             throw new  java.lang.IndexOutOfBoundsException();
         }
@@ -117,7 +122,11 @@ public class Percolation {
     } // number of open sites
 
     public boolean percolates() {
-        return uni.connected(virtualTop, virtualBottom);
+        boolean returnBoolean = uni.connected(virtualTop, virtualBottom);
+        if (returnBoolean) {
+            this.percolated = true;
+        }
+        return returnBoolean;
     } // does the system percolate?
 
     //public static void main(String[] args) {
