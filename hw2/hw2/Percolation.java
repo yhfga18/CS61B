@@ -1,6 +1,6 @@
 package hw2;                       
 
-import com.sun.javafx.scene.traversal.WeightedClosestCorner;
+//import com.sun.javafx.scene.traversal.WeightedClosestCorner;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
