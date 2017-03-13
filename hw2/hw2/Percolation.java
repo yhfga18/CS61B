@@ -10,6 +10,7 @@ public class Percolation {
     private int numCol;
     private int virtualTop;
     private int virtualBottom;
+    private int openSite;
 
     public Percolation(int N) {
         if (N <= 0) {
@@ -21,6 +22,7 @@ public class Percolation {
         virtualTop = numRow * numCol;
         virtualBottom = numRow * numCol + 1;
         uni = new WeightedQuickUnionUF((numRow*numCol) + 2);
+        openSite = 0;
 
         /*
         for (int i = 0; i < numCol; i++) {
@@ -43,6 +45,7 @@ public class Percolation {
         }
         grid[row][col] = true;
         connectAround(to1D(row, col));
+        openSite += 1;
     }
 
     private void connectAround(int center){ // takes # of grid (not location)
@@ -98,6 +101,9 @@ public class Percolation {
     } // is the site (row, col) full?
 
     public int numberOfOpenSites() {
+        return openSite;
+
+        /*
         int counter = 0;
         for (int i = 0; i < numRow; i++) {
             for (int j = 0; j < numRow; j++) {
@@ -107,6 +113,7 @@ public class Percolation {
             }
         }
         return counter;
+    */
     } // number of open sites
 
     public boolean percolates() {
