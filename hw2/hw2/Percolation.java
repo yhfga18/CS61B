@@ -6,12 +6,13 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
     private boolean[][] grid;
     private WeightedQuickUnionUF uni;
+    private WeightedQuickUnionUF uni2;
     private int numRow;
     private int numCol;
+    private int openSite;
     private int virtualTop;
     private int virtualBottom;
-    private int openSite;
-    private boolean percolated;
+    private int virtualTop2;
 
     public Percolation(int N) {
         if (N <= 0) {
@@ -22,9 +23,10 @@ public class Percolation {
         numCol = N;
         virtualTop = numRow * numCol;
         virtualBottom = numRow * numCol + 1;
+        virtualTop2 = numRow * numCol;
         uni = new WeightedQuickUnionUF((numRow * numCol) + 2);
+        uni2 = new WeightedQuickUnionUF((numRow * numCol) + 1);
         openSite = 0;
-        percolated = false;
 
         /*
         for (int i = 0; i < numCol; i++) {
@@ -64,11 +66,11 @@ public class Percolation {
     private void connectAround(int center) { // takes # of grid (not location)
         if (0 <= center && center < numCol) {
             uni.union(center, virtualTop);
+            uni2.union(center, virtualTop2);
         }
         if ((numRow - 1) * (numCol) <= center && center < (numRow * numCol)) {
             uni.union(center, virtualBottom);
         }
-
         int[] center2D = to2D(center);
         for (int i = -1; i <= 1; i += 2) {
             int row = center2D[0] + i;
@@ -76,6 +78,7 @@ public class Percolation {
             if (row >= 0 && row < numRow && col >= 0 && col < numCol) {
                 if (isOpen(row, col)) {
                     uni.union(center, to1D(row, col));
+                    uni2.union(center, to1D(row, col));
                 }
             }
         }
@@ -85,6 +88,7 @@ public class Percolation {
             if (row >= 0 && row < numRow && col >= 0 && col < numCol) {
                 if (isOpen(row, col)) {
                     uni.union(center, to1D(row, col));
+                    uni2.union(center, to1D(row, col));
                 }
             }
         }
@@ -106,12 +110,12 @@ public class Percolation {
         return grid[row][col];
     } // is the site (row, col) open?
 
-    public boolean isFull(int row, int col) { // # conneced to virtualTop?
+    public boolean isFull(int row, int col) { // # another WQUUF will do this
         if (row < 0 || col < 0 || row >= numRow || col >= numCol) {
             throw new  java.lang.IndexOutOfBoundsException();
         }
         int target = to1D(row, col);
-        return uni.connected(target, virtualTop);
+        return uni2.connected(target, virtualTop);
     } // is the site (row, col) full?
 
     public int numberOfOpenSites() {
@@ -131,11 +135,8 @@ public class Percolation {
     } // number of open sites
 
     public boolean percolates() {
-        boolean returnBoolean = uni.connected(virtualTop, virtualBottom);
-        if (returnBoolean) {
-            this.percolated = true;
-        }
-        return returnBoolean;
+        return uni.connected(virtualTop, virtualBottom);
+
     } // does the system percolate?
 
     //public static void main(String[] args) {
