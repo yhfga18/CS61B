@@ -4,7 +4,10 @@ import edu.princeton.cs.introcs.StdStats;
 
 
 // N*Nのgridを開けまくっていってpercolateしたらストップ。percolateするのに
-// 必要だったfraction Xt( = openの回数 / N*N)を記録する。この手順をT回繰り返してresultのaverageをとる
+
+// 必要だったfraction Xt( = openの回数 / N*N)を記録する。
+
+// この手順をT回繰り返してresultのaverageをとる
 
 
 
@@ -28,7 +31,9 @@ public class PercolationStats {
                     if (!(perco.isOpen(randomRow, randomCol))) {
                         perco.open(randomRow, randomCol);
                         if (perco.percolates()) {
-                            x[i] = j / N * N;  // "/" でちゃんとdoubleになるか
+                            double jj = (double) j;
+                            x[i] = jj / (N * N);  // "/" でちゃんとdoubleになるか
+                            System.out.println("x[" + i + "] is : " + (x[i]));
                         }
                     } else {
                         j--;

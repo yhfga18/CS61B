@@ -36,7 +36,9 @@ public class Percolation {
     }
 
     //二つの次元での話。一つは2D arrayのgrid上でtrue/falseでopen/closeを再現すること
-    //もう一つはWeightedQuickUnionUFでconnectednessを保存していくこと。
+
+    // もう一つはWeightedQuickUnionUFでconnectednessを保存していくこと。
+
     //二つを同時に、別々に進める必要が有る。
 
     // isFull = open & connected to virtualTop
