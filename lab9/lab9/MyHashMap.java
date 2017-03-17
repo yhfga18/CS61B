@@ -73,7 +73,11 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     /** Removes all of the mappings from this map. */
     public void clear(){
         bins = new ArrayList<Entry<K, V>>(capacity);
+        for (int i = 0; i < capacity; i++){
+            bins.add(new Entry<K, V>(null, null));
+        }
         keyset = new HashSet<K>();
+        size = 0;
     }
 
     /* Returns true if this map contains a mapping for the specified key. */
@@ -82,13 +86,19 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     }
 
     public V get(K key) {
+        if (!(keyset.contains(key))){
+            return null;
+        }
         int hash = key.hashCode() & 0x7fffffff;
         int index = hash % capacity;
         Entry<K, V> entry = bins.get(index);
-        while (entry != null) {
-            if (entry.getKey() == key){
-                return entry.getValue();
+        Entry<K, V> pointer = entry.next;
+        while (pointer != null) {
+            if (pointer.getKey().equals(key)){
+                return pointer.getValue();
             }
+            pointer = pointer.next;
+
         }
         return null;
     }
@@ -105,10 +115,18 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     /* Associates the specified value with the specified key in this map. */
     public void put(K key, V value){
         if (keyset.contains(key)) {
-            if (get(key) == value){
+            if (get(key).equals(value)){
                 return;
             }
-            size--;
+            Entry<K, V> newEntry = new Entry<K, V>(key, value);
+            int hash = key.hashCode() & 0x7fffffff;
+            int index = hash % capacity;
+            Entry<K,V> pointer = bins.get(index).next;
+            while (!(pointer.key.equals(key))){
+                pointer = pointer.next;
+            }
+            pointer.value = value;
+            return;
         }
         size++;
         Entry<K, V> newEntry = new Entry<K, V>(key, value);
