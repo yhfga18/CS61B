@@ -47,11 +47,11 @@ public class Solver {
             s.push(current.current());
             current = current.previous();
         }
-        ArrayList<WorldState> solution = new ArrayList<>();
+        ArrayList<WorldState> solutions = new ArrayList<>();
         while (!(stack.isEmpty())) {
-            solution.add((WorldState) s.pop());
+            solutions.add((WorldState) s.pop());
         }
-        return solution;
+        return solutions;
     }
 
     public SearchNode update(SearchNode current, SearchNode neighbor) {

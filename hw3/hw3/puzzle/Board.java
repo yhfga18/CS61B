@@ -1,7 +1,7 @@
 package hw3.puzzle;
 import edu.princeton.cs.algs4.Queue;
 
-public class Board implements WorldState{
+public class Board implements WorldState {
     int size;
     int[][] tiles;
     public Board(int[][] tilesInput) {
@@ -60,7 +60,7 @@ public class Board implements WorldState{
                 if (tiles[i][j] != n) {
                     count++;
                 }
-                if (i == size -1 && j == size - 2) {
+                if (i == size - 1 && j == size - 2) {
                     break;
                 }
                 n++;
@@ -111,12 +111,16 @@ public class Board implements WorldState{
         }
         for (int i = 0; i < size(); i++) {
             for (int j = 0; j < this.size(); j++) {
-                if (this.tileAt(i,j) != tiles2.tileAt(i,j)) {
+                if (this.tileAt(i, j) != tiles2.tileAt(i, j)) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    public int hashCode() {
+        return ((Object) this).hashCode();
     }
     /*
     if (this == o) {
@@ -142,7 +146,7 @@ public class Board implements WorldState{
         s.append(N + "\n");
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                s.append(String.format("%2d ", tileAt(i,j)));
+                s.append(String.format("%2d ", tileAt(i, j)));
             }
             s.append("\n");
         }
