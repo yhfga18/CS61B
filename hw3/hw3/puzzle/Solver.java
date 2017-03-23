@@ -29,10 +29,10 @@ public class Solver {
                 solution = solutionMaker(stack, currentStep);
                 break;
             }
-            for (Object neighbor : currentStep.neighbors()) {
+            for (WorldState neighbor : currentStep.current().neighbors()) {
                 //SearchNode updatedNeighbor = update(currentStep, (SearchNode) neighbor);
                 if (!(currentStep.current().equals(neighbor))) {
-                    SearchNode newNode = new SearchNode((WorldState) neighbor, currentStep);
+                    SearchNode newNode = new SearchNode(neighbor, currentStep);
                     fringe.insert(newNode);
                 }
             }
