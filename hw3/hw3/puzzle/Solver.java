@@ -8,6 +8,7 @@ import java.util.*;
  */
 public class Solver {
     SearchNode sn;
+    int numOfMove;
     HashSet<SearchNode> searched;
     MinPQ<SearchNode> fringe;
 
@@ -23,9 +24,12 @@ public class Solver {
             for (Object neighbor : currentStep.neighbors()) {
                 //SearchNode updatedNeighbor = update(currentStep, (SearchNode) neighbor);
                 if (!(searched.contains(neighbor))) {
-                    fringe.insert(new SearchNode((WorldState) neighbor, currentStep));
+                    SearchNode newNode = new SearchNode((WorldState) neighbor, currentStep);
+                    searched.add(newNode);
+                    fringe.insert(newNode);
                 }
             }
+            numOfMove += 1;
         }
     }
 
@@ -42,7 +46,7 @@ public class Solver {
     */
 
     public int moves() {
-        return sn.estimatedDistanceToGoal();
+        return numOfMove;
     }
     /*
     Returns the minimum number of moves to solve the puzzle starting
