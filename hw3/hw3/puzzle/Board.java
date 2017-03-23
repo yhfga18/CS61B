@@ -51,8 +51,10 @@ public class Board implements WorldState{
         int count = 0;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (tiles[i][j] != size*i + j + 1) {
-                    count++;
+                if (tiles[i][j] != 0) {
+                    if (tiles[i][j] != size * i + j + 1) {
+                        count++;
+                    }
                 }
             }
         }
@@ -62,9 +64,11 @@ public class Board implements WorldState{
         int count = 0;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                int row = (tiles[i][j] - 1) / size;
-                int col = tiles[i][j] % size - 1;
-                count += Math.abs(i - row) + Math.abs(i - col);
+                if (tiles[i][j] != 0) {
+                    int row = (tiles[i][j] - 1) / size;
+                    int col = tiles[i][j] % size - 1;
+                    count += Math.abs(i - row) + Math.abs(i - col);
+                }
             }
         }
         return count;
@@ -77,10 +81,10 @@ public class Board implements WorldState{
         return estimatedDistanceToGoal() == 0;
     }
     public boolean equals(Object y) {
-        int[][] yA = (int[][]) y;
+        Board yB = new Board((int[][]) y);
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (tiles[i][j] != yA[i][j]) {
+                if (tiles[i][j] != yB.tiles[i][j]) {
                     return false;
                 }
             }

@@ -59,6 +59,6 @@ public class SearchNode<T> implements Comparator<T> {
     }
 
     public boolean equals(Object obj) {
-        return obj.equals(this);
+        return obj == this;
     }
 }
