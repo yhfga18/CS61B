@@ -81,10 +81,13 @@ public class Board implements WorldState{
         return estimatedDistanceToGoal() == 0;
     }
     public boolean equals(Object y) {
-        Board yB = new Board((int[][]) y);
+        if (this.getClass() != y.getClass()) {
+            return false;
+        }
+        Board tiles2 = (Board) y;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (tiles[i][j] != yB.tiles[i][j]) {
+                if (tiles[i][j] != tiles2.tiles[i][j]) {
                     return false;
                 }
             }
