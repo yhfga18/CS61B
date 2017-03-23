@@ -17,7 +17,7 @@ public class SearchNode<T> implements Comparator<T> {
     public SearchNode(WorldState ws, SearchNode previous){
         thisWS = ws;
         previousSN = previous;
-        if (ws.isGoal() || previous == null) {
+        if (previous == null) {
             numOfMove = 0;
         } else {
             numOfMove = previous.numOfMove() + 1;

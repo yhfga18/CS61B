@@ -56,6 +56,7 @@ public class Solver {
             sol.add(pointer.current());
             pointer = pointer.previous();
         }
+        sol.add(pointer.current());
         Collections.reverse(sol);
         return sol;
     }
