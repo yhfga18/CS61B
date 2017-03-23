@@ -33,5 +33,9 @@ public interface Map61B<K, V> extends Iterable<K> {
     /* Removes the entry for the specified key only if it is currently mapped to
      * the specified value. Not required for Lab 8. If you don't implement this,
      * throw an UnsupportedOperationException.*/
+<<<<<<< HEAD
     //V remove(K key, V value);
+=======
+    V remove(K key, V value);
+>>>>>>> b03c4a7271c37102fbf2b82b796d75b1fe3d849a
 }

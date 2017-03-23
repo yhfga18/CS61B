@@ -133,12 +133,19 @@ public class ULLMap<K, V>  implements Map61B<K, V> {
         throw new UnsupportedOperationException();
     }
 
+<<<<<<< HEAD
     /*
+=======
+>>>>>>> b03c4a7271c37102fbf2b82b796d75b1fe3d849a
     @Override
     public V remove(K key, V value) {
         throw new UnsupportedOperationException();
     }
+<<<<<<< HEAD
     */
+=======
+
+>>>>>>> b03c4a7271c37102fbf2b82b796d75b1fe3d849a
     @Override
     public Set<K> keySet() {
         throw new UnsupportedOperationException();

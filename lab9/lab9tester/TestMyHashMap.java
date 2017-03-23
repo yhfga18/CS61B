@@ -21,12 +21,15 @@ public class TestMyHashMap {
     }
 
     //assumes put/size/containsKey/get work
+<<<<<<< HEAD
 
     @Test
     public void test1() {
         MyHashMap<String, String> a = new MyHashMap<String, String>();
     }
 
+=======
+>>>>>>> b03c4a7271c37102fbf2b82b796d75b1fe3d849a
 	@Test
     public void sanityClearTest() {
     	MyHashMap<String, Integer> b = new MyHashMap<String, Integer>();
