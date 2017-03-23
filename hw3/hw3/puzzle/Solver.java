@@ -42,7 +42,7 @@ public class Solver {
     */
 
     public int moves() {
-        return sn.numOfMove();
+        return sn.estimatedDistanceToGoal();
     }
     /*
     Returns the minimum number of moves to solve the puzzle starting
