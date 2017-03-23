@@ -29,7 +29,6 @@ public class Solver {
                 solution = solutionMaker(stack, currentStep);
                 break;
             }
-            searched.add(currentStep);
             for (Object neighbor : currentStep.neighbors()) {
                 //SearchNode updatedNeighbor = update(currentStep, (SearchNode) neighbor);
                 SearchNode newNode = new SearchNode((WorldState) neighbor, currentStep);
@@ -39,7 +38,7 @@ public class Solver {
     }
 
     private ArrayList<WorldState> solutionMaker(Stack s, SearchNode current) {
-        while (current.previous() != null) {
+        while (current != null) {
             s.push(current.current());
             current = current.previous();
         }
