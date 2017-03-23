@@ -67,7 +67,7 @@ public class Board implements WorldState{
                 if (tiles[i][j] != 0) {
                     int row = (tiles[i][j] - 1) / size;
                     int col = tiles[i][j] % size - 1;
-                    count += Math.abs(i - row) + Math.abs(i - col);
+                    count += Math.abs(i - row) + Math.abs(j - col);
                 }
             }
         }
