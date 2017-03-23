@@ -9,7 +9,11 @@ public class Board implements WorldState{
         this.tiles = tiles;
     }
     public int tileAt(int i, int j) {
-        return tiles[i][j];
+        int tile = tiles[i][j];
+        if (tile == 0) {
+            throw new java.lang.IndexOutOfBoundsException();
+        }
+        return tile;
     }
     public int size() {
         return size;
@@ -66,7 +70,7 @@ public class Board implements WorldState{
             for (int j = 0; j < size; j++) {
                 if (tiles[i][j] != 0) {
                     int row = (tiles[i][j] - 1) / size;
-                    int col = tiles[i][j] % size - 1;
+                    int col = (tiles[i][j] % size - 1) % 4;
                     count += Math.abs(i - row) + Math.abs(j - col);
                 }
             }
