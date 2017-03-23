@@ -8,7 +8,6 @@ import java.util.*;
  */
 public class Solver {
     SearchNode sn;
-    int numOfMove;
     HashSet<SearchNode> searched;
     MinPQ<SearchNode> fringe;
 
@@ -29,7 +28,6 @@ public class Solver {
                     fringe.insert(newNode);
                 }
             }
-            numOfMove += 1;
         }
     }
 
@@ -46,7 +44,12 @@ public class Solver {
     */
 
     public int moves() {
-        return numOfMove;
+        Iterable<WorldState> i =solution();
+        int counter = 0;
+        for (WorldState w : i) {
+            counter++;
+        }
+        return counter;
     }
     /*
     Returns the minimum number of moves to solve the puzzle starting
@@ -56,11 +59,10 @@ public class Solver {
     public Iterable<WorldState> solution() {
         SearchNode pointer = sn;
         LinkedList<WorldState> sol = new LinkedList<>();
-        while (!(pointer.previous() == null)) {
+        while (pointer != null) {
             sol.add(pointer.current());
             pointer = pointer.previous();
         }
-        sol.add(pointer.current());
         Collections.reverse(sol);
         return sol;
     }
