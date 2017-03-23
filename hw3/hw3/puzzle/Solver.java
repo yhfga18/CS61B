@@ -32,11 +32,12 @@ public class Solver {
             for (WorldState neighbor : currentStep.current().neighbors()) {
                 //SearchNode updatedNeighbor = update(currentStep, (SearchNode) neighbor);
                 if (currentStep.previous() != null) {
-                    if (!(neighbor.equals(currentStep.previous().current()))) {
-                        SearchNode newNode = new SearchNode(neighbor, currentStep);
-                        fringe.insert(newNode);
+                    if (neighbor.equals(currentStep.previous().current())) {
+                        continue;
                     }
                 }
+                SearchNode newNode = new SearchNode(neighbor, currentStep);
+                fringe.insert(newNode);
             }
         }
     }
