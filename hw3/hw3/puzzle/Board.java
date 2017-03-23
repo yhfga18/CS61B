@@ -94,19 +94,37 @@ public class Board implements WorldState{
         return estimatedDistanceToGoal() == 0;
     }
     public boolean equals(Object y) {
-        if (this.getClass() != y.getClass()) {
+        if (this == y) {
+            return true;
+        }
+        if (y == null || this.getClass() != y.getClass()) {
             return false;
         }
         Board tiles2 = (Board) y;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (tiles[i][j] != tiles2.tiles[i][j]) {
+                if (((Integer) tiles[i][j]).equals(tiles2.tiles[i][j])) {
                     return false;
                 }
             }
         }
         return true;
     }
+    /*
+    if (this == o) {
+        return true;
+    }
+        if (o == null || getClass() != o.getClass()) {
+        return false;
+    }
+
+    Word word1 = (Word) o;
+
+        if (word != null ? !word.equals(word1.word) : word1.word != null) {
+        return false;
+    }
+        return goal != null ? goal.equals(word1.goal) : word1.goal == null;
+    */
 
     /** Returns the string representation of the board.
      * Uncomment this method. */
