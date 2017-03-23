@@ -51,7 +51,7 @@ public class Board implements WorldState{
         int count = 0;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (tiles[i][j] != size*i + j) {
+                if (tiles[i][j] != size*i + j + 1) {
                     count++;
                 }
             }
@@ -62,10 +62,9 @@ public class Board implements WorldState{
         int count = 0;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                double diff = Math.abs(tiles[i][j] - size*i + j);
-                if (diff > 0) {
-                    count += diff;
-                }
+                int row = (tiles[i][j] - 1) / size;
+                int col = tiles[i][j] % size - 1;
+                count += Math.abs(i - row) + Math.abs(i - col);
             }
         }
         return count;
