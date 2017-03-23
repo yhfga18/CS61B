@@ -52,28 +52,41 @@ public class Board implements WorldState{
         return neighbors;
     }
     public int hamming() {
+        int n = 1;
         int count = 0;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (tiles[i][j] != 0) {
-                    if (tiles[i][j] != size * i + j + 1) {
-                        count++;
-                    }
+                if (tiles[i][j] != n) {
+                    count++;
+                }
+                if (i == size -1 && j == size - 2) {
+                    break;
                 }
             }
+            n++;
         }
         return count;
     }
+
     public int manhattan() {
+        int n = 1;
         int count = 0;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (tiles[i][j] != 0) {
-                    int row = (tiles[i][j] - 1) / size;
-                    int col = (tiles[i][j] % size - 1) % 4;
-                    count += Math.abs(i - row) + Math.abs(j - col);
+        while (n < size * size) {
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    if (tiles[i][j] == n) {
+                        int row = (int) Math.ceil(((double) n) / (double) size) - 1;
+                        int col;
+                        if (n % size == 0) {
+                            col = size - 1;
+                        } else {
+                            col = n % size - 1;
+                        }
+                        count += Math.abs(i - row) + Math.abs(j - col);
+                    }
                 }
             }
+            n++;
         }
         return count;
 
