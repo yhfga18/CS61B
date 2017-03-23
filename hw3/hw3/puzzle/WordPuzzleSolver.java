@@ -9,7 +9,7 @@ public class WordPuzzleSolver {
      **********************************************************************/
     public static void main(String[] args) {
         String start = "cube";
-        String goal = "tubes";
+        String goal = "cube";
 
         Word startState = new Word(start, goal);
         Solver solver = new Solver(startState);

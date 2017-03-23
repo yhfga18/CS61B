@@ -103,7 +103,7 @@ public class Board implements WorldState{
         Board tiles2 = (Board) y;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (((Integer) tiles[i][j]).equals(tiles2.tiles[i][j])) {
+                if (this.tileAt(i,j) - tiles2.tileAt(i,j) != 0) {
                     return false;
                 }
             }
