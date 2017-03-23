@@ -10,25 +10,44 @@ public class Solver {
     SearchNode sn;
     HashSet<SearchNode> searched;
     MinPQ<SearchNode> fringe;
+    ArrayList<WorldState> solution;
+    Stack<WorldState> stack;
+    int numOfMoveToGoal;
 
     //constructor
     public Solver(WorldState initial) {
-        searched = new HashSet<SearchNode>();
         sn = new SearchNode<>(initial, null);
         fringe = new MinPQ<SearchNode>((Comparator) sn);
+        solution = new ArrayList<>();
+        stack = new Stack<>();
+
         fringe.insert(sn);
-        while (!(fringe.min().isGoal())) {
+        while (!(fringe.isEmpty())) {
             SearchNode currentStep = fringe.delMin();
+            numOfMoveToGoal = currentStep.numOfMove();
+            if (currentStep.isGoal()) {
+                solution = solutionMaker(stack, currentStep);
+                break;
+            }
             searched.add(currentStep);
             for (Object neighbor : currentStep.neighbors()) {
                 //SearchNode updatedNeighbor = update(currentStep, (SearchNode) neighbor);
-                if (!(searched.contains(neighbor))) {
-                    SearchNode newNode = new SearchNode((WorldState) neighbor, currentStep);
-                    searched.add(newNode);
-                    fringe.insert(newNode);
-                }
+                SearchNode newNode = new SearchNode((WorldState) neighbor, currentStep);
+                fringe.insert(newNode);
             }
         }
+    }
+
+    private ArrayList<WorldState> solutionMaker(Stack s, SearchNode current) {
+        while (current.previous() != null) {
+            s.push(current.current());
+            current = current.previous();
+        }
+        ArrayList<WorldState> solution = new ArrayList<>();
+        while (!(stack.isEmpty())) {
+            solution.add((WorldState) s.pop());
+        }
+        return solution;
     }
 
     public SearchNode update(SearchNode current, SearchNode neighbor) {
@@ -44,6 +63,8 @@ public class Solver {
     */
 
     public int moves() {
+        return numOfMoveToGoal;
+        /*
         Iterable<WorldState> i =solution();
         int counter = 0;
         for (WorldState w : i) {
@@ -51,6 +72,7 @@ public class Solver {
         }
         counter -= 1;
         return counter;
+        */
     }
     /*
     Returns the minimum number of moves to solve the puzzle starting
@@ -58,14 +80,17 @@ public class Solver {
     */
 
     public Iterable<WorldState> solution() {
+        return solution;
+        /*
         SearchNode pointer = sn;
-        LinkedList<WorldState> sol = new LinkedList<>();
+        Stack<WorldState> sol = new Stack<>();
         while (pointer != null) {
-            sol.add(pointer.current());
+            sol.push(pointer.current());
             pointer = pointer.previous();
         }
         //Collections.reverse(sol);
         return sol;
+        */
     }
     /*
     Returns a sequence of WorldStates from the initial WorldState

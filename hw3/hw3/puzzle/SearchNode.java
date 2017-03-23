@@ -12,7 +12,6 @@ public class SearchNode<T> implements Comparator<T> {
     private int priority; // sum of (
                   // the number of moves made to reach this world state from the initial state
                   // + the WorldState's estimatedDistanceToGoal).
-    SearchNode previous;
     //WorldState thisWS;
     public SearchNode(WorldState ws, SearchNode previous){
         thisWS = ws;
@@ -41,7 +40,7 @@ public class SearchNode<T> implements Comparator<T> {
     }
 
     Iterable<WorldState> neighbors() {
-        return thisWS.neighbors();
+        return (Iterable<WorldState>) thisWS.neighbors();
     }
 
     public boolean isGoal() {
