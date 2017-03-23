@@ -49,6 +49,7 @@ public class Solver {
         for (WorldState w : i) {
             counter++;
         }
+        counter -= 1;
         return counter;
     }
     /*
