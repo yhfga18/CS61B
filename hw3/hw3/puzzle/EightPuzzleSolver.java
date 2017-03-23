@@ -9,7 +9,7 @@ public class EightPuzzleSolver {
      * your basic functionality.
     **********************************************************************/
     public static void main(String[] args) {
-        In in = new In("input/puzzle00.txt");
+        In in = new In("input/puzzle03.txt");
         int N = in.readInt();
         int[][] tiles = new int[N][N];
         for (int i = 0; i < N; i++) {
