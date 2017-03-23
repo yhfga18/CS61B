@@ -60,4 +60,8 @@ public class SearchNode<T> implements Comparator<T> {
     public boolean equals(Object obj) {
         return obj == this;
     }
+
+    public int hashCode() {
+        return ((Object) this).hashCode();
+    }
 }

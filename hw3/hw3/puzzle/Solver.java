@@ -1,7 +1,10 @@
 package hw3.puzzle;
 
 import edu.princeton.cs.algs4.MinPQ;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Stack;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * Created by hideyoshitakahashi on 3/20/17.
