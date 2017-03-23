@@ -31,9 +31,11 @@ public class Solver {
             }
             for (WorldState neighbor : currentStep.current().neighbors()) {
                 //SearchNode updatedNeighbor = update(currentStep, (SearchNode) neighbor);
-                if (!(currentStep.current().equals(neighbor))) {
-                    SearchNode newNode = new SearchNode(neighbor, currentStep);
-                    fringe.insert(newNode);
+                if (currentStep.previous() != null) {
+                    if (!(neighbor.equals(currentStep.previous().current()))) {
+                        SearchNode newNode = new SearchNode(neighbor, currentStep);
+                        fringe.insert(newNode);
+                    }
                 }
             }
         }
