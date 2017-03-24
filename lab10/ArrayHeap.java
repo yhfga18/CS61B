@@ -27,24 +27,21 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      * Returns the index of the node to the left of the node at i.
      */
     private static int leftIndex(int i) {
-        /* TODO: Your code here! */
-        return 0;
+        return 2 * i ;
     }
 
     /**
      * Returns the index of the node to the right of the node at i.
      */
     private static int rightIndex(int i) {
-        /* TODO: Your code here! */
-        return 0;
+        return 2 * i + 1;
     }
 
     /**
      * Returns the index of the node that is the parent of the node at i.
      */
     private static int parentIndex(int i) {
-        /* TODO: Your code here! */
-        return 0;
+        return i / 2;
     }
 
     /**
@@ -80,7 +77,6 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         contents[index2] = node1;
     }
 
-
     /**
      * Returns the index of the node with smaller priority. Precondition: not
      * both nodes are null.
@@ -99,28 +95,59 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         }
     }
 
-
     /**
      * Bubbles up the node currently at the given index.
      */
-    private void swim(int index) {
+    private void swim(int index) { // swim up!
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
-
-        /** TODO: Your code here. */
+        if (!(index > 1)) {
+            return;
+        } else if (comparison(parentIndex(index), index) > 0) {
+            swap(parentIndex(index), index);
+            swim(parentIndex(index));
+        }
         return;
     }
 
     /**
      * Bubbles down the node currently at the given index.
      */
-    private void sink(int index) {
+    private void sink(int index) { //sink down!
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
 
-        /** TODO: Your code here. */
+        int left = leftIndex(index);
+        int right = rightIndex(index);
+
+        if (index >= size || contents[index] == null || contents[left] == null && contents[right] == null) {
+            return;
+        }
+
+        if (contents[left] == null) {
+            sinkHelper(index, right);
+        } else if (contents[right] == null) {
+            sinkHelper(index, left);
+        } else {
+            if (comparison(right, left) > 0) {
+                sinkHelper(index, left);
+            } else {
+                sinkHelper(index, right);
+            }
+        }
+    }
+
+    private double comparison(int i, int j) {
+        return contents[i].myPriority - contents[j].myPriority;
+    }
+
+    private void sinkHelper(int index, int child) {
+        if (comparison(index, child) > 0) {
+            swap(index, child);
+        }
         return;
     }
+
 
     /**
      * Inserts an item with the given priority value. This is enqueue, or offer.
@@ -132,8 +159,9 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         if (size + 1 == contents.length) {
             resize(contents.length * 2);
         }
-
-        /* TODO: Your code here! */
+        size++;
+        contents[size] = new Node(item, priority);
+        swim(size);
     }
 
     /**
@@ -142,8 +170,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     @Override
     public T peek() {
-        /* TODO: Your code here! */
-        return null;
+        return contents[1].item();
     }
 
     /**
@@ -157,8 +184,12 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     @Override
     public T removeMin() {
-        /* TODO: Your code here! */
-        return null;
+        T topItem = contents[1].item();
+        contents[1] = contents[size];
+        contents[size] = null;
+        size--;
+        sink(1);
+        return topItem;
     }
 
     /**
@@ -180,7 +211,11 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     @Override
     public void changePriority(T item, double priority) {
-        /* TODO: Your code here! */
+        for (int i = 0; i < size; i++) {
+            if (contents[i].item().equals(item)) {
+                contents[i] = new Node(item, priority);
+            }
+        }
         return;
     }
 
