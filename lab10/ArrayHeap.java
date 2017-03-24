@@ -101,7 +101,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
     private void swim(int index) { // swim up!
         // Throws an exception if index is invalid. DON'T CHANGE THIS LINE.
         validateSinkSwimArg(index);
-        if (!(index > 1)) {
+        if (index == 1) {
             return;
         } else if (comparison(parentIndex(index), index) > 0) {
             swap(parentIndex(index), index);
@@ -123,18 +123,22 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         if (index >= size || contents[index] == null || contents[left] == null && contents[right] == null) {
             return;
         }
-
-        if (contents[left] == null) {
+        if (contents[left] == null && contents[right] != null) {
             sinkHelper(index, right);
-        } else if (contents[right] == null) {
+            index = right;
+        } else if (contents[right] == null && contents[left] != null) {
             sinkHelper(index, left);
+            index = left;
         } else {
-            if (comparison(right, left) > 0) {
+            if (comparison(right, left) >= 0) {
                 sinkHelper(index, left);
+                index = left;
             } else {
                 sinkHelper(index, right);
+                index = right;
             }
         }
+        sink(index);
     }
 
     private double comparison(int i, int j) {
