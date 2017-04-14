@@ -35,7 +35,13 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
         // Your code here!
-        return null;
+        Queue<Queue<Item>> singleItemQueues = new Queue<>();
+        for (Item i: items) {
+            Queue<Item> q = new Queue<Item>();
+            q.enqueue(i);
+            singleItemQueues.enqueue(q);
+        }
+        return singleItemQueues;
     }
 
     /**
@@ -54,13 +60,66 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
         // Your code here!
-        return null;
+        Queue<Item> mergeSortedQueue = new Queue<>();
+        while (!q1.isEmpty() || !q2.isEmpty()) {
+            mergeSortedQueue.enqueue(getMin(q1, q2));
+        }
+        return mergeSortedQueue;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
         // Your code here!
-        return items;
+        Queue<Queue<Item>> singles = makeSingleItemQueues(items);
+        while (singles.size() != 1) {
+            for (int i = 0; i < singles.size() / 2; i++) {
+                singles.enqueue(mergeSortedQueues(singles.dequeue(), singles.dequeue()));
+            }
+            if (singles.size() % 2 == 1) {
+                singles.enqueue(singles.dequeue());
+            }
+        }
+        return singles.dequeue();
+    }
+
+    public static void main(String[] args) {
+        Queue<String> students = new Queue<>();
+        students.enqueue("A");
+        students.enqueue("B");
+        students.enqueue("C");
+        students.enqueue("D");
+        students.enqueue("E");
+        students.enqueue("F");
+        students.enqueue("G");
+        students.enqueue("H");
+        students.enqueue("I");
+        students.enqueue("J");
+        students.enqueue("K");
+        students.enqueue("L");
+        students.enqueue("M");
+        students.enqueue("N");
+        // print unsorted queue
+        for (String stu: students) {
+            System.out.println(stu);
+        }
+        // create deep copy
+        Queue<String> studentCopy  = new Queue<>();
+        for (String stu: students) {
+            studentCopy.enqueue(stu);
+        }
+
+        System.out.println("");
+
+        students = MergeSort.mergeSort(students);
+        for (String stu: students) {
+            System.out.println(stu);
+        }
+
+        System.out.println("");
+
+        for (String stu: studentCopy) {
+            System.out.println(stu);
+        }
     }
 }

@@ -48,12 +48,84 @@ public class QuickSort {
             Queue<Item> unsorted, Item pivot,
             Queue<Item> less, Queue<Item> equal, Queue<Item> greater) {
         // Your code here!
+        int length = unsorted.size();
+        for (int i = 0; i < length; i = i + 1) {
+            Item thing = unsorted.dequeue();
+            if (thing.compareTo(pivot) < 0) {
+                less.enqueue(thing);
+            } else if (thing.compareTo(pivot) == 0) {
+                equal.enqueue(thing);
+            } else {
+                greater.enqueue(thing);
+            }
+
+        }
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> quickSort(
             Queue<Item> items) {
         // Your code here!
-        return items;
+        if (items.size() == 1 || items.size() == 0) {
+            return items;
+        }
+
+        Item pivot = getRandomItem(items);
+        Queue<Item> negative = new Queue<>();
+        Queue<Item> equal = new Queue<>();
+        Queue<Item> positive = new Queue<>();
+
+        partition(items, pivot, negative, equal, positive);
+        return catenate(catenate(quickSort(negative), equal), quickSort(positive));
     }
+
+    public static void main(String[] args) {
+        Queue<Integer> students = new Queue<>();
+        students.enqueue(4);
+        students.enqueue(9);
+        students.enqueue(8);
+        students.enqueue(9);
+        students.enqueue(3);
+        students.enqueue(2);
+        students.enqueue(1);
+        students.enqueue(7);
+        students.enqueue(5);
+        students.enqueue(6);
+        students.enqueue(3);
+        students.enqueue(3);
+        students.enqueue(5);
+        students.enqueue(8);
+        students.enqueue(3);
+        students.enqueue(5);
+        students.enqueue(6);
+        students.enqueue(6);
+        students.enqueue(2);
+        // print unsorted queue
+        for (Integer num: students) {
+            System.out.println(num);
+        }
+        // create deep copy
+        Queue<Integer> studentCopy  = new Queue<>();
+
+        for (Integer num: students) {
+            studentCopy.enqueue(num);
+        }
+
+        System.out.println("");
+
+        students = QuickSort.quickSort(students);
+        for (Integer num: students) {
+            System.out.println(num);
+        }
+
+        System.out.println("");
+
+        for (Integer num: studentCopy) {
+            System.out.println(num);
+        }
+    }
+
+
+
+
 }
