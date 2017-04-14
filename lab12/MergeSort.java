@@ -85,20 +85,20 @@ public class MergeSort {
 
     public static void main(String[] args) {
         Queue<String> students = new Queue<>();
-        students.enqueue("A");
-        students.enqueue("B");
-        students.enqueue("C");
-        students.enqueue("D");
-        students.enqueue("E");
+        students.enqueue("Z");
+        students.enqueue("X");
+        students.enqueue("W");
+        students.enqueue("P");
+        students.enqueue("Q");
         students.enqueue("F");
-        students.enqueue("G");
-        students.enqueue("H");
-        students.enqueue("I");
-        students.enqueue("J");
-        students.enqueue("K");
+        students.enqueue("A");
         students.enqueue("L");
+        students.enqueue("B");
+        students.enqueue("V");
+        students.enqueue("D");
+        students.enqueue("G");
         students.enqueue("M");
-        students.enqueue("N");
+        students.enqueue("R");
         // print unsorted queue
         for (String stu: students) {
             System.out.println(stu);
