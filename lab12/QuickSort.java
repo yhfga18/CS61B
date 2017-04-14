@@ -27,7 +27,7 @@ public class QuickSort {
                 pivot = item;
                 break;
             }
-            pivotIndex--;
+            pivotIndex = pivotIndex - 1;
         }
         return pivot;
     }
