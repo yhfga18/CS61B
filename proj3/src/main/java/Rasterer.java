@@ -25,6 +25,7 @@ public class Rasterer {
     double depth;
     boolean query_success = true;
     List<QuadTree.Node> fileList;
+    int numOfPic = 0;
 
 
     public Rasterer(String imgRoot) { // linear
@@ -98,7 +99,7 @@ public class Rasterer {
             }
             return;
         }
-        if ((P1(params, node)) && !(P2(params, node))) {
+        if ((P1(params, node)) && !(P2(params, node, d))) {
             if (node.getSub1() == null) {return;}
             search(params, node.getSub1(), d + 1);
             search(params, node.getSub2(), d + 1);
@@ -106,8 +107,9 @@ public class Rasterer {
             search(params, node.getSub4(), d + 1);
             return;
         }
-        if ((P1(params, node)) & P2(params, node)) {
+        if ((P1(params, node)) & P2(params, node, d)) {
             fileList.add(node);
+            numOfPic += 1;
             depth = d;
             //depth = node.getDepth();
             Map<String, Double> m = node.getPicScale();
@@ -135,13 +137,14 @@ public class Rasterer {
     private boolean P1(Map<String, Double> params, QuadTree.Node node) {
         Map<String, Double> picScale = node.getPicScale();
         boolean cond1 = (picScale.get("ullat") > params.get("lrlat")); // lat 1
-        boolean cond2 = (picScale.get("lrlat") < params.get("ullat")); // lat 2
-        boolean cond3 = (picScale.get("lrlon") > params.get("ullon")); // lon 1
+        boolean cond2 = (picScale.get("lrlon") > params.get("ullon")); // lon 1
+        boolean cond3 = (picScale.get("lrlat") < params.get("ullat")); // lat 2
         boolean cond4 = (picScale.get("ullon") < params.get("lrlon")); // lon 2
         return cond1 || cond2 || cond3 || cond4;
     }
 
-    private boolean P2(Map<String, Double> params, QuadTree.Node node) {
+    private boolean P2(Map<String, Double> params, QuadTree.Node node, int depth) {
+        if (depth >= 7) {return true;}
         Map<String, Double> picScale = node.getPicScale();
         double nodeLonDPP = lonDPP(picScale);
         double rasterLonDPP = lonDPP(params);
