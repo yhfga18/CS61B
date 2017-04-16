@@ -18,10 +18,10 @@ public class Rasterer {
      *  You may not actually need this for your class. */
 
     QuadTree quadTree;
-    double raster_ul_lon;
-    double raster_ul_lat;
-    double raster_lr_lon;
-    double raster_lr_lat;
+    double raster_ul_lon = MapServer.ROOT_ULLON;
+    double raster_ul_lat = MapServer.ROOT_ULLAT;
+    double raster_lr_lon = MapServer.ROOT_LRLON;
+    double raster_lr_lat = MapServer.ROOT_LRLAT;
     double depth;
     boolean query_success = true;
     List<QuadTree.Node> fileList;
