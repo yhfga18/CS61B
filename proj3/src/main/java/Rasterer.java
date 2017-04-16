@@ -117,6 +117,7 @@ public class Rasterer {
             Double ullat = m.get("ullat");
             Double lrlon = m.get("lrlon");
             Double lrlat = m.get("lrlat");
+            /*
             if (raster_ul_lon < ullon) {
                 raster_ul_lon = ullon;
             }
@@ -129,6 +130,7 @@ public class Rasterer {
             if (raster_lr_lat > lrlat) {
                 raster_lr_lat = lrlat;
             }
+            */ // この中で最大最初を持ってくるにはどうするか
 
         }
         return;
@@ -167,6 +169,10 @@ public class Rasterer {
             if (!(map.containsKey(ullat))) {
                 map.put(ullat, new LinkedList<QuadTree.Node>());
             }
+            raster_ul_lon = Math.min(raster_ul_lon, node.getPicScale().get("ullon"));
+//            raster_ul_lat = Math.min(raster_ul_lat, node.getPicScale().get("ullat"));
+            raster_lr_lon = Math.min(raster_ul_lon, node.getPicScale().get("lrlon"));
+//            raster_lr_lat = Math.min(raster_ul_lat, node.getPicScale().get("lrlat"));
         }
         for (QuadTree.Node node : fileList) {
             Double ullat = node.getPicScale().get("ullat");
@@ -181,6 +187,8 @@ public class Rasterer {
         */
         Double[] latitudeSet = map.keySet().toArray(new Double[1]);
         java.util.Arrays.sort(latitudeSet);
+        raster_ul_lat = latitudeSet[0];
+        raster_lr_lat = latitudeSet[latitudeSet.length - 1];
         String[][] returnArray = new String[latitudeSet.length][];
         for (int i = 0; i < latitudeSet.length; i++) {
             LinkedList<QuadTree.Node> list = map.get(latitudeSet[i]);
@@ -190,7 +198,20 @@ public class Rasterer {
             }
             returnArray[i] = latList.toArray(new String[0]);
         }
+        int l = returnArray.length-1;
+        raster_ul_lat = Double.parseDouble(returnArray[0][0]);
+        raster_ul_lat = Double.parseDouble(returnArray[l][returnArray[l].length - 1]);
         return returnArray;
+    }
+
+    private double arrayMin(Double[] dArray) {
+        double min = dArray[0];
+        for (int i = 1; i < dArray.length; i++) {
+            if (min > dArray[i]) {
+                min = dArray[i];
+            }
+        }
+        return min;
     }
 
     public static void main(String[] args) {
