@@ -130,15 +130,15 @@ public class QuadTree {
                 node.picScale.put("lrlat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("lrlat")) / 2);
                 node.picScale.put("lrlon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("lrlon")) / 2);
             } else if (lastChar == '2') {
-                node.picScale.put("ullat", parentNode.picScale.get("ullat"));
-                node.picScale.put("ullon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("ullon")) / 2);
-                node.picScale.put("lrlat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("lrlat")) / 2);
-                node.picScale.put("lrlon", parentNode.picScale.get("lrlon"));
-            } else if (lastChar == '3') {
-                node.picScale.put("ullat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("ullat")) / 2);
+                node.picScale.put("ullat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("lrlat")) / 2);
                 node.picScale.put("ullon", parentNode.picScale.get("ullon"));
                 node.picScale.put("lrlat", parentNode.picScale.get("lrlat"));
                 node.picScale.put("lrlon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("lrlon")) / 2);
+            } else if (lastChar == '3') {
+                node.picScale.put("ullat", parentNode.picScale.get("ullat"));
+                node.picScale.put("ullon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("lrlon")) / 2);
+                node.picScale.put("lrlat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("lrlat")) / 2);
+                node.picScale.put("lrlon", parentNode.picScale.get("lrlon"));
             } else if (lastChar == '4') {
                 node.picScale.put("ullat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("ullat")) / 2);
                 node.picScale.put("ullon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("ullon")) / 2);
