@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class QuadTree {
+    public int counter;
     public class Node implements Comparable<Node>{
         private String filename;
         private int depth;
@@ -13,24 +14,16 @@ public class QuadTree {
         private Node sub1, sub2, sub3, sub4;
 
         public Node(String name, int dep) {
+            counter += 1;
             filename = name;
             depth = dep;
             picScale = new HashMap<String, Double>();
-//            sub1 = null;
-//            sub2 = null;
-//            sub3 = null;
-//            sub4 = null;
-
         }
 
         public Node(String name, int dep, Map<String, Double> scale) {
             filename = name;
             depth = dep;
             picScale = scale;
-//            sub1 = null;
-//            sub2 = null;
-//            sub3 = null;
-//            sub4 = null;
         }
 
         public int compareTo(Node node) {
@@ -69,8 +62,10 @@ public class QuadTree {
     private Node root;
 
     public QuadTree(Map<String, Double> scales) { //String rootName
+        counter = 0;
         root = new Node("root", 0, scales);
         addSubsToRoot(root, "1", "2", "3", "4");
+
         addSubN(1, root.sub1);
         addSubN(1, root.sub2);
         addSubN(1, root.sub3);
@@ -130,18 +125,18 @@ public class QuadTree {
                 node.picScale.put("lrlat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("lrlat")) / 2);
                 node.picScale.put("lrlon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("lrlon")) / 2);
             } else if (lastChar == '2') {
-                node.picScale.put("ullat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("lrlat")) / 2);
-                node.picScale.put("ullon", parentNode.picScale.get("ullon"));
-                node.picScale.put("lrlat", parentNode.picScale.get("lrlat"));
-                node.picScale.put("lrlon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("lrlon")) / 2);
-            } else if (lastChar == '3') {
                 node.picScale.put("ullat", parentNode.picScale.get("ullat"));
                 node.picScale.put("ullon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("lrlon")) / 2);
                 node.picScale.put("lrlat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("lrlat")) / 2);
                 node.picScale.put("lrlon", parentNode.picScale.get("lrlon"));
+            } else if (lastChar == '3') {
+                node.picScale.put("ullat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("lrlat")) / 2);
+                node.picScale.put("ullon", parentNode.picScale.get("ullon"));
+                node.picScale.put("lrlat", parentNode.picScale.get("lrlat"));
+                node.picScale.put("lrlon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("lrlon")) / 2);
             } else if (lastChar == '4') {
-                node.picScale.put("ullat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("ullat")) / 2);
-                node.picScale.put("ullon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("ullon")) / 2);
+                node.picScale.put("ullat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("lrlat")) / 2);
+                node.picScale.put("ullon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("lrlon")) / 2);
                 node.picScale.put("lrlat", parentNode.picScale.get("lrlat"));
                 node.picScale.put("lrlon", parentNode.picScale.get("lrlon"));
             }
@@ -152,36 +147,29 @@ public class QuadTree {
     public Node getRoot() {
         return root;
     }
+
+    public Node getNode(String fileName) {
+        return getHelper(root, fileName, 0);
+    }
+
+    private Node getHelper(Node node, String fileName, int level) {
+        if (level > 7) {
+            return null;
+        }
+        if (node.getFilename().equals(fileName)) {
+            return node;
+        }
+        if (fileName.charAt(level) == '1') {
+            return getHelper(node.getSub1(), fileName, level + 1);
+        } else if (fileName.charAt(level) == '2') {
+            return getHelper(node.getSub2(), fileName, level + 1);
+        } else if (fileName.charAt(level) == '3') {
+            return getHelper(node.getSub3(), fileName, level + 1);
+        } else if (fileName.charAt(level) == '4') {
+            return getHelper(node.getSub4(), fileName, level + 1);
+        }
+        return null;
+    }
 //    private void scaleCalcHelper(Node node, Node parentNode, ) {}
 }
 
-
-/*
-    public void addSubs(Node node, String s1, String s2, String s3, String s4) {
-        node.sub1 = new Node(s1);
-        node.sub2 = new Node(s2);
-        node.sub3 = new Node(s3);
-        node.sub4 = new Node(s4);
-    }
-
-    public void addSubs(Node node) {
-        node.sub1 = new Node(node.filename + "1");
-        node.sub2 = new Node(node.filename + "2");
-        node.sub3 = new Node(node.filename + "3");
-        node.sub4 = new Node(node.filename + "4");
-    }
-
-    public void addSubN(int n) {
-        addSubN(n, root);
-    }
-
-    public void addSubN(int n, Node p) {
-        if (n < 1) {return;}
-        addSubs(p);
-        addSubN(n-1, p.sub1);
-        addSubN(n-1, p.sub2);
-        addSubN(n-1, p.sub3);
-        addSubN(n-1, p.sub4);
-
-   }
-*/
