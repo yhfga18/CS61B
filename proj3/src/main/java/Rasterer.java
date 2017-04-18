@@ -170,12 +170,7 @@ public class Rasterer {
             LinkedList<QuadTree.Node> list = map.get(ullat);
             list.add(node);
         }
-        /*
-        for (Double key : map.keySet()) {
-            LinkedList<QuadTree.Node> list = map.get(key);
-            list.sort();
-        }
-        */
+
         Double[] latitudes = map.keySet().toArray(new Double[1]);
         java.util.Arrays.sort(latitudes);
 
@@ -190,9 +185,7 @@ public class Rasterer {
             java.util.Arrays.sort(a);
             returnArray[i] = a;
         }
-        //
-        //
-        //Arrays.sort(returnArray, (a, b) -> String.(a[0], b[0]));
+
         reverse2DArray(returnArray);
 
         int l1 = returnArray.length - 1;
@@ -208,8 +201,6 @@ public class Rasterer {
         QuadTree.Node lowerRightNode = quadTree.getNode(newB);
         raster_lr_lat = lowerRightNode.getPicScale().get("lrlat");
         raster_lr_lon = lowerRightNode.getPicScale().get("lrlon");
-        //raster_ul_lat = returnArray[0][0];
-        //raster_ul_lat = Double.parseDouble(returnArray[l][returnArray[l].length - 1]);
         return returnArray;
     }
 

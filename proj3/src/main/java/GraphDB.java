@@ -6,6 +6,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Graph for storing all of the intersection (vertex) and road (edge) information.
@@ -25,7 +28,10 @@ public class GraphDB {
      * You do not need to modify this constructor, but you're welcome to do so.
      * @param dbPath Path to the XML file to be parsed.
      */
+    Graph graph;
+
     public GraphDB(String dbPath) {
+        graph = new Graph();
         try {
             File inputFile = new File(dbPath);
             SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -53,38 +59,91 @@ public class GraphDB {
      *  we can reasonably assume this since typically roads are connected.
      */
     private void clean() {
-        // TODO: Your code here.
+        graph.clean();
+    }
+
+    public HashMap<Long, LinkedList<Long>> adjacencyList() {
+        return graph.adjacencyList;
     }
 
     /** Returns an iterable of all vertex IDs in the graph. */
     Iterable<Long> vertices() {
-        //YOUR CODE HERE, this currently returns only an empty list.
-        return new ArrayList<Long>();
+        return graph.vertices();
     }
 
     /** Returns ids of all vertices adjacent to v. */
     Iterable<Long> adjacent(long v) {
-        return null;
+        return graph.adjacent(v);
     }
 
     /** Returns the Euclidean distance between vertices v and w, where Euclidean distance
      *  is defined as sqrt( (lonV - lonV)^2 + (latV - latV)^2 ). */
     double distance(long v, long w) {
-        return 0;
+        return graph.distance(v, w);
     }
 
     /** Returns the vertex id closest to the given longitude and latitude. */
     long closest(double lon, double lat) {
-        return 0;
+        return graph.closest(lon, lat);
+    }
+
+    Node closestNode(double lon, double lat) {
+        return graph.closestNode(lon, lat);
     }
 
     /** Longitude of vertex v. */
     double lon(long v) {
-        return 0;
+        return graph.lon(v);
     }
 
     /** Latitude of vertex v. */
     double lat(long v) {
-        return 0;
+        return graph.lat(v);
     }
+
+    boolean hasInnerGraph() {
+        return graph == null;
+    }
+
+    void createGraph() {
+        graph = new Graph();
+    }
+
+    public void addNode(Node node) {
+        graph.addNode(node);
+    }
+
+    public Node getNode(long id) {
+        return graph.getNode(id);
+    }
+
+    public Node getNode(String id) {
+        return graph.getNode(id);
+    }
+
+    public void removeNode(Long id) {
+        graph.removeNode(id);
+    }
+
+    public void addEdge(Node n1, Node n2) {
+        graph.addEdge(n1, n2);
+    }
+
+    public boolean contains(String id) {
+        return graph.contains(id);
+    }
+
+    public void takeLists(Node node) {
+        graph.takeLists(node);
+    }
+
+    public boolean containNode(Node node) {
+        return graph.containNode(node);
+    }
+    public boolean containNodeAdj(Node node) {
+        return graph.containNodeAdj(node);
+    }
+
+
+
 }

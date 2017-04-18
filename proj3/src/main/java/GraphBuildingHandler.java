@@ -2,9 +2,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  *  Parses OSM XML files using an XML SAX parser. Used to construct the graph of roads for
@@ -26,6 +24,9 @@ import java.util.Set;
  *  @author Alan Yao, Maurice Lee
  */
 public class GraphBuildingHandler extends DefaultHandler {
+    List<Node> Nodes;
+    List<Node> wayNodes;
+    boolean highway_flag;
     /**
      * Only allow for non-service roads; this prevents going on pedestrian streets as much as
      * possible. Note that in Berkeley, many of the campus roads are tagged as motor vehicle
@@ -41,6 +42,9 @@ public class GraphBuildingHandler extends DefaultHandler {
 
     public GraphBuildingHandler(GraphDB g) {
         this.g = g;
+        Nodes = new LinkedList<>();
+        wayNodes = new LinkedList<>();
+        highway_flag = false;
     }
 
     /**
@@ -67,6 +71,17 @@ public class GraphBuildingHandler extends DefaultHandler {
 //            System.out.println("Node id: " + attributes.getValue("id"));
 //            System.out.println("Node lon: " + attributes.getValue("lon"));
 //            System.out.println("Node lat: " + attributes.getValue("lat"));
+            String id = attributes.getValue("id");
+            String lon = attributes.getValue("lon");
+            String lat = attributes.getValue("lat");
+            /*
+            if (!(g.hasInnerGraph())) {
+                g.createGraph();
+            }
+            */
+            Node node = new Node(id, lon, lat);
+            g.addNode(node);
+            Nodes.add(node);
 
             /* TODO Use the above information to save a "node" to somewhere. */
             /* Hint: A graph-like structure would be nice. */
@@ -78,7 +93,12 @@ public class GraphBuildingHandler extends DefaultHandler {
         } else if (activeState.equals("way") && qName.equals("nd")) {
             /* While looking at a way, we found a <nd...> tag. */
             //System.out.println("Id of a node in this way: " + attributes.getValue("ref"));
-
+            String nd = attributes.getValue("ref");
+            boolean con = g.contains(nd);
+            if (con) {
+                Node nn = g.getNode(nd);
+                wayNodes.add(nn);
+            }
             /* TODO Use the above id to make "possible" connections between the nodes in this way */
             /* Hint1: It would be useful to remember what was the last node in this way. */
             /* Hint2: Not all ways are valid. So, directly connecting the nodes here would be
@@ -96,6 +116,15 @@ public class GraphBuildingHandler extends DefaultHandler {
             } else if (k.equals("highway")) {
                 //System.out.println("Highway type: " + v);
                 /* TODO Figure out whether this way and its connections are valid. */
+                highway_flag = ALLOWED_HIGHWAY_TYPES.contains(v);
+                /*
+                if (highway_flag == false) {
+                    for (Node n : wayNodes) {
+                        g.takeLists(n);
+                    }
+                }
+                wayNodes = new LinkedList<>();
+                */
                 /* Hint: Setting a "flag" is good enough! */
             } else if (k.equals("name")) {
                 //System.out.println("Way Name: " + v);
@@ -126,6 +155,17 @@ public class GraphBuildingHandler extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equals("way")) {
+            if (highway_flag) {
+                for (int i = 0; i < wayNodes.size() - 1 ; i++) {
+                    g.addEdge(wayNodes.get(i), wayNodes.get(i + 1));
+                }
+            } else {
+                for (Node n : wayNodes) {
+                    g.takeLists(n);
+                    g.removeNode(n.getId());
+                }
+            }
+            wayNodes = new LinkedList<Node>();
             /* We are done looking at a way. (We finished looking at the nodes, speeds, etc...)*/
             /* Hint1: If you have stored the possible connections for this way, here's your
             chance to actually connect the nodes together if the way is valid. */
