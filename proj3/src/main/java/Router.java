@@ -92,6 +92,7 @@ public class Router {
             resultList.addFirst(tracking);
             tracking = path.get(tracking);
         }
+        resultList.addFirst(tracking);
         return resultList;
     }
 }

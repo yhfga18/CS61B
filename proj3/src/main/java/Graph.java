@@ -60,6 +60,17 @@ public class Graph {
                 closestNode = n;
             }
         }
+
+        /*
+        for (Long n : adjacent(closestNode.getId())) {
+            double d = distance(nodes.get(n), node);
+            if (minDistance > d) {
+                minDistance = d;
+                closestNode = nodes.get(n);
+            }
+        }
+        */
+
         return closestNode.getId();
     }
 
