@@ -86,8 +86,6 @@ public class Router {
         Long start = current.getId();
         Long tracking = goal.getId();
         LinkedList<Long> resultList = new LinkedList<>();
-        resultList.addFirst(tracking);
-
         while (path.get(tracking) != null && !(path.get(tracking).equals(tracking)) && !(path.get(tracking).equals(start))) {
             resultList.addFirst(tracking);
             tracking = path.get(tracking);
