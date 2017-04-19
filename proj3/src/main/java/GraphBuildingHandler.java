@@ -27,6 +27,7 @@ public class GraphBuildingHandler extends DefaultHandler {
     List<Node> Nodes;
     List<Node> wayNodes;
     boolean highway_flag;
+    Way currentWay;
     /**
      * Only allow for non-service roads; this prevents going on pedestrian streets as much as
      * possible. Note that in Berkeley, many of the campus roads are tagged as motor vehicle
@@ -74,11 +75,6 @@ public class GraphBuildingHandler extends DefaultHandler {
             String id = attributes.getValue("id");
             String lon = attributes.getValue("lon");
             String lat = attributes.getValue("lat");
-            /*
-            if (!(g.hasInnerGraph())) {
-                g.createGraph();
-            }
-            */
             Node node = new Node(id, lon, lat);
             g.addNode(node);
             Nodes.add(node);
@@ -89,6 +85,10 @@ public class GraphBuildingHandler extends DefaultHandler {
         } else if (qName.equals("way")) {
             /* We encountered a new <way...> tag. */
             activeState = "way";
+            String id = attributes.getValue("id");
+            Way way = new Way(g, id);
+            g.addWay(way);
+            currentWay = way;
 //            System.out.println("Beginning a way...");
         } else if (activeState.equals("way") && qName.equals("nd")) {
             /* While looking at a way, we found a <nd...> tag. */
@@ -96,8 +96,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             String nd = attributes.getValue("ref");
             boolean con = g.contains(nd);
             if (con) {
-                Node nn = g.getNode(nd);
-                wayNodes.add(nn);
+                currentWay.addNodeToWay(nd);
             }
             /* TODO Use the above id to make "possible" connections between the nodes in this way */
             /* Hint1: It would be useful to remember what was the last node in this way. */
@@ -156,16 +155,9 @@ public class GraphBuildingHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equals("way")) {
             if (highway_flag) {
-                for (int i = 0; i < wayNodes.size() - 1 ; i++) {
-                    g.addEdge(wayNodes.get(i), wayNodes.get(i + 1));
-                }
-            } else {
-                for (Node n : wayNodes) {
-                    g.takeLists(n);
-                    g.removeNode(n.getId());
-                }
+                currentWay.addEdgeToNodes();
             }
-            wayNodes = new LinkedList<Node>();
+            highway_flag = false;
             /* We are done looking at a way. (We finished looking at the nodes, speeds, etc...)*/
             /* Hint1: If you have stored the possible connections for this way, here's your
             chance to actually connect the nodes together if the way is valid. */

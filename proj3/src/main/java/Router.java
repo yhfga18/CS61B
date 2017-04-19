@@ -22,33 +22,38 @@ public class Router {
      */
     public static LinkedList<Long> shortestPath(GraphDB g, double stlon, double stlat, double destlon, double destlat) {
 
-        LinkedList<Long> resultList = null;
+        LinkedList<Long> resultList = new LinkedList<>();
+        Node current;
 
         Node initial = g.closestNode(stlon, stlat);
         Node goal = g.closestNode(destlon, destlat);
-        g.containNode(initial);
-        g.containNodeAdj(initial);
-
         PriorityQueue<Node> MinPQ = new PriorityQueue<>(new NodeComparator(g, goal));
 
+        // set initial's d & h. No need initial's f to be set.
         initial.setDistFromSource(0);
         initial.setHeuristic(heuristic(g, initial, goal));
+
+        // add initial to MinPQ
         MinPQ.add(initial);
 
-        Map<Long, Long> path = new HashMap<>();
-        Set<Node> visited = new HashSet<>();
+
+        Map<Long, Long> path = new HashMap<>(); // path
+        Set<Node> visited = new HashSet<>(); // visited node
+        path.put(initial.getId(), initial.getId());
 
         while (!(MinPQ.isEmpty())) {
-            Node current = MinPQ.poll();
+            current = MinPQ.poll(); // MinPQ's smallest pulled
+            // resultList.addLast(current.getId());
 
             if(current.getId() == (goal.getId())){
+                //resultList.addLast(current.getId());
                 resultList = pathMaker(path, current, goal);
+                return resultList;
             }
 
             visited.add(current);
-            g.containNode(current);
-            g.containNodeAdj(current);
-            Iterable<Long> ll = g.adjacent(current.getId());
+
+//            Iterable<Long> ll = g.adjacent(current.getId());
             for (Long neig : g.adjacent(current.getId())) {
                 Node neighbor = g.getNode(neig);
 
@@ -56,10 +61,12 @@ public class Router {
                     continue;
                 }
 
-                double dist = g.distance(current.getId(), neighbor.getId());
-                dist = dist + current.getDistFromSource();
-                if (neighbor.getDistFromSource() > dist) {
-                    neighbor.setDistFromSource(dist);
+                double distToNeighbor = g.distance(current.getId(), neighbor.getId());
+                double distanceSoFar = distToNeighbor + current.getDistFromSource();
+                //neighbor.setDistFromSource(distanceSoFar); // neighbor の d を更新
+
+                if (neighbor.getDistFromSource() > distanceSoFar) {
+                    neighbor.setDistFromSource(distanceSoFar);
                     neighbor.setF();
                     path.put(neighbor.getId(), current.getId()); // 特定のprev-current-neighbor のならびにおいてのshortestを見たいから
                     if (!(MinPQ.contains(neighbor))) {
@@ -68,7 +75,7 @@ public class Router {
                 }
             }
         }
-        return resultList;
+        return null;
     }
 
     public static double heuristic(GraphDB g, Node current, Node destination) {
@@ -80,7 +87,9 @@ public class Router {
         Long tracking = goal.getId();
         LinkedList<Long> resultList = new LinkedList<>();
         resultList.addFirst(tracking);
-        while (path.get(tracking) != start) {
+
+        while (path.get(tracking) != null && !(path.get(tracking).equals(tracking)) && !(path.get(tracking).equals(start))) {
+            resultList.addFirst(tracking);
             tracking = path.get(tracking);
         }
         return resultList;

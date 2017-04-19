@@ -6,10 +6,12 @@ import java.util.*;
  */
 public class Graph {
     Map<Long, Node> nodes;
+    Map<Long, Way> ways;
     HashMap<Long, LinkedList<Long>> adjacencyList;
 
     public Graph() {
         nodes = new HashMap<>();
+        ways = new HashMap<>();
         adjacencyList = new HashMap();
     }
 
@@ -49,9 +51,9 @@ public class Graph {
     long closest(double lon, double lat) {
         Node node = new Node("0", Double.toString(lon), Double.toString(lat));
         Node closestNode = null;
-        double minDistance = 36000*18000;
-        for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
-            Node n = entry.getValue();
+        double minDistance = 99999999999999999.9;
+        //for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
+        for (Node n : nodes.values()) {
             double dist = distance(node, n);
             if (minDistance >= dist) {
                 minDistance = dist;
@@ -81,11 +83,12 @@ public class Graph {
             adjacencyList.put(node.getId(), new LinkedList<>());
         }
     }
-
+    /*
     public void addNode(String node) {
         Node n = nodes.get(Long.parseLong(node));
         addNode(n);
     }
+    */
 
 
     public Node getNode(long id) {
@@ -101,17 +104,17 @@ public class Graph {
         return returnNode;
     }
 
-    public void addEdge(Node node1, Node node2) {
-        long id1 = node1.getId();
-        long id2 = node2.getId();
-        addEdge(id1, id2);
-    }
-
     public void removeNode(Long nodeID) {
         if ((nodes.containsKey(nodeID))) {
             nodes.remove(nodeID);
             //nodes.containsKey(nodeID);
         }
+    }
+
+    public void addEdge(Node node1, Node node2) {
+        long id1 = node1.getId();
+        long id2 = node2.getId();
+        addEdge(id1, id2);
     }
 
     public void addEdge(long node1, long node2) {
@@ -158,6 +161,10 @@ public class Graph {
         return adjacencyList.containsKey(node.getId());
     }
 
+    public void addWay(Way way) {
+        ways.put(way.wayId, way);
+    }
+
 }
 
 class Node {
@@ -172,7 +179,7 @@ class Node {
         this.id = Long.parseLong(id);
         this.lon = Double.parseDouble(lon);
         this.lat = Double.parseDouble(lat);
-        distFromSource = 99999999999999999.9;
+        distFromSource = 9999999999999.9;
     }
     public long getId() {
         return id;
@@ -184,33 +191,55 @@ class Node {
         return lat;
     }
 
+
     public double getDistFromSource() {
         return distFromSource;
     }
-
     public void setDistFromSource(Node prev) {
         distFromSource = distFromSource + prev.getDistFromSource();
     }
     public void setDistFromSource(double d) {
         distFromSource = d;
     }
-
     public double getHeuristic() {
         return heuristic;
     }
-
     public void setHeuristic(double h) {
         heuristic = h;
     }
-
-
     public double getF() {
         return f;
     }
-
     public void setF() {
         f = distFromSource + heuristic;
     }
-
 }
+
+
+class Way {
+    long wayId;
+    LinkedList<Long> nodes;
+    Graph graph;
+    boolean isWay;
+
+    public Way(GraphDB g, String wayID) {
+        graph = g.graph;
+        wayId = Long.parseLong(wayID);
+        nodes = new LinkedList<>();
+    }
+
+    public void addNodeToWay(String nodeId) {
+        nodes.addLast(Long.parseLong(nodeId));
+    }
+
+    public void addEdgeToNodes() {
+        if (nodes.size() >= 1) {
+            for (int i = 0; i < nodes.size() - 1 ; i++) {
+                graph.addEdge(nodes.get(i), nodes.get(i + 1));
+            }
+        }
+    }
+
+
+        }
 

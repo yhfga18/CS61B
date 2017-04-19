@@ -144,6 +144,8 @@ public class GraphDB {
         return graph.containNodeAdj(node);
     }
 
+    public void addWay(Way way) {graph.addWay(way);}
+
 
 
 }
