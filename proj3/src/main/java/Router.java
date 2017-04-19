@@ -104,8 +104,6 @@ class NodeComparator implements Comparator<Node> {
     }
 
     public int compare(Node node1, Node node2) {
-        node1.setHeuristic(heuristic(node1, goal));
-        node2.setHeuristic(heuristic(node2, goal));
         if (node1.getF() > node2.getF()) {
             return 1;
         } else if (node1.getF() < node2.getF()) {
