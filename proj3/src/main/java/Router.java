@@ -1,5 +1,6 @@
 import java.util.Map;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Comparator;
@@ -20,7 +21,6 @@ public class Router {
      * Return a LinkedList of <code>Long</code>s representing the shortest path from st to dest, 
      * where the longs are node IDs.
      */
-    GraphDB graph;
 
     static class NodeComparator implements Comparator<Node> {
         Node goal;
@@ -42,7 +42,7 @@ public class Router {
     public static LinkedList<Long> shortestPath(GraphDB g, double stlon,
                                                 double stlat, double destlon, double destlat) {
 
-        LinkedList<Long> resultList;// = new LinkedList<>();
+        LinkedList<Long> resultList = new LinkedList<>();
         Node current;
 
         Node initial = g.closestNode(stlon, stlat);
@@ -58,28 +58,27 @@ public class Router {
 
 
         Map<Long, Long> path = new HashMap<>(); // path
-        //HashSet<Node> visited = new HashSet<>(); // visited node
+        HashSet<Node> visited = new HashSet<>(); // visited node
         path.put(initial.getId(), initial.getId());
 
         while (!(minPQ.isEmpty())) {
             current = minPQ.poll(); // MinPQ's smallest pulled
-            // resultList.addLast(current.getId());
+            resultList.addLast(current.getId());
 
             if (current.getId() == (goal.getId())) {
                 resultList = pathMaker(path, current, goal);
                 return resultList;
             }
 
-//            visited.add(current);
+            visited.add(current);
 
             for (Long neig : g.adjacent(current.getId())) {
                 Node neighbor = g.getNode(neig);
+                neighbor.setHeuristic(heuristic(g, neighbor, goal));
 
-                /*
                 if (visited.contains(neighbor)) {
                     continue;
                 }
-                */
 
                 double distToNeighbor = g.distance(current.getId(), neighbor.getId());
                 double distanceSoFar = distToNeighbor + current.getDistFromSource();
@@ -88,9 +87,7 @@ public class Router {
                     neighbor.setDistFromSource(distanceSoFar);
                     neighbor.setF();
                     path.put(neighbor.getId(), current.getId());
-                    if (!(minPQ.contains(neighbor))) {
-                        minPQ.add(neighbor);
-                    }
+                    minPQ.add(neighbor);
                 }
             }
         }
