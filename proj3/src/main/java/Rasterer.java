@@ -24,7 +24,7 @@ public class Rasterer {
     private double LRLAT;
     private double LRLON;
     private double Width;
-    private double Height;
+//    private double Height;
     private double LONDPP;
     double raster_ul_lon = MapServer.ROOT_ULLON;
     double raster_ul_lat = MapServer.ROOT_ULLAT;
@@ -32,9 +32,9 @@ public class Rasterer {
     double raster_lr_lat = MapServer.ROOT_LRLAT;
     int depth;
     boolean query_success = true;
-    List<QuadTree.Node> fileList;
+    Map<Double, LinkedList<Long>> fileMap;
+    LinkedList<Double> latitudeList;
     int numOfPic = 0;
-    int dup = 0;
     String img;
 
 
@@ -87,25 +87,44 @@ public class Rasterer {
         this.LRLAT = params.get("lrlat");
         this.LRLON = params.get("lrlon");
         this.Width = params.get("w");
-        this.Height = params.get("h");
+//        this.Height = params.get("h");
         this.LONDPP = (LRLON - ULLON) / Width;
+        latitudeList = new LinkedList<>();
 
         ////////////////////////////////////////////////////////////////////////////////
-        fileList = new LinkedList<QuadTree.Node>();
+        fileMap = new HashMap<>(); // Long, String
         ////////////////////////////////////////////////////////////////////////////////
 
         Map<String, Object> results = new HashMap<>();
         QuadTree.Node root = quadTree.getRoot();
         search(root, 0);
-        String[][] imageFiles = new String[1][];
-
+        String[][] resultMap = new String[latitudeList.size()][];
         ////////////////////////////////////////////////////////////////////////////////
         if (query_success) {
-            imageFiles = listToArray(fileList);
+            for (int i = 0; i < latitudeList.size(); i++) {
+                double keyLat = latitudeList.get(i);
+                LinkedList<Long> l = fileMap.get(keyLat);
+                String[] newL = new String[l.size()];
+                for (int j = 0; j < l.size(); j++) {
+                    newL[j] = img + Long.toString(l.get(j)) + ".png";
+                }
+                resultMap[i] = newL;
+            }
         }
+
+        int l1 = resultMap.length - 1;
+        int l2 = resultMap[l1].length - 1;
+        long veryFirstNode = fileMap.get(latitudeList.get(0)).get(0);
+        long veryLastNode = fileMap.get(latitudeList.get(l1)).get(l2);
+
+        raster_ul_lat = quadTree.getNode(Long.toString(veryFirstNode)).getULLAT();
+        raster_ul_lon = quadTree.getNode(Long.toString(veryFirstNode)).getULLON();
+        raster_lr_lat = quadTree.getNode(Long.toString(veryLastNode)).getLRLAT();
+        raster_lr_lon = quadTree.getNode(Long.toString(veryLastNode)).getLRLON();
+
         ////////////////////////////////////////////////////////////////////////////////
 
-        results.put("render_grid", imageFiles);
+        results.put("render_grid", resultMap);
         results.put("raster_ul_lon", raster_ul_lon);
         results.put("raster_ul_lat", raster_ul_lat);
         results.put("raster_lr_lon", raster_lr_lon);
@@ -133,7 +152,14 @@ public class Rasterer {
             return;
         }
 
-        fileList.add(node);
+        ////////////////////////////////////////////////
+        double latitude = node.getULLAT();
+        if (!(fileMap.containsKey(latitude))) {
+            fileMap.put(latitude, new LinkedList<>());
+            latitudeList.addLast(latitude);
+        }
+        fileMap.get(node.getULLAT()).addLast(Long.parseLong(node.getFilename()));
+        ////////////////////////////////////////////////
         numOfPic += 1;
         depth = (int) d;
         return;
@@ -153,6 +179,15 @@ public class Rasterer {
         return LONDPP > nodeLonDPP;
         }
 
+
+
+
+
+
+
+
+
+    /*
     private String[][] listToArray(List<QuadTree.Node> fileList){
         Map<Double, LinkedList<QuadTree.Node>> map = new HashMap<>();
         for (QuadTree.Node node : fileList) {
@@ -199,7 +234,9 @@ public class Rasterer {
         raster_lr_lon = lowerRightNode.getLRLON();
         return returnArray;
     }
+    */
 
+    /*
     private double arrayMin(Double[] dArray) {
         double min = dArray[0];
         for (int i = 1; i < dArray.length; i++) {
@@ -229,7 +266,6 @@ public class Rasterer {
         for (int i = 0; i < s.length; i++) {
             s[i] = img + s[i] + ".png";
 
-            /*
             if (s[i].length() > 4) {
 
                 //a = Character.toString(s[i].charAt(s.length - 4)) + Character.toString(s[i].charAt(s.length - 3)) + Character.toString(s[i].charAt(s.length - 2)) + Character.toString(s[i].charAt(s.length - 1));
@@ -239,7 +275,7 @@ public class Rasterer {
             } else {
                 s[i] = img + s[i] + ".png";
             }
-            */
         }
     }
+    */
 }
