@@ -19,14 +19,16 @@ import java.util.*;
  */
 public class GraphDB {
     Map<Long, Node> nodes;
+    Map<Integer, Set<Long>> actualNodes;
     Set<Long> vertices;
     //Map<Long, Way> ways;
     double Rullat = MapServer.ROOT_ULLAT;
     double Rullon = MapServer.ROOT_ULLON;
     double Rlrlat = MapServer.ROOT_LRLAT;
     double Rlrlon =  MapServer.ROOT_LRLON;
+    double HALF_LON = -122.255859;
     Node latestNode;
-    Node latestEdge;
+    Way latestEdge;
 
     HashMap<Long, LinkedList<Long>> adjacencyList;
 
@@ -44,6 +46,9 @@ public class GraphDB {
         //ways = new HashMap<>();
         adjacencyList = new HashMap();
         vertices = new HashSet<>();
+        actualNodes = new HashMap<Integer, Set<Long>>();
+        actualNodes.put(1, new HashSet<Long>());
+        actualNodes.put(-1, new HashSet<Long>());
 
         try {
             File inputFile = new File(dbPath);
@@ -54,7 +59,7 @@ public class GraphDB {
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
-        clean();
+        // clean();
     }
 
     /**
@@ -119,10 +124,9 @@ public class GraphDB {
 
     /** Returns ids of all vertices adjacent to v. */
     Iterable<Long> adjacent(long nodeId) {
-        if (adjacencyList.containsKey(nodeId)) {
-            if (!(adjacencyList.get(nodeId) == null)) {
-                return adjacencyList.get(nodeId);
-            }
+        LinkedList<Long> list = adjacencyList.get(nodeId);
+        if (!(list == null)) {
+            return list;
         }
         return new LinkedList<Long>();
     }
@@ -163,17 +167,22 @@ public class GraphDB {
     long closest(double lon, double lat) {
         Node closestNode = null;
         double minDistance = 99999999999.9;
-
+        Set<Long> nodeSet;
+        if (lon < HALF_LON) {
+            nodeSet = actualNodes.get(1);
+        } else {
+            nodeSet = actualNodes.get(-1);
+        }
         //for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
-        for (long entry : vertices) {
+        for (long entry : nodeSet) {
+            //if ((Math.abs(n.lat - lat) < 0.03) && (Math.abs(n.lon - lon)) < 0.03) {
             Node n = nodes.get(entry);
-            if ((Math.abs(n.lat - lat) < 0.03) && (Math.abs(n.lon - lon)) < 0.03) {
-                double dist = distance(lon, lat, n);
-                if (minDistance > dist) {
-                    minDistance = dist;
-                    closestNode = n;
-                }
+            double dist = distance(lon, lat, n);
+            if (minDistance > dist) {
+                minDistance = dist;
+                closestNode = n;
             }
+            //}
         }
 
         /*
@@ -288,6 +297,12 @@ public class GraphDB {
             LinkedList<Long> l = new LinkedList<Long>();
             l.add(node2);
             adjacencyList.put(node1, l);
+
+            if (nodes.get(node1).lon < HALF_LON) {
+                actualNodes.get(1).add(node1);
+            } else {
+                actualNodes.get(-1).add(node1);
+            }
         } else {
             adjacencyList.get(node1).add(node2);
         }

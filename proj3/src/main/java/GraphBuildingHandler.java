@@ -75,8 +75,10 @@ public class GraphBuildingHandler extends DefaultHandler {
             String id = attributes.getValue("id");
             String lon = attributes.getValue("lon");
             String lat = attributes.getValue("lat");
+            //
             Node node = new Node(id, lon, lat);
             g.addNode(node);
+            g.latestNode = node;
             Nodes.add(node);
 
             /* TODO Use the above information to save a "node" to somewhere. */
@@ -87,6 +89,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             activeState = "way";
             String id = attributes.getValue("id");
             Way way = new Way(g, id);
+            g.latestEdge = way;
             //g.addWay(way);
             currentWay = way;
 //            System.out.println("Beginning a way...");
