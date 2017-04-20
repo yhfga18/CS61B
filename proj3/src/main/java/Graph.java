@@ -8,6 +8,8 @@ public class Graph {
     Map<Long, Node> nodes;
     Map<Long, Node> nodes1;
     Map<Long, Node> nodes2;
+    Map<Long, Node> nodes3;
+    Map<Long, Node> nodes4;
     Map<Long, Way> ways;
     double Rullat = MapServer.ROOT_ULLAT;
     double Rullon = MapServer.ROOT_ULLON;
@@ -20,6 +22,8 @@ public class Graph {
         nodes = new HashMap<>();
         nodes1 = new HashMap<>();
         nodes2 = new HashMap<>();
+        nodes3 = new HashMap<>();
+        nodes4 = new HashMap<>();
         ways = new HashMap<>();
         adjacencyList = new HashMap();
     }
@@ -63,16 +67,20 @@ public class Graph {
         double minDistance = 99999999999999999.9;
         //for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
 
-//        Map<Long, Node>  nodeSet;
-//        if (lon > (Rullon - Rlrlon) / 2) {
-//            nodeSet = nodes2;
-//        } else {
-//            nodeSet = nodes1;
-//        }
+        Map<Long, Node>  nodeSet;
+        if (lat > (Rlrlat + Rullat) / 2 && lon < (Rullon + Rlrlon) / 2) {
+            nodeSet = nodes1;
+        } else if (lat > (Rlrlat + Rullat) / 2 && lon > (Rullon + Rlrlon) / 2) {
+            nodeSet = nodes2;
+        } else if (lat < (Rlrlat + Rullat) / 2 && lon < (Rullon + Rlrlon) / 2) {
+            nodeSet = nodes3;
+        } else {//if (lat < (Rlrlat + Rullat) / 2 && lon > (Rullon + Rlrlon) / 2) {
+            nodeSet = nodes4;
+        }
 
-        for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
+        for (Map.Entry<Long, Node> entry : nodeSet.entrySet()) {
             Node n = entry.getValue();
-            if ((Math.abs(n.lat - node.lat) < 0.06) && (Math.abs(n.lon - node.lon)) < 0.06) {
+            if ((Math.abs(n.lat - node.lat) < 0.1) && (Math.abs(n.lon - node.lon)) < 0.1) {
                 double dist = distance(node, n);
                 if (minDistance >= dist) {
                     minDistance = dist;
@@ -111,12 +119,25 @@ public class Graph {
     public void addNode(Node node) {
         if (!(nodes.containsKey(node.getId()))) {
             nodes.put(node.getId(), node);
-            char f = Long.toString(node.getId()).charAt(0);
-            if (f == '1' || f == '3') {
+            Double lon = node.getLon();
+            Double lat = node.getLat();
+            if (lat > (Rlrlat + Rullat) / 2 && lon < (Rullon + Rlrlon) / 2) {
+                nodes1.put(node.getId(), node);
+
+            } else if (lat > (Rlrlat + Rullat) / 2 && lon > (Rullon + Rlrlon) / 2) {
+                nodes2.put(node.getId(), node);
+            } else if (lat < (Rlrlat + Rullat) / 2 && lon < (Rullon + Rlrlon) / 2) {
+                nodes3.put(node.getId(), node);
+            } else if (lat < (Rlrlat + Rullat) / 2 && lon > (Rullon + Rlrlon) / 2) {
+                nodes4.put(node.getId(), node);
+            }
+            /*
+            if () {
                 nodes1.put(node.getId(), node);
             } else {
                 nodes2.put(node.getId(), node);
             }
+            */
         }
         if (!(adjacencyList.containsKey(node.getId()))) {
             adjacencyList.put(node.getId(), new LinkedList<>());
@@ -132,13 +153,27 @@ public class Graph {
 
     public void removeNode(Long nodeID) {
         if ((nodes.containsKey(nodeID))) {
+            Node node = nodes.get(nodeID);
             nodes.remove(nodeID);
+            Double lon = node.getLon();
+            Double lat = node.getLat();
+            if (lat > (Rlrlat + Rullat) / 2 && lon < (Rullon + Rlrlon) / 2) {
+                nodes1.remove(node.getId(), node);
+            } else if (lat > (Rlrlat + Rullat) / 2 && lon > (Rullon + Rlrlon) / 2) {
+                nodes2.remove(node.getId(), node);
+            } else if (lat < (Rlrlat + Rullat) / 2 && lon < (Rullon + Rlrlon) / 2) {
+                nodes3.remove(node.getId(), node);
+            } else if (lat < (Rlrlat + Rullat) / 2 && lon > (Rullon + Rlrlon) / 2) {
+                nodes4.remove(node.getId(), node);
+            }
+            /*
             char f = Long.toString(nodeID).charAt(0);
-            if (f == '1' || f == '3') {
+            if (f == '1' || f == '2') {
                 nodes1.remove(nodeID);
             } else {
                 nodes2.remove(nodeID);
             }
+            */
             //nodes.containsKey(nodeID);
         }
     }
