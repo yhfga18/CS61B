@@ -64,42 +64,40 @@ public class Graph {
     long closest(double lon, double lat) {
         Node node = new Node("0", Double.toString(lon), Double.toString(lat));
         Node closestNode = null;
-        double minDistance = 99999999999999999.9;
+        double minDistance = 999999999.9;
         //for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
 
-        Map<Long, Node>  nodeSet;
-        if (lat > (Rlrlat + Rullat) / 2 && lon < (Rullon + Rlrlon) / 2) {
-            nodeSet = nodes1;
-        } else if (lat > (Rlrlat + Rullat) / 2 && lon > (Rullon + Rlrlon) / 2) {
-            nodeSet = nodes2;
-        } else if (lat < (Rlrlat + Rullat) / 2 && lon < (Rullon + Rlrlon) / 2) {
-            nodeSet = nodes3;
-        } else {//if (lat < (Rlrlat + Rullat) / 2 && lon > (Rullon + Rlrlon) / 2) {
-            nodeSet = nodes4;
-        }
+        Map<Long, Node>  nodeSet = nodesSelector(lon, lat, Rullon, Rullat, Rlrlon, Rlrlat);
 
         for (Map.Entry<Long, Node> entry : nodeSet.entrySet()) {
             Node n = entry.getValue();
-            if ((Math.abs(n.lat - node.lat) < 0.1) && (Math.abs(n.lon - node.lon)) < 0.1) {
+            //if ((Math.abs(n.lat - node.lat) < 0.001) && (Math.abs(n.lon - node.lon)) < 0.001) {
                 double dist = distance(node, n);
                 if (minDistance >= dist) {
                     minDistance = dist;
                     closestNode = n;
                 }
-            }
+            //}
         }
-
-        /*
-        for (Long n : adjacent(closestNode.getId())) {
-            double d = distance(nodes.get(n), node);
-            if (minDistance > d) {
-                minDistance = d;
-                closestNode = nodes.get(n);
-            }
-        }
-        */
 
         return closestNode.getId();
+    }
+
+    private Map<Long, Node> nodesSelector(double lon, double lat, double ullon, double ullat,
+                                          double lrlon, double lrlat) {
+        Map<Long, Node> nodeSet;
+        boolean c1 = lat > (lrlat + ullat) / 2;
+        boolean c2 = lon > (ullon + lrlon) / 2;
+        if (c1 && !c2) {
+            nodeSet = nodes1;
+        } else if (c1 && c2) {
+            nodeSet = nodes2;
+        } else if (!c1 && !c2) {
+            nodeSet = nodes3;
+        } else {//if (lat < (lrlat + ullat) / 2 && lon > (ullon + lrlon) / 2) {
+            nodeSet = nodes4;
+        }
+        return nodeSet;
     }
 
 
@@ -121,23 +119,8 @@ public class Graph {
             nodes.put(node.getId(), node);
             Double lon = node.getLon();
             Double lat = node.getLat();
-            if (lat > (Rlrlat + Rullat) / 2 && lon < (Rullon + Rlrlon) / 2) {
-                nodes1.put(node.getId(), node);
-
-            } else if (lat > (Rlrlat + Rullat) / 2 && lon > (Rullon + Rlrlon) / 2) {
-                nodes2.put(node.getId(), node);
-            } else if (lat < (Rlrlat + Rullat) / 2 && lon < (Rullon + Rlrlon) / 2) {
-                nodes3.put(node.getId(), node);
-            } else if (lat < (Rlrlat + Rullat) / 2 && lon > (Rullon + Rlrlon) / 2) {
-                nodes4.put(node.getId(), node);
-            }
-            /*
-            if () {
-                nodes1.put(node.getId(), node);
-            } else {
-                nodes2.put(node.getId(), node);
-            }
-            */
+            Map<Long, Node> nodeSet = nodesSelector(lon, lat, Rullon, Rullat, Rlrlon, Rlrlat);
+            nodeSet.put(node.getId(), node);
         }
         if (!(adjacencyList.containsKey(node.getId()))) {
             adjacencyList.put(node.getId(), new LinkedList<>());
@@ -157,24 +140,8 @@ public class Graph {
             nodes.remove(nodeID);
             Double lon = node.getLon();
             Double lat = node.getLat();
-            if (lat > (Rlrlat + Rullat) / 2 && lon < (Rullon + Rlrlon) / 2) {
-                nodes1.remove(node.getId(), node);
-            } else if (lat > (Rlrlat + Rullat) / 2 && lon > (Rullon + Rlrlon) / 2) {
-                nodes2.remove(node.getId(), node);
-            } else if (lat < (Rlrlat + Rullat) / 2 && lon < (Rullon + Rlrlon) / 2) {
-                nodes3.remove(node.getId(), node);
-            } else if (lat < (Rlrlat + Rullat) / 2 && lon > (Rullon + Rlrlon) / 2) {
-                nodes4.remove(node.getId(), node);
-            }
-            /*
-            char f = Long.toString(nodeID).charAt(0);
-            if (f == '1' || f == '2') {
-                nodes1.remove(nodeID);
-            } else {
-                nodes2.remove(nodeID);
-            }
-            */
-            //nodes.containsKey(nodeID);
+            Map<Long, Node>  nodeSet = nodesSelector(lon, lat, Rullon, Rullat, Rlrlon, Rlrlat);
+            nodeSet.remove(node.getId(), node);
         }
     }
 

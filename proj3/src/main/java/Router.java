@@ -1,6 +1,6 @@
 //import java.util.List;
 import java.util.LinkedList;
-import java.util.Set;
+//import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public class Router {
 
 
         Map<Long, Long> path = new HashMap<>(); // path
-        Set<Node> visited = new HashSet<>(); // visited node
+        HashSet<Node> visited = new HashSet<>(); // visited node
         path.put(initial.getId(), initial.getId());
 
         while (!(minPQ.isEmpty())) {
