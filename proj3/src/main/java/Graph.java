@@ -6,11 +6,20 @@ import java.util.*;
  */
 public class Graph {
     Map<Long, Node> nodes;
+    Map<Long, Node> nodes1;
+    Map<Long, Node> nodes2;
     Map<Long, Way> ways;
+    double Rullat = MapServer.ROOT_ULLAT;
+    double Rullon = MapServer.ROOT_ULLON;
+    double Rlrlat = MapServer.ROOT_LRLAT;
+    double Rlrlon =  MapServer.ROOT_LRLON;
+
     HashMap<Long, LinkedList<Long>> adjacencyList;
 
     public Graph() {
         nodes = new HashMap<>();
+        nodes1 = new HashMap<>();
+        nodes2 = new HashMap<>();
         ways = new HashMap<>();
         adjacencyList = new HashMap();
     }
@@ -53,8 +62,16 @@ public class Graph {
         Node closestNode = null;
         double minDistance = 99999999999999999.9;
         //for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
-        for (Node n : nodes.values()) {
-            if (Math.abs(n.lat - node.lat) < 10) {
+
+        Map<Long, Node>  nodeSet;
+        if (lat > (Rlrlat - Rullat) / 2) {
+            nodeSet = nodes1;
+        } else {
+            nodeSet = nodes2;
+        }
+
+        for (Node n : nodeSet.values()) {
+            if ((Math.abs(n.lat - node.lat) < 0.005) && (Math.abs(n.lon - node.lon)) < 0.005) {
                 double dist = distance(node, n);
                 if (minDistance >= dist) {
                     minDistance = dist;
@@ -76,9 +93,11 @@ public class Graph {
         return closestNode.getId();
     }
 
+
     Node closestNode(double lon, double lat) {
         return getNode(closest(lon, lat));
     }
+
 
     public void clean() { // theta(N)
         for (Map.Entry<Long, LinkedList<Long>> entry : adjacencyList.entrySet()) {
@@ -91,6 +110,12 @@ public class Graph {
     public void addNode(Node node) {
         if (!(nodes.containsKey(node.getId()))) {
             nodes.put(node.getId(), node);
+            char f = Long.toString(node.getId()).charAt(0);
+            if (f == '1' || f == '2') {
+                nodes1.put(node.getId(), node);
+            } else {
+                nodes2.put(node.getId(), node);
+            }
         }
         if (!(adjacencyList.containsKey(node.getId()))) {
             adjacencyList.put(node.getId(), new LinkedList<>());
@@ -107,6 +132,12 @@ public class Graph {
     public void removeNode(Long nodeID) {
         if ((nodes.containsKey(nodeID))) {
             nodes.remove(nodeID);
+            char f = Long.toString(nodeID).charAt(0);
+            if (f == '1' || f == '2') {
+                nodes1.remove(nodeID);
+            } else {
+                nodes2.remove(nodeID);
+            }
             //nodes.containsKey(nodeID);
         }
     }
