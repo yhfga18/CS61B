@@ -6,9 +6,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 //import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Graph for storing all of the intersection (vertex) and road (edge) information.
@@ -21,6 +19,7 @@ import java.util.HashMap;
  */
 public class GraphDB {
     Map<Long, Node> nodes;
+    Set<Long> vertices;
     //Map<Long, Way> ways;
     double Rullat = MapServer.ROOT_ULLAT;
     double Rullon = MapServer.ROOT_ULLON;
@@ -42,6 +41,7 @@ public class GraphDB {
         nodes = new HashMap<>();
         //ways = new HashMap<>();
         adjacencyList = new HashMap();
+        vertices = new HashSet<>();
 
         try {
             File inputFile = new File(dbPath);
@@ -111,7 +111,8 @@ public class GraphDB {
         }
         return l;
         */
-        return nodes.keySet();
+
+        return vertices;
     }
 
     /** Returns ids of all vertices adjacent to v. */
@@ -217,14 +218,16 @@ public class GraphDB {
     }
     */
     public void addNode(Node node) {
-        if (!(nodes.containsKey(node.getId()))) {
+        //if (!(nodes.containsKey(node.getId()))) {
             nodes.put(node.getId(), node);
             //char f = Long.toString(node.getId()).charAt(0);
-        }
+        //}
 
+        /* ------------------------------------------------------------
         if (!(adjacencyList.containsKey(node.getId()))) {
             adjacencyList.put(node.getId(), null);
         }
+        */
 
     }
 
@@ -258,6 +261,9 @@ public class GraphDB {
             return;
         }
 
+        addEdgeHelper(node1, node2);
+        addEdgeHelper(node2, node1);
+        /*
         if (adjacencyList.get(node1) == null) {
             LinkedList<Long> list = new LinkedList<>();
             adjacencyList.put(node1, list);
@@ -269,7 +275,19 @@ public class GraphDB {
             adjacencyList.put(node2, list);
         }
         adjacencyList.get(node2).add(node1);
+        */
 
+    }
+
+    public void addEdgeHelper(long node1, long node2) {
+        if (!(adjacencyList.containsKey(node1))) {
+            vertices.add(node1);
+            LinkedList<Long> l = new LinkedList<Long>();
+            l.add(node2);
+            adjacencyList.put(node1, l);
+        } else {
+            adjacencyList.get(node1).add(node2);
+        }
     }
     /*
     public boolean contains(String id) {

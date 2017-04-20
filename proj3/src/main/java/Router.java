@@ -18,7 +18,7 @@ import java.util.Comparator;
  */
 public class Router {
     /**
-     * Return a LinkedList of <code>Long</code>s representing the shortest path from st to dest, 
+     * Return a LinkedList of <code>Long</code>s representing the shortest path from st to dest,
      * where the longs are node IDs.
      */
 
@@ -43,7 +43,6 @@ public class Router {
                                                 double stlat, double destlon, double destlat) {
 
         LinkedList<Long> resultList = new LinkedList<>();
-        Node current;
 
         Node initial = g.closestNode(stlon, stlat);
         Node goal = g.closestNode(destlon, destlat);
@@ -59,7 +58,10 @@ public class Router {
 
         Map<Long, Long> path = new HashMap<>(); // path
         HashSet<Node> visited = new HashSet<>(); // visited node
+
         path.put(initial.getId(), initial.getId());
+
+        Node current;
 
         while (!(minPQ.isEmpty())) {
 
