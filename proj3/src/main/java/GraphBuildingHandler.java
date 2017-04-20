@@ -87,7 +87,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             activeState = "way";
             String id = attributes.getValue("id");
             Way way = new Way(g, id);
-            g.addWay(way);
+            //g.addWay(way);
             currentWay = way;
 //            System.out.println("Beginning a way...");
         } else if (activeState.equals("way") && qName.equals("nd")) {

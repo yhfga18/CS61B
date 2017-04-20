@@ -24,7 +24,7 @@ public class Graph {
         //YOUR CODE HERE, this currently returns only an empty list.
         LinkedList<Long> l = new LinkedList<>();
         for (Map.Entry<Long, LinkedList<Long>> entry : adjacencyList.entrySet()) {
-            if (entry.getValue().size() != 0) {
+            if (entry.getValue() != null) {
                 l.add(entry.getKey());
             }
         }
