@@ -62,7 +62,11 @@ public class Router {
         path.put(initial.getId(), initial.getId());
 
         while (!(minPQ.isEmpty())) {
+
             current = minPQ.poll(); // MinPQ's smallest pulled
+            if (visited.contains(current)) {
+                continue;
+            }
             resultList.addLast(current.getId());
 
             if (current.getId() == (goal.getId())) {
