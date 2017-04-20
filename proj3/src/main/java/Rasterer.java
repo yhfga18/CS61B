@@ -129,9 +129,6 @@ public class Rasterer {
         fileList.add(node);
         numOfPic += 1;
         depth = (int) d;
-
-
-        //}
         return;
     }
 

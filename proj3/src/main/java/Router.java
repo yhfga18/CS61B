@@ -40,13 +40,10 @@ public class Router {
         Map<Long, Long> path = new HashMap<>(); // path
         Set<Node> visited = new HashSet<>(); // visited node
         path.put(initial.getId(), initial.getId());
-        current = MinPQ.poll();
 
         while (!(MinPQ.isEmpty())) {
-            // MinPQ's smallest pulled
+            current = MinPQ.poll(); // MinPQ's smallest pulled
             // resultList.addLast(current.getId());
-
-            current = MinPQ.poll();
 
             if(current.getId() == (goal.getId())){
                 //resultList.addLast(current.getId());
