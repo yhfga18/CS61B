@@ -42,9 +42,11 @@ public class Router {
         path.put(initial.getId(), initial.getId());
         current = MinPQ.poll();
 
-        while (true) {
+        while (!(MinPQ.isEmpty())) {
             // MinPQ's smallest pulled
             // resultList.addLast(current.getId());
+
+            current = MinPQ.poll();
 
             if(current.getId() == (goal.getId())){
                 //resultList.addLast(current.getId());
@@ -75,10 +77,8 @@ public class Router {
                     }
                 }
             }
-            if (!(MinPQ.isEmpty())) {
-                current = MinPQ.poll();
-            }
         }
+        return null;
     }
 
     public static double heuristic(GraphDB g, Node current, Node destination) {

@@ -101,14 +101,6 @@ public class GraphDB {
         return graph.lat(v);
     }
 
-    boolean hasInnerGraph() {
-        return graph == null;
-    }
-
-    void createGraph() {
-        graph = new Graph();
-    }
-
     public void addNode(Node node) {
         graph.addNode(node);
     }
@@ -117,31 +109,8 @@ public class GraphDB {
         return graph.getNode(id);
     }
 
-    public Node getNode(String id) {
-        return graph.getNode(id);
-    }
-
-    public void removeNode(Long id) {
-        graph.removeNode(id);
-    }
-
-    public void addEdge(Node n1, Node n2) {
-        graph.addEdge(n1, n2);
-    }
-
     public boolean contains(String id) {
         return graph.contains(id);
-    }
-
-    public void takeLists(Node node) {
-        graph.takeLists(node);
-    }
-
-    public boolean containNode(Node node) {
-        return graph.containNode(node);
-    }
-    public boolean containNodeAdj(Node node) {
-        return graph.containNodeAdj(node);
     }
 
     public void addWay(Way way) {graph.addWay(way);}

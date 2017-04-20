@@ -17,20 +17,15 @@ public class Rasterer {
 
     /** imgRoot is the name of the directory containing the images.
      *  You may not actually need this for your class. */
-    /*
+
     QuadTree quadTree;
-    String raster_ul_lon = "";
-    String raster_ul_lat = "";
-    String raster_lr_lon = "";
-    String raster_lr_lat = "";
-    String depth;
-    boolean query_success = true;
-    List<QuadTree.Node> fileList;
-    int numOfPic = 0;
-    int dup = 0;
-    String img;
-    */
-    QuadTree quadTree;
+    private double ULLAT;
+    private double ULLON;
+    private double LRLAT;
+    private double LRLON;
+    private double Width;
+    private double Height;
+    private double LONDPP;
     double raster_ul_lon = MapServer.ROOT_ULLON;
     double raster_ul_lat = MapServer.ROOT_ULLAT;
     double raster_lr_lon = MapServer.ROOT_LRLON;
@@ -41,7 +36,6 @@ public class Rasterer {
     int numOfPic = 0;
     int dup = 0;
     String img;
-
 
 
     public Rasterer(String imgRoot) { // linear
@@ -87,10 +81,19 @@ public class Rasterer {
      * //@see #REQUIRED_RASTER_REQUEST_PARAMS
      */
     public Map<String, Object> getMapRaster(Map<String, Double> params) {
+
+        this.ULLAT = params.get("ullat");
+        this.ULLON = params.get("ullon");
+        this.LRLAT = params.get("lrlat");
+        this.LRLON = params.get("lrlon");
+        this.Width = params.get("w");
+        this.Height = params.get("h");
+        this.LONDPP = (LRLON - ULLON) / Width;
+
         fileList = new LinkedList<QuadTree.Node>();
         Map<String, Object> results = new HashMap<>();
         QuadTree.Node root = quadTree.getRoot();
-        search(params, root, 0);
+        search(root, 0);
         String[][] imageFiles = new String[1][];
         if (query_success) {
             imageFiles = listToArray(fileList);
@@ -105,25 +108,24 @@ public class Rasterer {
         return results;
     }
 
-    private void search(Map<String, Double> params, QuadTree.Node node, int d) {
+    private void search(QuadTree.Node node, int d) {
         if (node == null) {
             return;
         }
-        if ((P1(params, node))) {
+        if ((P1(node))) { // (params, node)
             if (d == 0) {
                 query_success = false;
             }
             return;
         }
-        if (!(P2(params, node, d))) {
-            search(params, node.getSub1(), d + 1);
-            search(params, node.getSub2(), d + 1);
-            search(params, node.getSub3(), d + 1);
-            search(params, node.getSub4(), d + 1);
+        if (!(P2(node, d))) { // (params, node, d)
+            search(node.getSub1(), d + 1);
+            search(node.getSub2(), d + 1);
+            search(node.getSub3(), d + 1);
+            search(node.getSub4(), d + 1);
             return;
         }
-        //if (!(P1(params, node)) && P2(params, node, d)) {
-        //if (fileList.contains(node)) {dup++;}
+
         fileList.add(node);
         numOfPic += 1;
         depth = (int) d;
@@ -133,29 +135,21 @@ public class Rasterer {
         return;
     }
 
-    private boolean P1(Map<String, Double> params, QuadTree.Node node) {
+    private boolean P1(QuadTree.Node node) {
         Map<String, Double> picScale = node.getPicScale();
-        boolean cond1 = (picScale.get("ullat") < params.get("lrlat")); // lat 1
-        boolean cond2 = (picScale.get("lrlon") < params.get("ullon")); // lon 1
-        boolean cond3 = (picScale.get("lrlat") > params.get("ullat")); // lat 2
-        boolean cond4 = (picScale.get("ullon") > params.get("lrlon")); // lon 2
+        boolean cond1 = (picScale.get("ullat") < LRLAT); // lat 1
+        boolean cond2 = (picScale.get("lrlon") < ULLON); // lon 1
+        boolean cond3 = (picScale.get("lrlat") > ULLAT); // lat 2
+        boolean cond4 = (picScale.get("ullon") > LRLON); // lon 2
         return cond1 || cond2 || cond3 || cond4;
     }
 
-    private boolean P2(Map<String, Double> params, QuadTree.Node node, int depth) {
+    private boolean P2(QuadTree.Node node, int depth) {
         if (depth >= 7) {return true;}
         Map<String, Double> picScale = node.getPicScale();
-        double nodeLonDPP = lonDPP(picScale);
-        double rasterLonDPP = lonDPP(params);
-        return rasterLonDPP > nodeLonDPP;
+        double nodeLonDPP = (picScale.get("lrlon") - picScale.get("ullon")) / picScale.get("w");
+        return LONDPP > nodeLonDPP;
         }
-
-    private double lonDPP(Map<String, Double> param) {
-        double q_upperLeftlon = param.get("ullon");
-        double q_lowerRightlon = param.get("lrlon");
-        double q_width = param.get("w");
-        return (q_lowerRightlon - q_upperLeftlon) / q_width;
-    }
 
     private String[][] listToArray(List<QuadTree.Node> fileList){
         Map<Double, LinkedList<QuadTree.Node>> map = new HashMap<>();

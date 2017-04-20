@@ -54,10 +54,12 @@ public class Graph {
         double minDistance = 99999999999999999.9;
         //for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
         for (Node n : nodes.values()) {
-            double dist = distance(node, n);
-            if (minDistance >= dist) {
-                minDistance = dist;
-                closestNode = n;
+            if (Math.abs(n.lat - node.lat) < 10) {
+                double dist = distance(node, n);
+                if (minDistance >= dist) {
+                    minDistance = dist;
+                    closestNode = n;
+                }
             }
         }
 
@@ -94,13 +96,6 @@ public class Graph {
             adjacencyList.put(node.getId(), new LinkedList<>());
         }
     }
-    /*
-    public void addNode(String node) {
-        Node n = nodes.get(Long.parseLong(node));
-        addNode(n);
-    }
-    */
-
 
     public Node getNode(long id) {
         if (nodes.containsKey(id)) {
@@ -109,23 +104,11 @@ public class Graph {
         return null;
     }
 
-    public Node getNode(String id) {
-        long d = Long.parseLong(id);
-        Node returnNode =  nodes.get(d);
-        return returnNode;
-    }
-
     public void removeNode(Long nodeID) {
         if ((nodes.containsKey(nodeID))) {
             nodes.remove(nodeID);
             //nodes.containsKey(nodeID);
         }
-    }
-
-    public void addEdge(Node node1, Node node2) {
-        long id1 = node1.getId();
-        long id2 = node2.getId();
-        addEdge(id1, id2);
     }
 
     public void addEdge(long node1, long node2) {
@@ -151,25 +134,6 @@ public class Graph {
 
     boolean contains(String id) {
         return nodes.containsKey(Long.parseLong(id));
-    }
-
-    boolean contains(long id) {
-        return nodes.containsKey(id);
-    }
-
-    public void takeLists(Node node) {
-        /*
-        LinkedList<Long> b = adjacencyList.get(node.getId());
-        b = new LinkedList<Long>();
-    */ //WTF
-    }
-
-    public boolean containNode(Node node) {
-        return nodes.containsKey(node.getId());
-    }
-
-    public boolean containNodeAdj(Node node) {
-        return adjacencyList.containsKey(node.getId());
     }
 
     public void addWay(Way way) {
