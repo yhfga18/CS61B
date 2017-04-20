@@ -62,7 +62,7 @@ public class Graph {
 
         for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
             Node n = entry.getValue();
-            if ((Math.abs(n.lat - node.lat) < 0.006) && (Math.abs(n.lon - node.lon)) < 0.006) {
+            if ((Math.abs(n.lat - node.lat) < 0.007) && (Math.abs(n.lon - node.lon)) < 0.007) {
                 double dist = distance(node, n);
                 if (minDistance >= dist) {
                     minDistance = dist;
@@ -107,7 +107,7 @@ public class Graph {
     public void addNode(Node node) {
         if (!(nodes.containsKey(node.getId()))) {
             nodes.put(node.getId(), node);
-            char f = Long.toString(node.getId()).charAt(0);
+            //char f = Long.toString(node.getId()).charAt(0);
         }
 
         if (!(adjacencyList.containsKey(node.getId()))) {
@@ -126,8 +126,9 @@ public class Graph {
     public void removeNode(Long nodeID) {
         if ((nodes.containsKey(nodeID))) {
             nodes.remove(nodeID);
-            char f = Long.toString(nodeID).charAt(0);
+            //char f = Long.toString(nodeID).charAt(0);
             //nodes.containsKey(nodeID);
+//            adjacencyList.put(nodeID, null);
         }
     }
 
