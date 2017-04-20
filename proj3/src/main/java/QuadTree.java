@@ -144,27 +144,27 @@ public class QuadTree {
     private void scaleCalculator(Node node, Node parentNode) {
         long lastNum = node.filenameLong % 10;
         //char lastChar = node.filename.charAt(node.filename.length() - 1);
-            if (lastNum == 1) {
-                node.setULLAT(parentNode.getULLAT());
-                node.setULLON(parentNode.getULLON());
-                node.setLRLAT((parentNode.getULLAT() + parentNode.getLRLAT()) / 2);
-                node.setLRLON((parentNode.getULLON() + parentNode.getLRLON()) / 2);
-            } else if (lastNum == 2) {
-                node.setULLAT(parentNode.getULLAT());
-                node.setULLON((parentNode.getULLON() + parentNode.getLRLON()) / 2);
-                node.setLRLAT((parentNode.getULLAT() + parentNode.getLRLAT()) / 2);
-                node.setLRLON(parentNode.getLRLON());
-            } else if (lastNum == 3) {
-                node.setULLAT((parentNode.getULLAT() + parentNode.getLRLAT()) / 2);
-                node.setULLON(parentNode.getULLON());
-                node.setLRLAT(parentNode.getLRLAT());
-                node.setLRLON((parentNode.getULLON() + parentNode.getLRLON()) / 2);
-            } else if (lastNum == 4) {
-                node.setULLAT((parentNode.getULLAT() + parentNode.getLRLAT()) / 2);
-                node.setULLON((parentNode.getULLON() + parentNode.getLRLON()) / 2);
-                node.setLRLAT(parentNode.getLRLAT());
-                node.setLRLON(parentNode.getLRLON());
-            }
+        if (lastNum == 1) {
+            node.setULLAT(parentNode.getULLAT());
+            node.setULLON(parentNode.getULLON());
+            node.setLRLAT((parentNode.getULLAT() + parentNode.getLRLAT()) / 2);
+            node.setLRLON((parentNode.getULLON() + parentNode.getLRLON()) / 2);
+        } else if (lastNum == 2) {
+            node.setULLAT(parentNode.getULLAT());
+            node.setULLON((parentNode.getULLON() + parentNode.getLRLON()) / 2);
+            node.setLRLAT((parentNode.getULLAT() + parentNode.getLRLAT()) / 2);
+            node.setLRLON(parentNode.getLRLON());
+        } else if (lastNum == 3) {
+            node.setULLAT((parentNode.getULLAT() + parentNode.getLRLAT()) / 2);
+            node.setULLON(parentNode.getULLON());
+            node.setLRLAT(parentNode.getLRLAT());
+            node.setLRLON((parentNode.getULLON() + parentNode.getLRLON()) / 2);
+        } else if (lastNum == 4) {
+            node.setULLAT((parentNode.getULLAT() + parentNode.getLRLAT()) / 2);
+            node.setULLON((parentNode.getULLON() + parentNode.getLRLON()) / 2);
+            node.setLRLAT(parentNode.getLRLAT());
+            node.setLRLON(parentNode.getLRLON());
+        }
         node.setWidth(256.0);
     }
 

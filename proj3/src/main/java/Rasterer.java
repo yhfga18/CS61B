@@ -23,7 +23,7 @@ public class Rasterer {
     private double LRLAT;
     private double LRLON;
     private double width;
-//    private double Height;
+    //    private double Height;
     private double LONDPP;
     double rasterUllon = MapServer.ROOT_ULLON;
     double rasterUllat = MapServer.ROOT_ULLAT;
@@ -73,7 +73,7 @@ public class Rasterer {
      * "raster_lr_lat" -> Number, the bounding lower right latitude of the rastered image <br>
      * "depth"         -> Number, the 1-indexed quadtree depth of the nodes of the rastered image.
      *                    Can also be interpreted as the length of the numbers in the image
-     *                    string. <br> // recursion の数
+     *                    string. <br> // recursion ã®æ•°
      * "query_success" -> Boolean, whether the query was able to successfully complete. Don't
      *                    forget to set this to true! <br>
      * //@see #REQUIRED_RASTER_REQUEST_PARAMS
