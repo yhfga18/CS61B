@@ -5,10 +5,7 @@ import java.util.*;
  * Created by hideyoshitakahashi on 4/17/17.
  */
 public class Graph {
-    Map<Long, Node> nodes1;
-    Map<Long, Node> nodes2;
-    Map<Long, Node> nodes3;
-    Map<Long, Node> nodes4;
+    Map<Long, Node> nodes;
     Map<Long, Way> ways;
     double Rullat = MapServer.ROOT_ULLAT;
     double Rullon = MapServer.ROOT_ULLON;
@@ -18,10 +15,7 @@ public class Graph {
     HashMap<Long, LinkedList<Long>> adjacencyList;
 
     public Graph() {
-        nodes1 = new HashMap<>();
-        nodes2 = new HashMap<>();
-        nodes3 = new HashMap<>();
-        nodes4 = new HashMap<>();
+        nodes = new HashMap<>();
         ways = new HashMap<>();
         adjacencyList = new HashMap();
     }
@@ -39,15 +33,17 @@ public class Graph {
 
     Iterable<Long> adjacent(long nodeId) {
         if (adjacencyList.containsKey(nodeId)) {
-            return adjacencyList.get(nodeId);
+            if (!(adjacencyList.get(nodeId) == null)) {
+                return adjacencyList.get(nodeId);
+            }
         }
-        return null;
+        return new LinkedList<Long>();
     }
 
 
     double distance(long node1, long node2) {
-        Node n1 = groupIDMatcher(whichGroupContains(node1)).get(node1);
-        Node n2 = groupIDMatcher(whichGroupContains(node2)).get(node2);
+        Node n1 = nodes.get(node1);
+        Node n2 = nodes.get(node2);
         return distance(n1, n2);
     }
 
@@ -62,14 +58,11 @@ public class Graph {
     long closest(double lon, double lat) {
         Node node = new Node("0", Double.toString(lon), Double.toString(lat));
         Node closestNode = null;
-        double minDistance = 999999999.9;
-        //for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
+        double minDistance = 99999999999999999.9;
 
-        Map<Long, Node>  nodeSet = groupIDMatcher(nodesSelector(lon, lat, Rullon, Rullat, Rlrlon, Rlrlat));
-
-        for (Map.Entry<Long, Node> entry : nodeSet.entrySet()) {
+        for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
             Node n = entry.getValue();
-            if ((Math.abs(n.lat - node.lat) < 0.01) && (Math.abs(n.lon - node.lon)) < 0.01) {
+            if ((Math.abs(n.lat - node.lat) < 0.006) && (Math.abs(n.lon - node.lon)) < 0.006) {
                 double dist = distance(node, n);
                 if (minDistance >= dist) {
                     minDistance = dist;
@@ -78,48 +71,17 @@ public class Graph {
             }
         }
 
+        /*
+        for (Long n : adjacent(closestNode.getId())) {
+            double d = distance(nodes.get(n), node);
+            if (minDistance > d) {
+                minDistance = d;
+                closestNode = nodes.get(n);
+            }
+        }
+        */
+
         return closestNode.getId();
-    }
-
-    private int nodesSelector(double lon, double lat, double ullon, double ullat,
-                                          double lrlon, double lrlat) {
-        int groupID;
-        boolean c1 = lat > (lrlat + ullat) / 2;
-        boolean c2 = lon > (ullon + lrlon) / 2;
-        if (c1 && !c2) {
-            groupID = 1;
-        } else if (c1 && c2) {
-            groupID = 2;
-        } else if (!c1 && !c2) {
-            groupID = 3;
-        } else {//if (lat < (lrlat + ullat) / 2 && lon > (ullon + lrlon) / 2) {
-            groupID = 4;
-        }
-        return groupID;
-    }
-
-    private Map<Long, Node> groupIDMatcher(int groupID) {
-        if (groupID == 1) {
-            return nodes1;
-        } else if (groupID == 2) {
-            return nodes2;
-        } else if (groupID == 3) {
-            return nodes3;
-        } else {
-            return nodes4;
-        }
-    }
-
-    private int whichGroupContains(long id) {
-        if (nodes1.containsKey(id)) {
-            return 1;
-        } else if (nodes2.containsKey(id)) {
-            return 2;
-        } else if (nodes3.containsKey(id)) {
-            return 3;
-        } else {
-            return 4;
-        }
     }
 
 
@@ -130,71 +92,75 @@ public class Graph {
 
     public void clean() { // theta(N)
         for (Map.Entry<Long, LinkedList<Long>> entry : adjacencyList.entrySet()) {
+            if (entry.getValue() == null) {
+                removeNode(entry.getKey());
+            }
+
+            /*
             if (entry.getValue().size() == 0) {
                 removeNode(entry.getKey());
             }
+            */
         }
     }
 
     public void addNode(Node node) {
-        //if (!(nodes.containsKey(node.getId()))) {
-            //nodes.put(node.getId(), node);
-            Double lon = node.getLon();
-            Double lat = node.getLat();
-            int groupID = nodesSelector(lon, lat, Rullon, Rullat, Rlrlon, Rlrlat);
-            groupIDMatcher(groupID).put(node.getId(), node);
-            node.setGroupID(groupID);
-        //}
+        if (!(nodes.containsKey(node.getId()))) {
+            nodes.put(node.getId(), node);
+            char f = Long.toString(node.getId()).charAt(0);
+        }
 
         if (!(adjacencyList.containsKey(node.getId()))) {
-            adjacencyList.put(node.getId(), new LinkedList<>());
+            adjacencyList.put(node.getId(), null);
         }
+
     }
 
     public Node getNode(long id) {
-        int groupID = whichGroupContains(id);
-        Map<Long, Node> m = groupIDMatcher(groupID);
-        return m.get(id);
+        if (nodes.containsKey(id)) {
+            return nodes.get(id);
+        }
+        return null;
     }
 
     public void removeNode(Long nodeID) {
-        //if ((nodes.containsKey(nodeID))) {
-            //Node node = nodes.get(nodeID);
-            //nodes.remove(nodeID);
-            Node node = groupIDMatcher(whichGroupContains(nodeID)).get(nodeID);
-            Double lon = node.getLon();
-            Double lat = node.getLat();
-            int groupID = nodesSelector(lon, lat, Rullon, Rullat, Rlrlon, Rlrlat);
-            groupIDMatcher(groupID).remove(node.getId(), node);
-        //}
+        if ((nodes.containsKey(nodeID))) {
+            nodes.remove(nodeID);
+            char f = Long.toString(nodeID).charAt(0);
+            //nodes.containsKey(nodeID);
+        }
     }
 
     public void addEdge(long node1, long node2) {
-        boolean cond1 = groupIDMatcher(whichGroupContains(node1)).containsKey(node1);
-        boolean cond2 = groupIDMatcher(whichGroupContains(node2)).containsKey(node2);
-
-        if (!(cond1 && cond2)) {
+        if (!(nodes.containsKey(node1) && nodes.containsKey(node2))) {
             return;
         }
-        if (!(adjacencyList.get(node1).contains(node2))) {
-            adjacencyList.get(node1).add(node2);
+
+        if (adjacencyList.get(node1) == null) {
+            LinkedList<Long> list = new LinkedList<>();
+            adjacencyList.put(node1, list);
         }
-        if (!(adjacencyList.get(node2).contains(node1))) {
-            adjacencyList.get(node2).add(node1);
+        adjacencyList.get(node1).add(node2);
+
+        if (adjacencyList.get(node2) == null) {
+            LinkedList<Long> list = new LinkedList<>();
+            adjacencyList.put(node2, list);
         }
+        adjacencyList.get(node2).add(node1);
+
     }
     /** Longitude of vertex v. */
     double lon(long v) {
-        return groupIDMatcher(whichGroupContains(v)).get(v).getLon();
+        return nodes.get(v).getLon();
     }
 
     /** Latitude of vertex v. */
     double lat(long v) {
-        return groupIDMatcher(whichGroupContains(v)).get(v).getLat();
+        return nodes.get(v).getLat();
     }
 
     boolean contains(String id) {
-        return groupIDMatcher(whichGroupContains(Long.parseLong(id))).containsKey(Long.parseLong(id));
+        return nodes.containsKey(Long.parseLong(id));
     }
 
     public void addWay(Way way) {
@@ -204,7 +170,6 @@ public class Graph {
 }
 
 class Node {
-    int groupID;
     long id;
     double lon;
     double lat;
@@ -228,23 +193,19 @@ class Node {
         return lat;
     }
 
-    public int getGroupID() {
-        return groupID;
-    }
-
-    public void setGroupID(int id) {
-        groupID = id;
-    }
-
 
     public double getDistFromSource() {
         return distFromSource;
     }
-
+    public void setDistFromSource(Node prev) {
+        distFromSource = distFromSource + prev.getDistFromSource();
+    }
     public void setDistFromSource(double d) {
         distFromSource = d;
     }
-
+    public double getHeuristic() {
+        return heuristic;
+    }
     public void setHeuristic(double h) {
         heuristic = h;
     }
@@ -274,16 +235,8 @@ class Way {
     }
 
     public void addEdgeToNodes() {
-        int len = nodes.size();
-        /*
-        if (len > 2) {
-            Long n = nodes.removeFirst();
-            while (len > 1) {
-                graph.addEdge(n, nodes.removeFirst());
-            }
-            */
-        if (len > 1) {
-            for (int i = 0; i < len - 1; i++) {
+        if (nodes.size() >= 1) {
+            for (int i = 0; i < nodes.size() - 1 ; i++) {
                 graph.addEdge(nodes.get(i), nodes.get(i + 1));
             }
         }
@@ -291,4 +244,3 @@ class Way {
 
 
 }
-
