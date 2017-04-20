@@ -90,14 +90,21 @@ public class Rasterer {
         this.Height = params.get("h");
         this.LONDPP = (LRLON - ULLON) / Width;
 
+        ////////////////////////////////////////////////////////////////////////////////
         fileList = new LinkedList<QuadTree.Node>();
+        ////////////////////////////////////////////////////////////////////////////////
+
         Map<String, Object> results = new HashMap<>();
         QuadTree.Node root = quadTree.getRoot();
         search(root, 0);
         String[][] imageFiles = new String[1][];
+
+        ////////////////////////////////////////////////////////////////////////////////
         if (query_success) {
             imageFiles = listToArray(fileList);
         }
+        ////////////////////////////////////////////////////////////////////////////////
+
         results.put("render_grid", imageFiles);
         results.put("raster_ul_lon", raster_ul_lon);
         results.put("raster_ul_lat", raster_ul_lat);
@@ -133,31 +140,29 @@ public class Rasterer {
     }
 
     private boolean P1(QuadTree.Node node) {
-        Map<String, Double> picScale = node.getPicScale();
-        boolean cond1 = (picScale.get("ullat") < LRLAT); // lat 1
-        boolean cond2 = (picScale.get("lrlon") < ULLON); // lon 1
-        boolean cond3 = (picScale.get("lrlat") > ULLAT); // lat 2
-        boolean cond4 = (picScale.get("ullon") > LRLON); // lon 2
+        boolean cond1 = (node.getULLAT() < LRLAT); // lat 1
+        boolean cond2 = (node.getLRLON() < ULLON); // lon 1
+        boolean cond3 = (node.getLRLAT() > ULLAT); // lat 2
+        boolean cond4 = (node.getULLON() > LRLON); // lon 2
         return cond1 || cond2 || cond3 || cond4;
     }
 
     private boolean P2(QuadTree.Node node, int depth) {
         if (depth >= 7) {return true;}
-        Map<String, Double> picScale = node.getPicScale();
-        double nodeLonDPP = (picScale.get("lrlon") - picScale.get("ullon")) / picScale.get("w");
+        double nodeLonDPP = (node.getLRLON() - node.getULLON()) / node.getWidth();
         return LONDPP > nodeLonDPP;
         }
 
     private String[][] listToArray(List<QuadTree.Node> fileList){
         Map<Double, LinkedList<QuadTree.Node>> map = new HashMap<>();
         for (QuadTree.Node node : fileList) {
-            double ullat = node.getPicScale().get("ullat");
+            double ullat = node.getULLAT();
             if (!(map.containsKey(ullat))) {
                 map.put(ullat, new LinkedList<QuadTree.Node>());
             }
         }
         for (QuadTree.Node node : fileList) {
-            double ullat = node.getPicScale().get("ullat");
+            double ullat = node.getULLAT();
             LinkedList<QuadTree.Node> list = map.get(ullat);
             list.add(node);
         }
@@ -187,11 +192,11 @@ public class Rasterer {
         String newB = b.substring(4, a.length() - 4);
 
         QuadTree.Node upperLeftNode = quadTree.getNode(newA);
-        raster_ul_lat = upperLeftNode.getPicScale().get("ullat");
-        raster_ul_lon = upperLeftNode.getPicScale().get("ullon");
+        raster_ul_lat = upperLeftNode.getULLAT();
+        raster_ul_lon = upperLeftNode.getULLON();
         QuadTree.Node lowerRightNode = quadTree.getNode(newB);
-        raster_lr_lat = lowerRightNode.getPicScale().get("lrlat");
-        raster_lr_lon = lowerRightNode.getPicScale().get("lrlon");
+        raster_lr_lat = lowerRightNode.getLRLAT();
+        raster_lr_lon = lowerRightNode.getLRLON();
         return returnArray;
     }
 

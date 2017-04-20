@@ -11,6 +11,14 @@ public class QuadTree {
         private String filename;
         private int depth;
         private Map<String, Double> picScale;
+        private double ULLAT;
+        private double ULLON;
+        private double LRLAT;
+        private double LRLON;
+        private double Width;
+        private double Height;
+        private double LonDPP;
+
         private Node sub1, sub2, sub3, sub4;
 
         public Node(String name, int dep) {
@@ -23,7 +31,13 @@ public class QuadTree {
         public Node(String name, int dep, Map<String, Double> scale) {
             filename = name;
             depth = dep;
-            picScale = scale;
+            ULLAT = scale.get("ullat");
+            ULLON = scale.get("ullon");
+            LRLAT = scale.get("lrlat");
+            LRLON = scale.get("lrlon");
+            Width = scale.get("w");
+
+
         }
 
         public int compareTo(Node node) {
@@ -33,6 +47,38 @@ public class QuadTree {
         public Map<String, Double> getPicScale() {
             return picScale;
         }
+
+        public double getULLAT() {
+            return ULLAT;
+        }
+        public double getULLON() {
+            return ULLON;
+        }
+        public double getLRLAT() {
+            return LRLAT;
+        }
+        public double getLRLON() {
+            return LRLON;
+        }
+        public double getWidth() {
+            return Width;
+        }
+        public void setULLAT(double val) {
+            ULLAT = val;
+        }
+        public void setULLON(double val) {
+            ULLON = val;
+        }
+        public void setLRLAT(double val) {
+            LRLAT = val;
+        }
+        public void setLRLON(double val) {
+            LRLON = val;
+        }
+        public void setWidth(double val) {
+            Width = val;
+        }
+
 
         public String getFilename() {
             return filename;
@@ -65,7 +111,6 @@ public class QuadTree {
         counter = 0;
         root = new Node("root", 0, scales);
         addSubsToRoot(root, "1", "2", "3", "4");
-
         addSubN(1, root.sub1);
         addSubN(1, root.sub2);
         addSubN(1, root.sub3);
@@ -104,44 +149,30 @@ public class QuadTree {
         addSubN(n + 1, p.sub4);
     }
 
-    public Map<String, Double> getNodeValues(Node node) {
-        return node.picScale;
-    }
-
     private void scaleCalculator(Node node, Node parentNode) {
-        /*
-        if (node.filename.length() < 1 || node.filename.equals("root")) {
-            node.picScale.put("ullat", parentNode.picScale.get("ULLAT")); //upper left lati 横
-            node.picScale.put("ullon", parentNode.picScale.get("ULLON")); //upper left long 縦
-            node.picScale.put("lrlat", parentNode.picScale.get("LRLAT")); //lower right lati
-            node.picScale.put("lrlon", parentNode.picScale.get("LRLON")); //lower right long
-        }
-        */
-        //else {
             char lastChar = node.filename.charAt(node.filename.length() - 1);
             if (lastChar == '1') {
-                node.picScale.put("ullat", parentNode.picScale.get("ullat"));
-                node.picScale.put("ullon", parentNode.picScale.get("ullon"));
-                node.picScale.put("lrlat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("lrlat")) / 2);
-                node.picScale.put("lrlon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("lrlon")) / 2);
+                node.setULLAT(parentNode.getULLAT());
+                node.setULLON(parentNode.getULLON());
+                node.setLRLAT((parentNode.getULLAT() + parentNode.getLRLAT()) / 2);
+                node.setLRLON((parentNode.getULLON() + parentNode.getLRLON()) / 2);
             } else if (lastChar == '2') {
-                node.picScale.put("ullat", parentNode.picScale.get("ullat"));
-                node.picScale.put("ullon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("lrlon")) / 2);
-                node.picScale.put("lrlat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("lrlat")) / 2);
-                node.picScale.put("lrlon", parentNode.picScale.get("lrlon"));
+                node.setULLAT(parentNode.getULLAT());
+                node.setULLON((parentNode.getULLON() + parentNode.getLRLON()) / 2);
+                node.setLRLAT((parentNode.getULLAT() + parentNode.getLRLAT()) / 2);
+                node.setLRLON(parentNode.getLRLON());
             } else if (lastChar == '3') {
-                node.picScale.put("ullat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("lrlat")) / 2);
-                node.picScale.put("ullon", parentNode.picScale.get("ullon"));
-                node.picScale.put("lrlat", parentNode.picScale.get("lrlat"));
-                node.picScale.put("lrlon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("lrlon")) / 2);
+                node.setULLAT((parentNode.getULLAT() + parentNode.getLRLAT()) / 2);
+                node.setULLON(parentNode.getULLON());
+                node.setLRLAT(parentNode.getLRLAT());
+                node.setLRLON((parentNode.getULLON() + parentNode.getLRLON()) / 2);
             } else if (lastChar == '4') {
-                node.picScale.put("ullat", (parentNode.picScale.get("ullat") + parentNode.picScale.get("lrlat")) / 2);
-                node.picScale.put("ullon", (parentNode.picScale.get("ullon") + parentNode.picScale.get("lrlon")) / 2);
-                node.picScale.put("lrlat", parentNode.picScale.get("lrlat"));
-                node.picScale.put("lrlon", parentNode.picScale.get("lrlon"));
+                node.setULLAT((parentNode.getULLAT() + parentNode.getLRLAT()) / 2);
+                node.setULLON((parentNode.getULLON() + parentNode.getLRLON()) / 2);
+                node.setLRLAT(parentNode.getLRLAT());
+                node.setLRLON(parentNode.getLRLON());
             }
-        node.picScale.put("w", 256.0);
-        //}
+        node.setWidth(256.0);
     }
 
     public Node getRoot() {
@@ -170,6 +201,5 @@ public class QuadTree {
         }
         return null;
     }
-//    private void scaleCalcHelper(Node node, Node parentNode, ) {}
 }
 
