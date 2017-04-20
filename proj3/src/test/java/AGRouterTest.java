@@ -18,6 +18,6 @@ public class AGRouterTest extends AGMapTest {
             assertEquals("Found route differs for input: " + p.routeParams + ".\n",
                     p.routeResult, studentRouteResult);
         }
-
     }
 }
+

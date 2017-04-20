@@ -25,6 +25,8 @@ public class GraphDB {
     double Rullon = MapServer.ROOT_ULLON;
     double Rlrlat = MapServer.ROOT_LRLAT;
     double Rlrlon =  MapServer.ROOT_LRLON;
+    Node latestNode;
+    Node latestEdge;
 
     HashMap<Long, LinkedList<Long>> adjacencyList;
 
@@ -162,9 +164,10 @@ public class GraphDB {
         Node closestNode = null;
         double minDistance = 99999999999.9;
 
-        for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
-            Node n = entry.getValue();
-            if ((Math.abs(n.lat - lat) < 0.005) && (Math.abs(n.lon - lon)) < 0.005) {
+        //for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
+        for (long entry : vertices) {
+            Node n = nodes.get(entry);
+            if ((Math.abs(n.lat - lat) < 0.03) && (Math.abs(n.lon - lon)) < 0.03) {
                 double dist = distance(lon, lat, n);
                 if (minDistance > dist) {
                     minDistance = dist;
@@ -218,10 +221,10 @@ public class GraphDB {
     }
     */
     public void addNode(Node node) {
-        //if (!(nodes.containsKey(node.getId()))) {
+        if (!(nodes.containsKey(node.getId()))) {
             nodes.put(node.getId(), node);
             //char f = Long.toString(node.getId()).charAt(0);
-        //}
+        }
 
         /* ------------------------------------------------------------
         if (!(adjacencyList.containsKey(node.getId()))) {
