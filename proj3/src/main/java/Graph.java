@@ -204,15 +204,11 @@ class Node {
     public double getDistFromSource() {
         return distFromSource;
     }
-    public void setDistFromSource(Node prev) {
-        distFromSource = distFromSource + prev.getDistFromSource();
-    }
+
     public void setDistFromSource(double d) {
         distFromSource = d;
     }
-    public double getHeuristic() {
-        return heuristic;
-    }
+
     public void setHeuristic(double h) {
         heuristic = h;
     }
