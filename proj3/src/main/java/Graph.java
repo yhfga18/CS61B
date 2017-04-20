@@ -69,13 +69,13 @@ public class Graph {
 
         for (Map.Entry<Long, Node> entry : nodeSet.entrySet()) {
             Node n = entry.getValue();
-            //if ((Math.abs(n.lat - node.lat) < 0.001) && (Math.abs(n.lon - node.lon)) < 0.001) {
+            if ((Math.abs(n.lat - node.lat) < 0.01) && (Math.abs(n.lon - node.lon)) < 0.01) {
                 double dist = distance(node, n);
                 if (minDistance >= dist) {
                     minDistance = dist;
                     closestNode = n;
                 }
-            //}
+            }
         }
 
         return closestNode.getId();
