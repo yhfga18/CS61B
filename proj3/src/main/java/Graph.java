@@ -145,6 +145,7 @@ public class Graph {
             groupIDMatcher(groupID).put(node.getId(), node);
             node.setGroupID(groupID);
         //}
+
         if (!(adjacencyList.containsKey(node.getId()))) {
             adjacencyList.put(node.getId(), new LinkedList<>());
         }
