@@ -1,9 +1,8 @@
 import java.util.HashMap;
-import java.util.TreeMap;
 import java.util.Map;
-import java.util.List;
+//import java.util.List;
 import java.util.LinkedList;
-import java.util.Arrays;
+//import java.util.Arrays;
 
 /**
  * This class provides all code necessary to take a query box and produce
@@ -23,15 +22,15 @@ public class Rasterer {
     private double ULLON;
     private double LRLAT;
     private double LRLON;
-    private double Width;
+    private double width;
 //    private double Height;
     private double LONDPP;
-    double raster_ul_lon = MapServer.ROOT_ULLON;
-    double raster_ul_lat = MapServer.ROOT_ULLAT;
-    double raster_lr_lon = MapServer.ROOT_LRLON;
-    double raster_lr_lat = MapServer.ROOT_LRLAT;
+    double rasterUllon = MapServer.ROOT_ULLON;
+    double rasterUllat = MapServer.ROOT_ULLAT;
+    double rasterLrlon = MapServer.ROOT_LRLON;
+    double rasterLrlat = MapServer.ROOT_LRLAT;
     int depth;
-    boolean query_success = true;
+    boolean querySuccess = true;
     Map<Double, LinkedList<Long>> fileMap;
     LinkedList<Double> latitudeList;
     String img;
@@ -85,9 +84,9 @@ public class Rasterer {
         this.ULLON = params.get("ullon");
         this.LRLAT = params.get("lrlat");
         this.LRLON = params.get("lrlon");
-        this.Width = params.get("w");
+        this.width = params.get("w");
 //        this.Height = params.get("h");
-        this.LONDPP = (LRLON - ULLON) / Width;
+        this.LONDPP = (LRLON - ULLON) / width;
         latitudeList = new LinkedList<>();
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +98,7 @@ public class Rasterer {
         search(root, 0);
         String[][] resultMap = new String[latitudeList.size()][];
         ////////////////////////////////////////////////////////////////////////////////
-        if (query_success) {
+        if (querySuccess) {
             for (int i = 0; i < latitudeList.size(); i++) {
                 double keyLat = latitudeList.get(i);
                 LinkedList<Long> l = fileMap.get(keyLat);
@@ -116,20 +115,20 @@ public class Rasterer {
         long veryFirstNode = fileMap.get(latitudeList.get(0)).get(0);
         long veryLastNode = fileMap.get(latitudeList.get(l1)).get(l2);
 
-        raster_ul_lat = quadTree.getNode(veryFirstNode).getULLAT();
-        raster_ul_lon = quadTree.getNode(veryFirstNode).getULLON();
-        raster_lr_lat = quadTree.getNode(veryLastNode).getLRLAT();
-        raster_lr_lon = quadTree.getNode(veryLastNode).getLRLON();
+        rasterUllat = quadTree.getNode(veryFirstNode).getULLAT();
+        rasterUllon = quadTree.getNode(veryFirstNode).getULLON();
+        rasterLrlat = quadTree.getNode(veryLastNode).getLRLAT();
+        rasterLrlon = quadTree.getNode(veryLastNode).getLRLON();
 
         ////////////////////////////////////////////////////////////////////////////////
 
         results.put("render_grid", resultMap);
-        results.put("raster_ul_lon", raster_ul_lon);
-        results.put("raster_ul_lat", raster_ul_lat);
-        results.put("raster_lr_lon", raster_lr_lon);
-        results.put("raster_lr_lat", raster_lr_lat);
+        results.put("raster_ul_lon", rasterUllon);
+        results.put("raster_ul_lat", rasterUllat);
+        results.put("raster_lr_lon", rasterLrlon);
+        results.put("raster_lr_lat", rasterLrlat);
         results.put("depth", depth);
-        results.put("query_success", query_success);
+        results.put("query_success", querySuccess);
         return results;
     }
 
@@ -139,7 +138,7 @@ public class Rasterer {
         }
         if ((P1(node))) { // (params, node)
             if (d == 0) {
-                query_success = false;
+                querySuccess = false;
             }
             return;
         }
@@ -164,14 +163,17 @@ public class Rasterer {
     }
 
     private boolean P1(QuadTree.Node node) {
-        /*
+
         boolean cond1 = (node.getULLAT() < LRLAT); // lat 1
         boolean cond2 = (node.getLRLON() < ULLON); // lon 1
         boolean cond3 = (node.getLRLAT() > ULLAT); // lat 2
         boolean cond4 = (node.getULLON() > LRLON); // lon 2
         return cond1 || cond2 || cond3 || cond4;
-        */
-        return (node.getULLAT() < LRLAT) || (node.getLRLON() < ULLON) || (node.getLRLAT() > ULLAT) || (node.getULLON() > LRLON);
+
+        // return (node.getULLAT() < LRLAT) ||
+        // (node.getLRLON() < ULLON) ||
+        // (node.getLRLAT() > ULLAT) ||
+        // (node.getULLON() > LRLON);
     }
 
     private boolean P2(QuadTree.Node node, int dep) {

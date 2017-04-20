@@ -5,9 +5,9 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Map;
+//import java.util.Map;
 import java.util.HashMap;
 
 /**
@@ -113,7 +113,9 @@ public class GraphDB {
         return graph.contains(id);
     }
 
-    public void addWay(Way way) {graph.addWay(way);}
+    public void addWay(Way way) {
+        graph.addWay(way);
+    }
 
 
 
