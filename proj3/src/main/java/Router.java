@@ -85,7 +85,7 @@ public class Router {
                     continue;
                 }
 
-                double distToNeighbor = g.distance(current.getId(), neighbor.getId());//
+                double distToNeighbor = g.distance(current.getId(), neighbor.getId());
                 double distanceSoFar = distToNeighbor + current.getDistFromSource();
 
                 if (neighbor.getDistFromSource() > distanceSoFar) {

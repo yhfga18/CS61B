@@ -2,7 +2,12 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.util.*;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Arrays;
+
 
 /**
  *  Parses OSM XML files using an XML SAX parser. Used to construct the graph of roads for
@@ -24,9 +29,9 @@ import java.util.*;
  *  @author Alan Yao, Maurice Lee
  */
 public class GraphBuildingHandler extends DefaultHandler {
-    List<Node> Nodes;
+    List<Node> nodes;
     List<Node> wayNodes;
-    boolean highway_flag;
+    boolean highwayFlag;
     Way currentWay;
     /**
      * Only allow for non-service roads; this prevents going on pedestrian streets as much as
@@ -43,9 +48,9 @@ public class GraphBuildingHandler extends DefaultHandler {
 
     public GraphBuildingHandler(GraphDB g) {
         this.g = g;
-        Nodes = new LinkedList<>();
+        nodes = new LinkedList<>();
         wayNodes = new LinkedList<>();
-        highway_flag = false;
+        highwayFlag = false;
     }
 
     /**
@@ -79,7 +84,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             Node node = new Node(id, lon, lat);
             g.addNode(node);
             g.latestNode = node;
-            Nodes.add(node);
+            nodes.add(node);
 
             /* TODO Use the above information to save a "node" to somewhere. */
             /* Hint: A graph-like structure would be nice. */
@@ -118,7 +123,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             } else if (k.equals("highway")) {
                 //System.out.println("Highway type: " + v);
                 /* TODO Figure out whether this way and its connections are valid. */
-                highway_flag = ALLOWED_HIGHWAY_TYPES.contains(v);
+                highwayFlag = ALLOWED_HIGHWAY_TYPES.contains(v);
                 /*
                 if (highway_flag == false) {
                     for (Node n : wayNodes) {
@@ -157,10 +162,10 @@ public class GraphBuildingHandler extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equals("way")) {
-            if (highway_flag) {
+            if (highwayFlag) {
                 currentWay.addEdgeToNodes();
             }
-            highway_flag = false;
+            highwayFlag = false;
             /* We are done looking at a way. (We finished looking at the nodes, speeds, etc...)*/
             /* Hint1: If you have stored the possible connections for this way, here's your
             chance to actually connect the nodes together if the way is valid. */

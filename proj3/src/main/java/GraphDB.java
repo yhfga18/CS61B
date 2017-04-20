@@ -6,7 +6,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 //import java.util.ArrayList;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+
 
 /**
  * Graph for storing all of the intersection (vertex) and road (edge) information.
@@ -22,10 +27,10 @@ public class GraphDB {
     Map<Integer, Set<Long>> actualNodes;
     Set<Long> vertices;
     //Map<Long, Way> ways;
-    double Rullat = MapServer.ROOT_ULLAT;
-    double Rullon = MapServer.ROOT_ULLON;
-    double Rlrlat = MapServer.ROOT_LRLAT;
-    double Rlrlon =  MapServer.ROOT_LRLON;
+    double rullat = MapServer.ROOT_ULLAT;
+    double rullon = MapServer.ROOT_ULLON;
+    double rlrlat = MapServer.ROOT_LRLAT;
+    double rlrlon =  MapServer.ROOT_LRLON;
     double HALF_LON = -122.255859;
     Node latestNode;
     Way latestEdge;
