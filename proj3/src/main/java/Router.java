@@ -40,9 +40,10 @@ public class Router {
         Map<Long, Long> path = new HashMap<>(); // path
         Set<Node> visited = new HashSet<>(); // visited node
         path.put(initial.getId(), initial.getId());
+        current = MinPQ.poll();
 
-        while (!(MinPQ.isEmpty())) {
-            current = MinPQ.poll(); // MinPQ's smallest pulled
+        while (true) {
+            // MinPQ's smallest pulled
             // resultList.addLast(current.getId());
 
             if(current.getId() == (goal.getId())){
@@ -74,8 +75,10 @@ public class Router {
                     }
                 }
             }
+            if (!(MinPQ.isEmpty())) {
+                current = MinPQ.poll();
+            }
         }
-        return null;
     }
 
     public static double heuristic(GraphDB g, Node current, Node destination) {
