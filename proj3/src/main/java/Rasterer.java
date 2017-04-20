@@ -34,7 +34,6 @@ public class Rasterer {
     boolean query_success = true;
     Map<Double, LinkedList<Long>> fileMap;
     LinkedList<Double> latitudeList;
-    int numOfPic = 0;
     String img;
 
 
@@ -117,10 +116,10 @@ public class Rasterer {
         long veryFirstNode = fileMap.get(latitudeList.get(0)).get(0);
         long veryLastNode = fileMap.get(latitudeList.get(l1)).get(l2);
 
-        raster_ul_lat = quadTree.getNode(Long.toString(veryFirstNode)).getULLAT();
-        raster_ul_lon = quadTree.getNode(Long.toString(veryFirstNode)).getULLON();
-        raster_lr_lat = quadTree.getNode(Long.toString(veryLastNode)).getLRLAT();
-        raster_lr_lon = quadTree.getNode(Long.toString(veryLastNode)).getLRLON();
+        raster_ul_lat = quadTree.getNode(veryFirstNode).getULLAT();
+        raster_ul_lon = quadTree.getNode(veryFirstNode).getULLON();
+        raster_lr_lat = quadTree.getNode(veryLastNode).getLRLAT();
+        raster_lr_lon = quadTree.getNode(veryLastNode).getLRLON();
 
         ////////////////////////////////////////////////////////////////////////////////
 
@@ -158,26 +157,29 @@ public class Rasterer {
             fileMap.put(latitude, new LinkedList<>());
             latitudeList.addLast(latitude);
         }
-        fileMap.get(node.getULLAT()).addLast(Long.parseLong(node.getFilename()));
+        fileMap.get(node.getULLAT()).addLast(node.getFilenameLong());
         ////////////////////////////////////////////////
-        numOfPic += 1;
         depth = (int) d;
         return;
     }
 
     private boolean P1(QuadTree.Node node) {
+        /*
         boolean cond1 = (node.getULLAT() < LRLAT); // lat 1
         boolean cond2 = (node.getLRLON() < ULLON); // lon 1
         boolean cond3 = (node.getLRLAT() > ULLAT); // lat 2
         boolean cond4 = (node.getULLON() > LRLON); // lon 2
         return cond1 || cond2 || cond3 || cond4;
+        */
+        return (node.getULLAT() < LRLAT) || (node.getLRLON() < ULLON) || (node.getLRLAT() > ULLAT) || (node.getULLON() > LRLON);
     }
 
-    private boolean P2(QuadTree.Node node, int depth) {
-        if (depth >= 7) {return true;}
-        double nodeLonDPP = (node.getLRLON() - node.getULLON()) / node.getWidth();
-        return LONDPP > nodeLonDPP;
+    private boolean P2(QuadTree.Node node, int dep) {
+        if (dep >= 7) {
+            return true;
         }
+        return LONDPP > (node.getLRLON() - node.getULLON()) / node.getWidth();
+    }
 
 
 
@@ -268,7 +270,10 @@ public class Rasterer {
 
             if (s[i].length() > 4) {
 
-                //a = Character.toString(s[i].charAt(s.length - 4)) + Character.toString(s[i].charAt(s.length - 3)) + Character.toString(s[i].charAt(s.length - 2)) + Character.toString(s[i].charAt(s.length - 1));
+                //a = Character.toString(s[i].charAt(s.length - 4)) +
+                Character.toString(s[i].charAt(s.length - 3))
+                + Character.toString(s[i].charAt(s.length - 2)) +
+                Character.toString(s[i].charAt(s.length - 1));
                 if (!(a.equals(".png"))) {
                     s[i] = img + s[i] + ".png";
                 }
