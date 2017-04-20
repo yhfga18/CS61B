@@ -67,9 +67,8 @@ public class Router {
             if (visited.contains(current)) {
                 continue;
             }
-            resultList.addLast(current.getId());
 
-            if (current.getId() == (goal.getId())) {
+            if (current.getId() == goal.getId()) {
                 resultList = pathMaker(path, current, goal);
                 return resultList;
             }
@@ -84,7 +83,7 @@ public class Router {
                     continue;
                 }
 
-                double distToNeighbor = g.distance(current.getId(), neighbor.getId());
+                double distToNeighbor = g.distance(current.getId(), neighbor.getId());//
                 double distanceSoFar = distToNeighbor + current.getDistFromSource();
 
                 if (neighbor.getDistFromSource() > distanceSoFar) {
@@ -108,6 +107,7 @@ public class Router {
         LinkedList<Long> resultList = new LinkedList<>();
         while (!(path.get(tracking).equals(tracking))
                 && !(path.get(tracking).equals(start))) {
+
             resultList.addFirst(tracking);
             tracking = path.get(tracking);
         }
