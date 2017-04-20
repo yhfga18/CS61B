@@ -6,7 +6,7 @@ import java.util.*;
  */
 public class Graph {
     Map<Long, Node> nodes;
-    Map<Long, Way> ways;
+    //Map<Long, Way> ways;
     double Rullat = MapServer.ROOT_ULLAT;
     double Rullon = MapServer.ROOT_ULLON;
     double Rlrlat = MapServer.ROOT_LRLAT;
@@ -16,7 +16,7 @@ public class Graph {
 
     public Graph() {
         nodes = new HashMap<>();
-        ways = new HashMap<>();
+        //ways = new HashMap<>();
         adjacencyList = new HashMap();
     }
 
@@ -55,16 +55,21 @@ public class Graph {
         return Math.sqrt((lon1 - lon2) *  (lon1 - lon2) + (lad1 - lad2) * (lad1 - lad2));
     }
 
+    double distance(double lon1, double lad1, Node node2) {
+        double lon2 = node2.getLon();
+        double lat2 = node2.getLat();
+        return Math.sqrt((lon1 - lon2) *  (lon1 - lon2) + (lad1 - lat2) * (lad1 - lat2));
+    }
+
     long closest(double lon, double lat) {
-        Node node = new Node("0", Double.toString(lon), Double.toString(lat));
         Node closestNode = null;
-        double minDistance = 99999999999999999.9;
+        double minDistance = 99999999999.9;
 
         for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
             Node n = entry.getValue();
-            if ((Math.abs(n.lat - node.lat) < 0.007) && (Math.abs(n.lon - node.lon)) < 0.007) {
-                double dist = distance(node, n);
-                if (minDistance >= dist) {
+            if ((Math.abs(n.lat - lat) < 0.005) && (Math.abs(n.lon - lon)) < 0.005) {
+                double dist = distance(lon, lat, n);
+                if (minDistance > dist) {
                     minDistance = dist;
                     closestNode = n;
                 }
@@ -164,10 +169,6 @@ public class Graph {
         return nodes.containsKey(Long.parseLong(id));
     }
 
-    public void addWay(Way way) {
-        ways.put(way.wayId, way);
-    }
-
 }
 
 class Node {
@@ -223,7 +224,6 @@ class Way {
     long wayId;
     LinkedList<Long> nodes;
     Graph graph;
-    boolean isWay;
 
     public Way(GraphDB g, String wayID) {
         graph = g.graph;

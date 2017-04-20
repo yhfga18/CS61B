@@ -113,9 +113,7 @@ public class GraphDB {
         return graph.contains(id);
     }
 
-    public void addWay(Way way) {
-        graph.addWay(way);
-    }
+
 
 
 
