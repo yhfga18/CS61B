@@ -63,15 +63,16 @@ public class Graph {
         double minDistance = 99999999999999999.9;
         //for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
 
-        Map<Long, Node>  nodeSet;
-        if (lat > (Rlrlat - Rullat) / 2) {
-            nodeSet = nodes1;
-        } else {
-            nodeSet = nodes2;
-        }
+//        Map<Long, Node>  nodeSet;
+//        if (lon > (Rullon - Rlrlon) / 2) {
+//            nodeSet = nodes2;
+//        } else {
+//            nodeSet = nodes1;
+//        }
 
-        for (Node n : nodeSet.values()) {
-            if ((Math.abs(n.lat - node.lat) < 0.005) && (Math.abs(n.lon - node.lon)) < 0.005) {
+        for (Map.Entry<Long, Node> entry : nodes.entrySet()) {
+            Node n = entry.getValue();
+            if ((Math.abs(n.lat - node.lat) < 0.06) && (Math.abs(n.lon - node.lon)) < 0.06) {
                 double dist = distance(node, n);
                 if (minDistance >= dist) {
                     minDistance = dist;
@@ -111,7 +112,7 @@ public class Graph {
         if (!(nodes.containsKey(node.getId()))) {
             nodes.put(node.getId(), node);
             char f = Long.toString(node.getId()).charAt(0);
-            if (f == '1' || f == '2') {
+            if (f == '1' || f == '3') {
                 nodes1.put(node.getId(), node);
             } else {
                 nodes2.put(node.getId(), node);
@@ -133,7 +134,7 @@ public class Graph {
         if ((nodes.containsKey(nodeID))) {
             nodes.remove(nodeID);
             char f = Long.toString(nodeID).charAt(0);
-            if (f == '1' || f == '2') {
+            if (f == '1' || f == '3') {
                 nodes1.remove(nodeID);
             } else {
                 nodes2.remove(nodeID);
