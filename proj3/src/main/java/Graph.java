@@ -274,8 +274,16 @@ class Way {
     }
 
     public void addEdgeToNodes() {
-        if (nodes.size() >= 1) {
-            for (int i = 0; i < nodes.size() - 1 ; i++) {
+        int len = nodes.size();
+        /*
+        if (len > 2) {
+            Long n = nodes.removeFirst();
+            while (len > 1) {
+                graph.addEdge(n, nodes.removeFirst());
+            }
+            */
+        if (len > 1) {
+            for (int i = 0; i < len - 1; i++) {
                 graph.addEdge(nodes.get(i), nodes.get(i + 1));
             }
         }
