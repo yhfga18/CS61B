@@ -24,7 +24,7 @@ import java.util.LinkedList;
  */
 public class GraphDB {
 
-    public PrefixTree pt = new PrefixTree();
+    public PrefixTree pt = new PrefixTree("pt");
     Map<Long, Node> nodes;
     Map<Integer, Set<Long>> actualNodes;
     Set<Long> vertices;

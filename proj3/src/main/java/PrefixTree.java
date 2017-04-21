@@ -12,8 +12,10 @@ import java.util.HashSet;
 public class PrefixTree {
 
     Node root;
+    String name;
 
-    PrefixTree() {
+    PrefixTree(String name) {
+        this.name = name;
         root = new Node(null);
     }
 
@@ -41,11 +43,11 @@ public class PrefixTree {
         public void add(String word, Node parentNode, String actualName) {
             int lenOfWord = word.length();
             if (lenOfWord < 1 || word == null) {
-                parentNode.isWord = true;
                 if (words == null) {
                     words = new HashSet<>();
                 }
                 words.add(actualName);
+                parentNode.isWord = true;
                 return;
             }
 
@@ -63,20 +65,26 @@ public class PrefixTree {
 
             Node current;
 
+            //convert to lower case
             firstLetter = firstLetter.toLowerCase();
-            if (parentNode.children.containsKey(firstLetter)) {
-                current = parentNode.children.get(firstLetter);
+
+            Map<String, PrefixTree.Node> n = parentNode.children;
+            if (n.containsKey(firstLetter)) {
+                current = n.get(firstLetter);
             } else {
                 current = new Node(firstLetter);
-                parentNode.children.put(firstLetter, current);
+                n.put(firstLetter, current);
             }
             current.add(word.substring(1, lenOfWord), current, actualName);
         }
     }
 
     public List<String> getLocationsByPrefix(String prefix) {
+
         wordList = new ArrayList<>();
+
         Node currentNode = root;
+
         int prefixLen = prefix.length();
         for (int k = 0; k < prefixLen; k++) {
             String  ch = prefix.substring(k, k + 1);
@@ -91,12 +99,12 @@ public class PrefixTree {
         return wordList;
     }
     private void collectWords(Node current) {
+        if (current.children == null) {
+            return;
+        }
         if (current.isWord) {
             for (String word: current.words) {
                 wordList.add(word);
-            }
-            if (current.children == null) {
-                return;
             }
         }
         for (Node node : current.children.values()) {
