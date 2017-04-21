@@ -68,7 +68,8 @@ public class GraphBuildingHandler extends DefaultHandler {
      * @see Attributes
      */
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes)
+    public void startElement(String uri, String localName, String qName,
+                             Attributes attributes)
             throws SAXException {
         /* Some example code on how you might begin to parse XML files. */
         if (qName.equals("node")) {
@@ -117,6 +118,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             /* While looking at a way, we found a <tag...> tag. */
             String k = attributes.getValue("k");
             String v = attributes.getValue("v");
+
             if (k.equals("maxspeed")) {
                 //System.out.println("Max Speed: " + v);
                 /* TODO set the max speed of the "current way" here. */
