@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
@@ -279,9 +281,8 @@ public class MapServer {
      * cleaned <code>prefix</code>.
      */
     public static List<String> getLocationsByPrefix(String prefix) {
-        return new LinkedList<>();
+        return graph.pt.getLocationsByPrefix(prefix);
     }
-
     /**
      * Collect all locations that match a cleaned <code>locationName</code>, and return
      * information about each node that matches.
@@ -295,7 +296,18 @@ public class MapServer {
      * "id" -> Number, The id of the node. <br>
      */
     public static List<Map<String, Object>> getLocations(String locationName) {
-        return new LinkedList<>();
+        List<Map<String, Object>> list = new ArrayList<>();
+        List<String> stringList = getLocationsByPrefix(locationName);
+        Set<Node> nodeSet = graph.locationMaps.get(stringList.get(0));
+        for (Node node: nodeSet) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("id", node.id);
+            map.put("name", node.locationName);
+            map.put("lon", node.lon);
+            map.put("lat", node.lat);
+            list.add(map);
+        }
+        return list;
     }
 
     /** Validates that Rasterer has returned a result that can be rendered.

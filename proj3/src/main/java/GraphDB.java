@@ -23,6 +23,8 @@ import java.util.LinkedList;
  * @author Alan Yao, Josh Hug
  */
 public class GraphDB {
+
+    public PrefixTree pt = new PrefixTree();
     Map<Long, Node> nodes;
     Map<Integer, Set<Long>> actualNodes;
     Set<Long> vertices;
@@ -32,6 +34,7 @@ public class GraphDB {
     double rlrlat = MapServer.ROOT_LRLAT;
     double rlrlon =  MapServer.ROOT_LRLON;
     double HALF_LON = -122.255859;
+    Map<String, Set<Node>> locationMaps = new HashMap<>();
     Node latestNode;
     Way latestEdge;
 
@@ -65,6 +68,17 @@ public class GraphDB {
             e.printStackTrace();
         }
         // clean();
+    }
+
+    public void putLatestNode(String locationName) {
+        pt.root.add(locationName);
+        if (!(locationMaps.containsKey(locationName))) {
+            Set<Node> set = new HashSet<>();
+            set.add(latestNode);
+            locationMaps.put(locationName, set);
+        } else {
+            locationMaps.get(locationName).add(latestNode);
+        }
     }
 
     /**
@@ -237,6 +251,7 @@ public class GraphDB {
     public void addNode(Node node) {
         if (!(nodes.containsKey(node.getId()))) {
             nodes.put(node.getId(), node);
+            latestNode = node;
             //char f = Long.toString(node.getId()).charAt(0);
         }
 

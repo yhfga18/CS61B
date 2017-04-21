@@ -9,6 +9,7 @@ public class Node {
     double heuristic;
     double f;
     long parent;
+    String locationName;
 
     public Node(String id, String lon, String lat) {
         this.id = Long.parseLong(id);
@@ -25,6 +26,13 @@ public class Node {
     }
     public double getLat() {
         return lat;
+    }
+
+    public void setLocation(String name) {
+        locationName = name;
+    }
+    public String getLocation() {
+        return locationName;
     }
 
 
