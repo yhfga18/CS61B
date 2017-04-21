@@ -24,7 +24,7 @@ import java.util.LinkedList;
  */
 public class GraphDB {
 
-    public PrefixTree pt = new PrefixTree("pt");
+    private PrefixTree pt = new PrefixTree("pt");
     Map<Long, Node> nodes;
     Map<Integer, Set<Long>> actualNodes;
     Set<Long> vertices;
@@ -68,6 +68,10 @@ public class GraphDB {
             e.printStackTrace();
         }
         // clean();
+    }
+
+    public PrefixTree pt() {
+        return pt;
     }
 
     public void putLatestNode(String locationName) {

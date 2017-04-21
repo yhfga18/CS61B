@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
@@ -281,7 +280,7 @@ public class MapServer {
      * cleaned <code>prefix</code>.
      */
     public static List<String> getLocationsByPrefix(String prefix) {
-        return graph.pt.getLocationsByPrefix(prefix);
+        return graph.pt().getLocationsByPrefix(prefix);
     }
     /**
      * Collect all locations that match a cleaned <code>locationName</code>, and return
