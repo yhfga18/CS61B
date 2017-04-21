@@ -68,6 +68,9 @@ public class Router {
 
             current = minPQ.poll(); // MinPQ's smallest pulled
             long currentID = current.getId();
+            if (currentID == 956500319) {
+                System.out.println("hello");
+            }
 
             if (visited.contains(current)) {
                 continue;
@@ -95,9 +98,10 @@ public class Router {
                     neighbor.setF();
                     //path.put(neighbor.getId(), current.getId());
                     minPQ.add(neighbor);
+                    g.setParent(currentID, neig);
                 }
 
-                g.setParent(currentID, neig);
+                //g.setParent(currentID, neig);
             }
         }
         return pathMaker(g, goalID, initial, resultList);
