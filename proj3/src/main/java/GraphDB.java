@@ -330,8 +330,36 @@ public class GraphDB {
 
     public long getParent(long current) {
         Node currentNode = nodes.get(current);
-        return currentNode.getParent(current);
+        return currentNode.getParent();
     }
+
+    public void setDistance(long previous, long current) {
+        double dis = distance(previous, current);
+        dis = dis + nodes.get(previous).getDistFromSource();
+        nodes.get(current).setDistFromSource(dis);
+    }
+
+    public double getDistance(long current) {
+        return nodes.get(current).getDistFromSource();
+    }
+
+
+    public void setHeuristic(long nodeID, long goal) {
+        nodes.get(nodeID).setHeuristic(distance(nodeID, goal));
+    }
+
+    public double getF(long node) {
+        Node n = nodes.get(node);
+        return n.getDistFromSource() + n.getHeuristic();
+    }
+
+    public double getHypoScore(long current, long nextNodeID, long goalID) {
+        double h = distance(nextNodeID, goalID);
+        double preCost = nodes.get(current).getDistFromSource();
+        double dis = distance(current, nextNodeID);
+        return h + preCost + dis;
+    }
+
 
 }
 

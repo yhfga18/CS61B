@@ -21,17 +21,17 @@ public class Router {
      * Return a LinkedList of <code>Long</code>s representing the shortest path from st to dest,
      * where the longs are node IDs.
      */
-
-    static class NodeComparator implements Comparator<Node> {
-        Node goal;
-        NodeComparator(Node destination) {
-            goal = destination;
+    static class NodeComparator implements Comparator<Long> {
+        GraphDB graph;
+        NodeComparator(GraphDB g) {
+            graph = g;
         }
-
-        public int compare(Node node1, Node node2) {
-            if (node1.getF() > node2.getF()) {
+        public int compare(Long n1, Long n2) {
+            double node1F = graph.getNode(n1).getF();
+            double node2F = graph.getNode(n2).getF();
+            if (node1F > node2F) {
                 return 1;
-            } else if (node1.getF() < node2.getF()) {
+            } else if (node1F < node2F) {
                 return -1;
             } else {
                 return 0;
@@ -44,77 +44,63 @@ public class Router {
 
         LinkedList<Long> resultList = new LinkedList<>();
 
-        Node initial = g.closestNode(stlon, stlat);
-        Node goal = g.closestNode(destlon, destlat);
-        PriorityQueue<Node> minPQ = new PriorityQueue<>(new NodeComparator(goal));
+        long initial = g.closest(stlon, stlat);
+        long goal = g.closest(destlon, destlat);
+
+        PriorityQueue<Long> minPQ = new PriorityQueue<>(new NodeComparator(g));
 
         // set initial's d & h. No need initial's f to be set.
-        initial.setDistFromSource(0);
-        initial.setHeuristic(heuristic(g, initial, goal));
+        g.setDistance(initial, initial);
+        g.setHeuristic(initial, goal);
 
         // add initial to MinPQ
         minPQ.add(initial);
 
 
         //Map<Long, Long> path = new HashMap<>(); // path
-        HashSet<Node> visited = new HashSet<>(); // visited node
+        HashSet<Long> visited = new HashSet<>(); // visited node
 
         //path.put(initial.getId(), initial.getId());
 
-        Node current;
-        long goalID = goal.getId();
+        long currentID = minPQ.poll();
 
-        while (!(minPQ.isEmpty())) {
+        while (true) {
 
-            current = minPQ.poll(); // MinPQ's smallest pulled
-            long currentID = current.getId();
-            if (currentID == 956500319) {
-                System.out.println("hello");
-            }
-
-            if (visited.contains(current)) {
-                continue;
-            }
-
-            if (currentID == goalID) {
+            if (currentID == goal) {
                 break;
             }
 
-            visited.add(current);
+            visited.add(currentID);
 
-            for (Long neig : g.adjacent(currentID)) {
-                Node neighbor = g.getNode(neig);
-                neighbor.setHeuristic(heuristic(g, neighbor, goal));
-
-                if (visited.contains(neighbor)) {
+            for (Long v: g.adjacent(currentID)) {
+                if (visited.contains(v)) {
                     continue;
                 }
-
-                double distToNeighbor = g.distance(currentID, neighbor.getId());
-                double distanceSoFar = distToNeighbor + current.getDistFromSource();
-
-                if (neighbor.getDistFromSource() > distanceSoFar) {
-                    neighbor.setDistFromSource(distanceSoFar);
-                    neighbor.setF();
-                    //path.put(neighbor.getId(), current.getId());
-                    minPQ.add(neighbor);
-                    g.setParent(currentID, neig);
+                if (minPQ.contains(v)) {
+                    if (g.getHypoScore(currentID, v, goal) < g.getF(v)) {
+                        g.setDistance(currentID, v);
+                        g.setHeuristic(v, goal);
+                        minPQ.add(v);
+                        g.setParent(currentID, v);
+                    }
+                } else {
+                    g.setDistance(currentID, v);
+                    g.setHeuristic(v, goal);
+                    minPQ.add(v);
+                    g.setParent(currentID, v);
                 }
-
-                //g.setParent(currentID, neig);
             }
+            if (minPQ.isEmpty()) {
+                break;
+            }
+            currentID = minPQ.poll();
         }
-        return pathMaker(g, goalID, initial, resultList);
+        return pathMaker(g, goal, initial, resultList);
     }
 
-    public static double heuristic(GraphDB g, Node current, Node destination) {
-        return g.distance(current.getId(), destination.getId());
-    }
-
-    public static LinkedList<Long> pathMaker(GraphDB g, long currentID, Node initial, LinkedList resultList) {
-        long initialID = initial.getId();
+    public static LinkedList<Long> pathMaker(GraphDB g, long currentID, long initial, LinkedList resultList) {
         resultList.addLast(currentID);
-        while (currentID != initialID) {
+        while (currentID != initial) {
             currentID = g.getParent(currentID);
             resultList.addFirst(currentID);
         }

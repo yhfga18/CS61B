@@ -14,7 +14,8 @@ public class Node {
         this.id = Long.parseLong(id);
         this.lon = Double.parseDouble(lon);
         this.lat = Double.parseDouble(lat);
-        distFromSource = 9999999999999.9;
+        distFromSource = 99999.9;
+//        parent = this.id;
     }
     public long getId() {
         return id;
@@ -30,28 +31,35 @@ public class Node {
     public double getDistFromSource() {
         return distFromSource;
     }
+
     public void setDistFromSource(Node prev) {
         distFromSource = distFromSource + prev.getDistFromSource();
     }
+
     public void setDistFromSource(double d) {
         distFromSource = d;
     }
+
     public double getHeuristic() {
         return heuristic;
     }
+
     public void setHeuristic(double h) {
         heuristic = h;
     }
+
     public double getF() {
-        return f;
+        return distFromSource + heuristic;
     }
+
     public void setF() {
         f = distFromSource + heuristic;
     }
+
     public void setParent(long p) {
         parent = p;
     }
-    public long getParent(long p) {
+    public long getParent() {
         return parent;
     }
 }
