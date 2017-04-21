@@ -56,28 +56,30 @@ public class Router {
         minPQ.add(initial);
 
 
-        Map<Long, Long> path = new HashMap<>(); // path
+        //Map<Long, Long> path = new HashMap<>(); // path
         HashSet<Node> visited = new HashSet<>(); // visited node
 
-        path.put(initial.getId(), initial.getId());
+        //path.put(initial.getId(), initial.getId());
 
         Node current;
+        long goalID = goal.getId();
 
         while (!(minPQ.isEmpty())) {
 
             current = minPQ.poll(); // MinPQ's smallest pulled
+            long currentID = current.getId();
+
             if (visited.contains(current)) {
                 continue;
             }
 
-            if (current.getId() == goal.getId()) {
-                resultList = pathMaker(path, current, goal);
-                return resultList;
+            if (currentID == goalID) {
+                break;
             }
 
             visited.add(current);
 
-            for (Long neig : g.adjacent(current.getId())) {
+            for (Long neig : g.adjacent(currentID)) {
                 Node neighbor = g.getNode(neig);
                 neighbor.setHeuristic(heuristic(g, neighbor, goal));
 
@@ -85,24 +87,36 @@ public class Router {
                     continue;
                 }
 
-                double distToNeighbor = g.distance(current.getId(), neighbor.getId());
+                double distToNeighbor = g.distance(currentID, neighbor.getId());
                 double distanceSoFar = distToNeighbor + current.getDistFromSource();
 
                 if (neighbor.getDistFromSource() > distanceSoFar) {
                     neighbor.setDistFromSource(distanceSoFar);
                     neighbor.setF();
-                    path.put(neighbor.getId(), current.getId());
+                    //path.put(neighbor.getId(), current.getId());
                     minPQ.add(neighbor);
                 }
+
+                g.setParent(currentID, neig);
             }
         }
-        return null;
+        return pathMaker(g, goalID, initial, resultList);
     }
 
     public static double heuristic(GraphDB g, Node current, Node destination) {
         return g.distance(current.getId(), destination.getId());
     }
 
+    public static LinkedList<Long> pathMaker(GraphDB g, long currentID, Node initial, LinkedList resultList) {
+        long initialID = initial.getId();
+        resultList.addLast(currentID);
+        while (currentID != initialID) {
+            currentID = g.getParent(currentID);
+            resultList.addFirst(currentID);
+        }
+        return resultList;
+    }
+    /*
     public static LinkedList<Long> pathMaker(Map<Long, Long> path, Node current, Node goal) {
         Long start = current.getId();
         Long tracking = goal.getId();
@@ -116,4 +130,5 @@ public class Router {
         resultList.addFirst(tracking);
         return resultList;
     }
+    */
 }

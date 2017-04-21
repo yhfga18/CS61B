@@ -8,6 +8,7 @@ public class Node {
     double distFromSource;
     double heuristic;
     double f;
+    long parent;
 
     public Node(String id, String lon, String lat) {
         this.id = Long.parseLong(id);
@@ -46,5 +47,11 @@ public class Node {
     }
     public void setF() {
         f = distFromSource + heuristic;
+    }
+    public void setParent(long p) {
+        parent = p;
+    }
+    public long getParent(long p) {
+        return parent;
     }
 }

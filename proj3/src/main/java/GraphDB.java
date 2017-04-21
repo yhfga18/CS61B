@@ -322,6 +322,17 @@ public class GraphDB {
         return nodes.containsKey(Long.parseLong(id));
     }
 
+
+    public void setParent(long current, long child) {
+        Node childNode = nodes.get(child);
+        childNode.setParent(current);
+    }
+
+    public long getParent(long current) {
+        Node currentNode = nodes.get(current);
+        return currentNode.getParent(current);
+    }
+
 }
 
 
