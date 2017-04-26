@@ -28,13 +28,13 @@ public class SeamCarver {
         */
     }
     public Picture picture() { // current picture
-        return pic;
+        return new Picture(pic);
     }
     public int width() { // width of current picture
         return width;
     }
     public int height() { // height of current picture
-        return pic.width();
+        return height;
     }
     public double energy(int x, int y) { // energy of pixel at column x and row y
 
@@ -43,7 +43,7 @@ public class SeamCarver {
         Color above;// = pic.get(x, y + 1);
         Color below;// = pic.get(x, y - 1);
         if (width == 1) {
-
+            return 0;
         }
         if (x == width() - 1) {
             left = pic.get(x - 1, y);
