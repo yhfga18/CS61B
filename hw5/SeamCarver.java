@@ -86,41 +86,43 @@ public class SeamCarver {
         return new int[0];
     }
     public int[] findVerticalSeam() {
-        int[] trackIndices = new int[height];
+
         for (int s = 0; s < width; s++) {
             energyPaths[s][0] = energy(s,0);
         }
-        for (int j = 1; j < height; j++) {  // smallest の node の 2d array を作った
+        for (int j = 1; j < height - 1; j++) {  // smallest の node の 2d array を作った
             for (int i = 0; i < width; i++) {
-                double p1, p2, p3;
-                if (i == 0) {
-                    p1 = energyPaths[i][j - 1];
-                    p2 = energyPaths[i + 1][j - 1];
-                    p3 = 99999;
-                } else if (i  == width - 1) {
-                    p1 = energyPaths[i][j - 1];
-                    p2 = energyPaths[i - 1][j - 1];
-                    p3 = 99999;
-                } else {
-                    p1 = energyPaths[i][j - 1];
-                    p2 = energyPaths[i - 1][j - 1]; // いずれ out of bound exception が出る
-                    p3 = energyPaths[i + 1][j - 1];
+                for (int c = -1; c < 1; c++) {
+                    if ((c == -1 && i == 0) || (c == 1 && i == width - 1)) {
+                        continue;
+                    }
+                    if (energyPaths[i + c][j + 1] != 0) {
+                        double oldEnergy = energyPaths[i + c][j + 1];
+                        double newEnergy = energyPaths[i][j] + energy(i + c, j + 1);
+                        energyPaths[i + c][j + 1] = Math.min(oldEnergy, newEnergy);
+                    } else {
+                        energyPaths[i + c][j + 1] = energyPaths[i][j] + energy(i + c, j + 1);
+                    }
                 }
-                energyPaths[i][j] = Math.min(energyPaths[i][j], energy(i, j) + minOfThree(p1, p2, p3));
             }
         }
 
-        double min = energyPaths[0][height - 1];
         int minIndex = 0;
+        double min = energyPaths[0][height - 1];
         for (int s = 1; s < width; s++) {
             min = Math.min(energyPaths[s][height - 1], min);
             minIndex = s;
-        }
+        } // energyPaths の一番下のrowの中からminimumを見つけた(==shortest path の goal を見つけた)
+
+        int[] trackIndices = new int[height - 1]; // 最終的に返す array
+
         double d1;
         double d2;
         double d3;
+
         int trackIndex = minIndex;
-        for (int i = 1; i < width; i++) {
+
+        for (int i = 1; i < height - 1; i++) {
             if (trackIndex == 0) {
                 d1 = 99999;
                 d2 = energyPaths[trackIndex][height - i - 1];
@@ -134,8 +136,8 @@ public class SeamCarver {
                 d2 = energyPaths[trackIndex][height - i - 1];
                 d3 = energyPaths[trackIndex + 1][height - i - 1];
             }
-            int mindIndex = minOfThreeIndex(d1, d2, d3);
-            trackIndices[height - i] = trackIndex + mindIndex;
+            int indexOfMin = minOfThreeIndex(d1, d2, d3);
+            trackIndices[height - i - 1] = trackIndex + indexOfMin;
         }
 
         return trackIndices;
@@ -151,6 +153,7 @@ public class SeamCarver {
         */
     }
 
+    /*
     public double minOfThree(double d1, double d2, double d3) {
         if(d1 < d2 && d1 < d3){
             return d1;
@@ -160,6 +163,8 @@ public class SeamCarver {
             return d3;
         }
     }
+    */
+
     public int minOfThreeIndex(double d1, double d2, double d3) {
         if(d1 < d2 && d1 < d3){
             return -1;
@@ -177,3 +182,46 @@ public class SeamCarver {
         int[] indices = findVerticalSeam();
     }
 }
+
+/*
+
+if (i == 0) {
+        p1 = energyPaths[i][j - 1];
+        p2 = energyPaths[i + 1][j - 1];
+        p3 = 99999;
+        } else if (i  == width - 1) {
+        p1 = energyPaths[i][j - 1];
+        p2 = energyPaths[i - 1][j - 1];
+        p3 = 99999;
+        } else {
+        p1 = energyPaths[i][j - 1];
+        p2 = energyPaths[i - 1][j - 1];
+        p3 = energyPaths[i + 1][j - 1];
+        }
+
+*/
+
+
+/*
+        for (int j = 1; j < height; j++) {  // smallest の node の 2d array を作った
+            for (int i = 0; i < width; i++) {
+
+                double p1, p2, p3;
+                if (i == 0) {
+                    p1 = energy(i, j - 1);
+                    p2 = energy(i + 1, j - 1);
+                    p3 = 99999;
+                } else if (i  == width - 1) {
+                    p1 = energy(i, j - 1);
+                    p2 = energy(i - 1, j - 1);
+                    p3 = 99999;
+                } else {
+                    p1 = energy(i, j - 1);
+                    p2 = energy(i - 1, j - 1);
+                    p3 = energy(i + 1, j - 1);
+                }
+                energyPaths[i][j] = Math.min(energyPaths[i][j], energy(i, j) + minOfThree(p1, p2, p3));
+            }
+        }
+
+ */
