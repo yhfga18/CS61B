@@ -15,7 +15,7 @@ public class SeamCarver {
     private double[][] energyPaths;
 
     public SeamCarver(Picture picture) {
-        pic = new Picture(pic);
+        pic = new Picture(picture);
         width = picture.width();
         height = picture.height();
     }
