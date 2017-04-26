@@ -137,16 +137,16 @@ public class SeamCarver {
         for (int i = 1; i < height; i++) {
             if (trackIndex == 0) {
                 d1 = Double.POSITIVE_INFINITY;
-                d2 = energyPaths[trackIndex][height - i - 1];
-                d3 = energyPaths[trackIndex + 1][height - i - 1];
+                d2 = energyPaths[trackIndex][(height - 1) - i];
+                d3 = energyPaths[trackIndex + 1][(height - 1) - i];
             } else if (trackIndex == width - 1) {
-                d1 = energyPaths[trackIndex - 1][height - i - 1];
-                d2 = energyPaths[trackIndex][height - i - 1];
+                d1 = energyPaths[trackIndex - 1][(height - 1) - i];
+                d2 = energyPaths[trackIndex][(height - 1) - i];
                 d3 = Double.POSITIVE_INFINITY;
             } else {
-                d1 = energyPaths[trackIndex - 1][height - i - 1];
-                d2 = energyPaths[trackIndex][height - i - 1];
-                d3 = energyPaths[trackIndex + 1][height - i - 1];
+                d1 = energyPaths[trackIndex - 1][(height - 1) - i];
+                d2 = energyPaths[trackIndex][(height - 1) - i];
+                d3 = energyPaths[trackIndex + 1][(height - 1) - i];
             }
             /*
             double dif = min - energy(trackIndex, height - i - 1);
@@ -160,7 +160,7 @@ public class SeamCarver {
             */
             int indexOfMin = minOfThreeIndex(d1, d2, d3);
             trackIndex = trackIndex + indexOfMin;
-            trackIndices[height - i - 1] = trackIndex;
+            trackIndices[(height - 1) - i] = trackIndex;
 
         }
 
