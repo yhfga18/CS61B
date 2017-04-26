@@ -66,11 +66,11 @@ public class SeamCarver {
 
         if (height != 1) {
             if (y == height - 1) {
-                above = pic.get(x, 0);
-                below = pic.get(x, y - 1);
+                above = pic.get(x, y - 1);
+                below = pic.get(x, 0);
             } else if (y == 0) {
-                above = pic.get(x, y + 1);
-                below = pic.get(x, height - 1);
+                above = pic.get(x, height - 1);
+                below = pic.get(x, y + 1);
             } else {
                 above = pic.get(x, y + 1);
                 below = pic.get(x, y - 1);
@@ -97,6 +97,7 @@ public class SeamCarver {
         for (int s = 0; s < width; s++) {
             energyPaths[s][0] = energy(s,0);
         }
+
         for (int j = 0; j < height - 1; j++) {  // smallest の node の 2d array を作った
             for (int i = 0; i < width; i++) {
                 for (int c = -1; c <= 1; c++) {
@@ -190,11 +191,11 @@ public class SeamCarver {
     */
 
     private int minOfThreeIndex(double d1, double d2, double d3) {
-        if(d1 < d2 && d1 < d3){
+        if(d1 <= d2 && d1 <= d3) {
             return -1;
-        }else if(d2 < d3 && d2 < d1){
+        }else if(d2 <= d3 && d2 <= d1) {
             return 0;
-        }else{
+        }else {
             return 1;
         }
     }
