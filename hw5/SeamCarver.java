@@ -129,6 +129,13 @@ public class SeamCarver {
         int[] trackIndices = new int[height]; // 最終的に返す array
         trackIndices[height - 1] = minIndex;
 
+        if (width == 1) {
+            for (int i = 0; i < height - 1; i++) {
+                trackIndices[(height - 1) - i] = 0;
+            }
+            return trackIndices;
+        }
+
         double d1;
         double d2;
         double d3;
