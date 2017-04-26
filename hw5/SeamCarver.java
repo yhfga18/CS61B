@@ -31,31 +31,39 @@ public class SeamCarver {
         return pic;
     }
     public int width() { // width of current picture
-        return pic.width();
+        return width;
     }
     public int height() { // height of current picture
         return pic.width();
     }
     public double energy(int x, int y) { // energy of pixel at column x and row y
 
-        Color left = pic.get(x - 1, y);
-        Color right = pic.get(x + 1, y);
-        Color above = pic.get(x, y + 1);
-        Color below = pic.get(x, y - 1);
+        Color left;// = pic.get(x - 1, y);
+        Color right;// = pic.get(x + 1, y);
+        Color above;// = pic.get(x, y + 1);
+        Color below;// = pic.get(x, y - 1);
+        if (width == 1) {
 
-        if (x == width()) {
+        }
+        if (x == width() - 1) {
             left = pic.get(x - 1, y);
             right = pic.get(0, y);
         } else if (x == 0){
-            left = pic.get(width(), y);
+            left = pic.get(width() - 1, y);
             right = pic.get(x + 1, y);
+        } else {
+            left = pic.get(x - 1, y);
+            right= pic.get(x + 1, y);
         }
 
         if (y == height()) {
             above = pic.get(x, 0);
             below = pic.get(x, y - 1);
         } else if (y == 0) {
-            above = pic.get(x, height());
+            above = pic.get(x, height() - 1);
+            below = pic.get(x, y + 1);
+        } else {
+            above = pic.get(x, y + 1);
             below = pic.get(x, y - 1);
         }
 
@@ -132,12 +140,6 @@ public class SeamCarver {
 
         return trackIndices;
 
-
-
-
-
-
-
         /*
         for (int i = 0; i < width; i++) { // for each starting node
             for (int j = 0; j < height - 1; j++) { // till get the bottom
@@ -172,6 +174,6 @@ public class SeamCarver {
 
     }
     public void removeVerticalSeam(int[] seam) { // remove vertical seam from picture
-
+        int[] indices = findVerticalSeam();
     }
 }
