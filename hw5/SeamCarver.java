@@ -15,23 +15,12 @@ public class SeamCarver {
     private double[][] energyPaths;
 
     public SeamCarver(Picture picture) {
-        pic = picture;
-        dummyPic = new Picture(pic);
+        pic = new Picture(pic);
         width = picture.width();
         height = picture.height();
-        energyPaths = new double[width][height];
-        /*
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                energy[i][j] = energy(i, j);
-//                edgeTo[i][j] = Integer.MAX_VALUE;
-            }
-        }
-        */
     }
     public Picture picture() { // current picture
-        dummyPic = new Picture(pic);
-        return dummyPic;
+        return new Picture(pic);
     }
     public int width() { // width of current picture
         return width;
@@ -143,7 +132,7 @@ public class SeamCarver {
                 min = newMin;
                 minIndex = s;
             }
-        } // energyPaths の一番下のrowの中からminimumを見つけた(==shortest path の goal を見つけた)
+        }
 
         int[] trackIndices = new int[height]; // 最終的に返す array
         trackIndices[height - 1] = minIndex;
@@ -175,16 +164,6 @@ public class SeamCarver {
                 d2 = energyPaths[trackIndex][(height - 1) - i];
                 d3 = energyPaths[trackIndex + 1][(height - 1) - i];
             }
-            /*
-            double dif = min - energy(trackIndex, height - i - 1);
-            if (dif == min - d1) {
-                trackIndex = trackIndex - 1;
-            } else if (dif == min - d2) {
-                trackIndex = trackIndex + 0;
-            } else {
-                trackIndex = trackIndex + 1;
-            }
-            */
             int indexOfMin = minOfThreeIndex(d1, d2, d3);
             trackIndex = trackIndex + indexOfMin;
             trackIndices[(height - 1) - i] = trackIndex;
@@ -193,15 +172,6 @@ public class SeamCarver {
 
         return trackIndices;
 
-        /*
-        for (int i = 0; i < width; i++) { // for each starting node
-            for (int j = 0; j < height - 1; j++) { // till get the bottom
-                int min = minOfThree(energy[i][j - 1], energy[i][j], energy[i][j + 1]);
-                edgeTo[i][j + min] = ; // 自分自身のxにたいして
-                // 右なのか中央なのか左なのかを入れればいい。y方向には１づつしか動かない
-            }
-        }
-        */
     }
 
     /*
@@ -226,55 +196,12 @@ public class SeamCarver {
         }
     }
 
-    public void removeHorizontalSeam(int[] seam) { // remove horizontal seam from picture
+    public void removeHorizontalSeam(int[] seam) {
 
     }
-    public void removeVerticalSeam(int[] seam) { // remove vertical seam from picture
+    public void removeVerticalSeam(int[] seam) {
         int[] indices = findVerticalSeam();
     }
 }
 
 
-/*
-
-if (i == 0) {
-        p1 = energyPaths[i][j - 1];
-        p2 = energyPaths[i + 1][j - 1];
-        p3 = 99999;
-        } else if (i  == width - 1) {
-        p1 = energyPaths[i][j - 1];
-        p2 = energyPaths[i - 1][j - 1];
-        p3 = 99999;
-        } else {
-        p1 = energyPaths[i][j - 1];
-        p2 = energyPaths[i - 1][j - 1];
-        p3 = energyPaths[i + 1][j - 1];
-        }
-
-*/
-
-
-/*
-        for (int j = 1; j < height; j++) {  // smallest の node の 2d array を作った
-            for (int i = 0; i < width; i++) {
-
-                double p1, p2, p3;
-                if (i == 0) {
-                    p1 = energy(i, j - 1);
-                    p2 = energy(i + 1, j - 1);
-                    p3 = 99999;
-                } else if (i  == width - 1) {
-                    p1 = energy(i, j - 1);
-                    p2 = energy(i - 1, j - 1);
-                    p3 = 99999;
-                } else {
-                    p1 = energy(i, j - 1);
-                    p2 = energy(i - 1, j - 1);
-                    p3 = energy(i + 1, j - 1);
-                }
-                energyPaths[i][j] = Math.min(energyPaths[i][j],
-                // energy(i, j) + minOfThree(p1, p2, p3));
-            }
-        }
-
- */
