@@ -8,13 +8,15 @@ import java.awt.Color;
 
 public class SeamCarver {
 
-    Picture pic;
-    int width;
-    int height;
-    double[][] energyPaths;
+    private Picture pic;
+    private Picture dummyPic;
+    private int width;
+    private int height;
+    private double[][] energyPaths;
 
     public SeamCarver(Picture picture) {
         pic = picture;
+        dummyPic = new Picture(pic);
         width = picture.width();
         height = picture.height();
         energyPaths = new double[width][height];
@@ -28,7 +30,7 @@ public class SeamCarver {
         */
     }
     public Picture picture() { // current picture
-        return new Picture(pic);
+        return dummyPic;
     }
     public int width() { // width of current picture
         return width;
@@ -95,7 +97,7 @@ public class SeamCarver {
         }
         for (int j = 1; j < height - 1; j++) {  // smallest の node の 2d array を作った
             for (int i = 0; i < width; i++) {
-                for (int c = -1; c < 1; c++) {
+                for (int c = -1; c <= 1; c++) {
                     if ((c == -1 && i == 0) || (c == 1 && i == width - 1)) {
                         continue;
                     }
@@ -113,8 +115,11 @@ public class SeamCarver {
         int minIndex = 0;
         double min = energyPaths[0][height - 1];
         for (int s = 1; s < width; s++) {
-            min = Math.min(energyPaths[s][height - 1], min);
-            minIndex = s;
+            double newMin = energyPaths[s][height - 1];
+            if (newMin < min) {
+                min = newMin;
+                minIndex = s;
+            }
         } // energyPaths の一番下のrowの中からminimumを見つけた(==shortest path の goal を見つけた)
 
         int[] trackIndices = new int[height - 1]; // 最終的に返す array
@@ -125,7 +130,7 @@ public class SeamCarver {
 
         int trackIndex = minIndex;
 
-        for (int i = 1; i < height - 1; i++) {
+        for (int i = 1; i < height; i++) {
             if (trackIndex == 0) {
                 d1 = 99999;
                 d2 = energyPaths[trackIndex][height - i - 1];
@@ -139,8 +144,20 @@ public class SeamCarver {
                 d2 = energyPaths[trackIndex][height - i - 1];
                 d3 = energyPaths[trackIndex + 1][height - i - 1];
             }
+            double dif = min - energy(trackIndex, height - i - 1);
+            int addTrack;
+            if (dif == min - d1) {
+                trackIndex = trackIndex - 1;
+            } else if (dif == min - d2) {
+                trackIndex = trackIndex + 0;
+            } else {
+                trackIndex = trackIndex + 1;
+            }
+            /*
             int indexOfMin = minOfThreeIndex(d1, d2, d3);
-            trackIndices[height - i - 1] = trackIndex + indexOfMin;
+            */
+            trackIndices[height - i - 1] = trackIndex;
+
         }
 
         return trackIndices;
@@ -168,7 +185,7 @@ public class SeamCarver {
     }
     */
 
-    public int minOfThreeIndex(double d1, double d2, double d3) {
+    private int minOfThreeIndex(double d1, double d2, double d3) {
         if(d1 < d2 && d1 < d3){
             return -1;
         }else if(d2 < d3 && d2 < d1){
