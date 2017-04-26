@@ -38,44 +38,47 @@ public class SeamCarver {
     }
     public double energy(int x, int y) { // energy of pixel at column x and row y
 
-        Color left;// = pic.get(x - 1, y);
-        Color right;// = pic.get(x + 1, y);
-        Color above;// = pic.get(x, y + 1);
-        Color below;// = pic.get(x, y - 1);
-        if (width == 1) {
-            return 0;
-        }
-        if (x == width() - 1) {
-            left = pic.get(x - 1, y);
-            right = pic.get(0, y);
-        } else if (x == 0){
-            left = pic.get(width() - 1, y);
-            right = pic.get(x + 1, y);
+        Color left, right, above, below;
+        int xEnergyR, xEnergyG, xEnergyB, xEnergy, yEnergyR, yEnergyG, yEnergyB, yEnergy;
+
+        if (width != 1) {
+            if (x == width - 1) {
+                left = pic.get(x - 1, y);
+                right = pic.get(0, y);
+            } else if (x == 0) {
+                left = pic.get(width - 1, y);
+                right = pic.get(x + 1, y);
+            } else {
+                left = pic.get(x - 1, y);
+                right = pic.get(x + 1, y);
+            }
+            xEnergyR = right.getRed() - left.getRed();
+            xEnergyG = right.getGreen() - left.getGreen();
+            xEnergyB = right.getBlue() - left.getBlue();
+            xEnergy = xEnergyR * xEnergyR + xEnergyG * xEnergyG + xEnergyB * xEnergyB;
+
         } else {
-            left = pic.get(x - 1, y);
-            right= pic.get(x + 1, y);
+            xEnergy = 0;
         }
 
-        if (y == height()) {
-            above = pic.get(x, 0);
-            below = pic.get(x, y - 1);
-        } else if (y == 0) {
-            above = pic.get(x, height() - 1);
-            below = pic.get(x, y + 1);
+        if (height != 1) {
+            if (y == height - 1) {
+                above = pic.get(x, 0);
+                below = pic.get(x, y - 1);
+            } else if (y == 0) {
+                above = pic.get(x, y + 1);
+                below = pic.get(x, height - 1);
+            } else {
+                above = pic.get(x, y + 1);
+                below = pic.get(x, y - 1);
+            }
+            yEnergyR = above.getRed() - below.getRed();
+            yEnergyG = above.getGreen() - below.getGreen();
+            yEnergyB = above.getBlue() - below.getBlue();
+            yEnergy = yEnergyR * yEnergyR + yEnergyG * yEnergyG + yEnergyB * yEnergyB;
         } else {
-            above = pic.get(x, y + 1);
-            below = pic.get(x, y - 1);
+            yEnergy = 0;
         }
-
-        int xEnergyR = right.getRed() - left.getRed();
-        int xEnergyG = right.getGreen() - left.getGreen();
-        int xEnergyB = right.getBlue() - left.getBlue();
-        int xEnergy = xEnergyR * xEnergyR + xEnergyG * xEnergyG + xEnergyB * xEnergyB;
-
-        int yEnergyR = above.getRed() - below.getRed();
-        int yEnergyG = above.getGreen() - below.getGreen();
-        int yEnergyB = above.getBlue() - below.getBlue();
-        int yEnergy = yEnergyR * yEnergyR + yEnergyG * yEnergyG + yEnergyB * yEnergyB;
 
         return xEnergy + yEnergy;
 
