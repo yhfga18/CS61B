@@ -95,7 +95,7 @@ public class SeamCarver {
 
         for (int w = 0; w < transpose.width(); w++) {
             for (int h = 0; h < transpose.height(); h++) {
-                Color color = original.get(h, w);
+                Color color = original.get(h, w); // *****************
                 transpose.set(w, h, color);
             }
         }
@@ -111,11 +111,13 @@ public class SeamCarver {
 
     public int[] findVerticalSeam() {
 
-        for (int s = 0; s < width; s++) {
-            energyPaths[s][0] = energy(s,0);
+        energyPaths = new double[width][height];
+
+        for (int s = 0; s < pic.width(); s++) {
+            energyPaths[s][0] = energy(s, 0);
         }
 
-        for (int j = 0; j < height - 1; j++) {  // smallest の node の 2d array を作った
+        for (int j = 0; j < height - 1; j++) {
             for (int i = 0; i < width; i++) {
                 for (int c = -1; c <= 1; c++) {
                     if ((c == -1 && i == 0) || (c == 1 && i == width - 1)) {
@@ -215,11 +217,11 @@ public class SeamCarver {
     */
 
     private int minOfThreeIndex(double d1, double d2, double d3) {
-        if(d1 <= d2 && d1 <= d3) {
+        if (d1 <= d2 && d1 <= d3) {
             return -1;
-        }else if(d2 <= d3 && d2 <= d1) {
+        } else if (d2 <= d3 && d2 <= d1) {
             return 0;
-        }else {
+        } else {
             return 1;
         }
     }
@@ -231,6 +233,7 @@ public class SeamCarver {
         int[] indices = findVerticalSeam();
     }
 }
+
 
 /*
 
@@ -269,7 +272,8 @@ if (i == 0) {
                     p2 = energy(i - 1, j - 1);
                     p3 = energy(i + 1, j - 1);
                 }
-                energyPaths[i][j] = Math.min(energyPaths[i][j], energy(i, j) + minOfThree(p1, p2, p3));
+                energyPaths[i][j] = Math.min(energyPaths[i][j],
+                // energy(i, j) + minOfThree(p1, p2, p3));
             }
         }
 
