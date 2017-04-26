@@ -157,7 +157,8 @@ public class SeamCarver {
             }
             */
             int indexOfMin = minOfThreeIndex(d1, d2, d3);
-            trackIndices[height - i - 1] = trackIndex + indexOfMin;
+            trackIndex = trackIndex + indexOfMin;
+            trackIndices[height - i - 1] = trackIndex;
 
         }
 
