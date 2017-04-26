@@ -30,6 +30,7 @@ public class SeamCarver {
         */
     }
     public Picture picture() { // current picture
+        dummyPic = new Picture(pic);
         return dummyPic;
     }
     public int width() { // width of current picture
@@ -122,7 +123,8 @@ public class SeamCarver {
             }
         } // energyPaths の一番下のrowの中からminimumを見つけた(==shortest path の goal を見つけた)
 
-        int[] trackIndices = new int[height - 1]; // 最終的に返す array
+        int[] trackIndices = new int[height]; // 最終的に返す array
+        trackIndices[height - 1] = minIndex;
 
         double d1;
         double d2;
@@ -144,8 +146,8 @@ public class SeamCarver {
                 d2 = energyPaths[trackIndex][height - i - 1];
                 d3 = energyPaths[trackIndex + 1][height - i - 1];
             }
+            /*
             double dif = min - energy(trackIndex, height - i - 1);
-            int addTrack;
             if (dif == min - d1) {
                 trackIndex = trackIndex - 1;
             } else if (dif == min - d2) {
@@ -153,10 +155,9 @@ public class SeamCarver {
             } else {
                 trackIndex = trackIndex + 1;
             }
-            /*
-            int indexOfMin = minOfThreeIndex(d1, d2, d3);
             */
-            trackIndices[height - i - 1] = trackIndex;
+            int indexOfMin = minOfThreeIndex(d1, d2, d3);
+            trackIndices[height - i - 1] = trackIndex + indexOfMin;
 
         }
 
