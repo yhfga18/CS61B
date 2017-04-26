@@ -89,6 +89,7 @@ public class SeamCarver {
     }
 
     public int[] findHorizontalSeam() { // sequence of indices for horizontal seam
+
         return new int[0];
     }
     public int[] findVerticalSeam() {
@@ -96,7 +97,7 @@ public class SeamCarver {
         for (int s = 0; s < width; s++) {
             energyPaths[s][0] = energy(s,0);
         }
-        for (int j = 1; j < height - 1; j++) {  // smallest の node の 2d array を作った
+        for (int j = 0; j < height - 1; j++) {  // smallest の node の 2d array を作った
             for (int i = 0; i < width; i++) {
                 for (int c = -1; c <= 1; c++) {
                     if ((c == -1 && i == 0) || (c == 1 && i == width - 1)) {
@@ -115,6 +116,7 @@ public class SeamCarver {
 
         int minIndex = 0;
         double min = energyPaths[0][height - 1];
+
         for (int s = 1; s < width; s++) {
             double newMin = energyPaths[s][height - 1];
             if (newMin < min) {
@@ -134,13 +136,13 @@ public class SeamCarver {
 
         for (int i = 1; i < height; i++) {
             if (trackIndex == 0) {
-                d1 = 99999;
+                d1 = Double.POSITIVE_INFINITY;
                 d2 = energyPaths[trackIndex][height - i - 1];
                 d3 = energyPaths[trackIndex + 1][height - i - 1];
             } else if (trackIndex == width - 1) {
                 d1 = energyPaths[trackIndex - 1][height - i - 1];
                 d2 = energyPaths[trackIndex][height - i - 1];
-                d3 = 99999;
+                d3 = Double.POSITIVE_INFINITY;
             } else {
                 d1 = energyPaths[trackIndex - 1][height - i - 1];
                 d2 = energyPaths[trackIndex][height - i - 1];
