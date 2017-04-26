@@ -89,9 +89,26 @@ public class SeamCarver {
     }
 
     public int[] findHorizontalSeam() { // sequence of indices for horizontal seam
+            // Transpose picture.
+        Picture original = pic;
+        Picture transpose = new Picture(original.height(), original.width());
 
-        return new int[0];
+        for (int w = 0; w < transpose.width(); w++) {
+            for (int h = 0; h < transpose.height(); h++) {
+                Color color = original.get(h, w);
+                transpose.set(w, h, color);
+            }
+        }
+        pic = transpose;
+        width = transpose.width();
+        height = transpose.height();
+        int[] horizontalSeam = findVerticalSeam();
+        pic = original;
+        width = original.width();
+        height = original.height();
+        return horizontalSeam;
     }
+
     public int[] findVerticalSeam() {
 
         for (int s = 0; s < width; s++) {
