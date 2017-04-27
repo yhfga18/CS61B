@@ -9,16 +9,27 @@ import java.awt.Color;
 public class SeamCarver {
 
     private Picture pic;
-    private Picture dummyPic;
     private int width;
     private int height;
+    private double[][] energies;
     private double[][] energyPaths;
 
     public SeamCarver(Picture picture) {
         pic = new Picture(picture);
         width = picture.width();
         height = picture.height();
+        energies = new double[width][height];
+        energiesCalcu();
     }
+
+    private void energiesCalcu() {
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
+                energies[i][j] = energy(i, j);
+            }
+        }
+    }
+
     public Picture picture() { // current picture
         return new Picture(pic);
     }
@@ -81,18 +92,24 @@ public class SeamCarver {
             // Transpose picture.
         Picture original = pic;
         Picture transpose = new Picture(original.height(), original.width());
+        double[][] originalEnergies = energies;
+        double[][] transposeEnergies = new double[originalEnergies[0].length][originalEnergies.length];
 
         for (int w = 0; w < transpose.width(); w++) {
             for (int h = 0; h < transpose.height(); h++) {
                 Color color = original.get(h, w); // *****************
                 transpose.set(w, h, color);
+                transposeEnergies[w][h] = originalEnergies[h][w];
+
             }
         }
         pic = transpose;
+        energies = transposeEnergies;
         width = transpose.width();
         height = transpose.height();
         int[] horizontalSeam = findVerticalSeam();
         pic = original;
+        energies = originalEnergies;
         width = original.width();
         height = original.height();
         return horizontalSeam;
@@ -114,10 +131,10 @@ public class SeamCarver {
                     }
                     if (energyPaths[i + c][j + 1] != 0) {
                         double oldEnergy = energyPaths[i + c][j + 1];
-                        double newEnergy = energyPaths[i][j] + energy(i + c, j + 1);
+                        double newEnergy = energyPaths[i][j] + energies[i + c][j + 1];
                         energyPaths[i + c][j + 1] = Math.min(oldEnergy, newEnergy);
                     } else {
-                        energyPaths[i + c][j + 1] = energyPaths[i][j] + energy(i + c, j + 1);
+                        energyPaths[i + c][j + 1] = energyPaths[i][j] + energies[i + c][j + 1];
                     }
                 }
             }
@@ -167,7 +184,6 @@ public class SeamCarver {
             int indexOfMin = minOfThreeIndex(d1, d2, d3);
             trackIndex = trackIndex + indexOfMin;
             trackIndices[(height - 1) - i] = trackIndex;
-
         }
 
         return trackIndices;
