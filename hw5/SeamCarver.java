@@ -93,7 +93,9 @@ public class SeamCarver {
         Picture original = pic;
         Picture transpose = new Picture(original.height(), original.width());
         double[][] originalEnergies = energies;
-        double[][] transposeEnergies = new double[originalEnergies[0].length][originalEnergies.length];
+        int l1 = originalEnergies[0].length;
+        int l2 = originalEnergies.length;
+        double[][] transposeEnergies = new double[l1][l2];
 
         for (int w = 0; w < transpose.width(); w++) {
             for (int h = 0; h < transpose.height(); h++) {
